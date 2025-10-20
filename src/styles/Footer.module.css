@@ -1,0 +1,102 @@
+.footer {
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 2rem;
+}
+
+.footerContent {
+  text-align: center;
+  padding: 4rem 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.footerContent h2 {
+  font-size: 2.5rem;
+  font-weight: 300;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.footerContent p {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.footerLinks {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.footerLinks a {
+  text-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+  text-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+    /* Time and easing for the animation */
+    transition: transform 1.25s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.footerLinks a:hover {
+  transition: color 0.3s ease-in-out;
+  /* Lifts the text up by 5 pixels */
+  transform: translateY(-5px);
+
+  /* Adds a blurred shadow below the text */
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 1);
+  color: rgb(255, 255, 255);
+}
+
+
+/* Responsive styles */
+@media (max-width: 1300px) {
+  .footerContent {
+    padding: 3rem 1rem;
+  }
+  
+  .footerContent h2 {
+    font-size: 2rem;
+  }
+  
+  .footerContent p {
+    font-size: 1rem;
+  }
+  
+  .footerLinks {
+    gap: 1rem;
+  }
+  
+  .footerLinks a {
+    font-size: 1rem;
+    padding: 0.4rem 0.8rem;
+  }
+}
+
+@media (max-width: 800px) {
+  .footerContent {
+    padding: 2rem 1rem;
+  }
+  
+  .footerContent h2 {
+    font-size: 1.8rem;
+  }
+  
+  .footerContent p {
+    font-size: 0.9rem;
+  }
+  
+  .footerLinks {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  
+  .footerLinks a {
+    font-size: 0.9rem;
+    padding: 0.3rem 0.6rem;
+  }
+}

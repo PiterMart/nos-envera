@@ -1,0 +1,244 @@
+/* Acquire Dialog Styles - Matching ARTWINGS Design System */
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
+
+.dialog {
+  background-image: url('/metaltextureverticaledited2.jpg');
+  background-size: auto;
+  background-position: center;
+  background-repeat: repeat;
+  padding: 2.5rem;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.closeButton {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: #707984;
+  transition: color 0.3s ease;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeButton:hover {
+  color: #000;
+}
+
+.title {
+  font-family: var(--font-lovelt);
+  font-size: 2rem;
+  font-weight: 300;
+  margin-bottom: 0.5rem;
+  color: #707984;
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-family: var(--font-lovelt);
+  font-size: 1.1rem;
+  color: #707984;
+  margin-bottom: 2rem;
+  font-weight: 300;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formRow {
+  display: flex;
+  gap: 1rem;
+}
+
+.formRow .formGroup {
+  flex: 1;
+}
+
+.label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #707984;
+  margin-bottom: 0.25rem;
+}
+
+.required {
+  color: #e74c3c;
+}
+
+.input,
+.textarea {
+  width: 100%;
+  padding: 0.875rem;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+  font-family: var(--font-lovelt);
+  font-weight: 300;
+  color: #707984;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box;
+  background-color: white;
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: #000;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 100px;
+  font-family: 'Inter', sans-serif;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.button {
+  padding: 0.875rem 1.75rem;
+  font-size: 1rem;
+  font-family: var(--font-lovelt);
+  font-weight: 300;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  min-width: 120px;
+}
+
+.buttonSecondary {
+  background: none;
+  color: #707984;
+  border: 1px solid #ddd;
+}
+
+.buttonSecondary:hover {
+  color: #000;
+  border-color: #000;
+}
+
+.buttonPrimary {
+  background: none;
+  color: #707984;
+  border: 1px solid #707984;
+}
+
+.buttonPrimary:hover:not(:disabled) {
+  color: #000;
+  border-color: #000;
+  transform: translateY(-1px);
+}
+
+.buttonPrimary:disabled {
+  color: #ccc;
+  border-color: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.alert {
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+}
+
+.alertSuccess {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.alertError {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dialog {
+    padding: 2rem 1.5rem;
+    margin: 1rem;
+    max-width: calc(100vw - 2rem);
+  }
+  
+  .title {
+    font-size: 1.75rem;
+  }
+  
+  .subtitle {
+    font-size: 1rem;
+  }
+  
+  .formRow {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .buttonGroup {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .dialog {
+    padding: 1.5rem 1rem;
+    margin: 0.5rem;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+  }
+  
+  .closeButton {
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+  }
+}

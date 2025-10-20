@@ -1,0 +1,233 @@
+/* Embla container */
+.embla {
+  position: relative;
+  max-width: 100%;
+  height: auto;
+  overflow: visible;
+  margin: auto;
+  --slide-height: 19rem;
+  --slide-spacing: 2rem;
+  --slide-size: 100%;
+}
+
+/* Viewport for the carousel */
+.embla__viewport {
+  overflow: visible;
+  
+}
+
+/* Container for all the slides */
+.embla__container {
+  display: flex;
+  touch-action: pan-y pinch-zoom;
+  margin-left: calc(var(--slide-spacing) * -1);
+}
+
+/* Individual slide styling */
+.embla__slide {
+  transform: translate3d(0, 0, 0);
+  flex: 0 0 auto;
+  min-width: 0;
+  padding-left: 2rem;
+}
+
+/* Inner slide content */
+.embla__slide__inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  max-height: 75vh;
+  overflow: hidden;
+  width: 100%;
+}
+
+/* Image styling for the slide */
+.embla__slide__img {
+  width: 100%; /* Ensure the image takes the full width */
+  height: auto;
+  transition: transform 1.3s ease-in-out;
+}
+
+/* Text styling for the slide */
+.embla__slide__text {
+  gap: 3px;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  letter-spacing: 1px;
+  z-index: 100;
+  left: 2rem;
+  bottom: 2rem;
+  max-width: 100%;
+  width: 300px;
+  height: 150px;
+  color: black;
+  background: var(--background);
+  padding: 0.75rem;
+}
+
+/* .embla__slide:hover .embla__slide__img {
+  transform: scale(1.05);
+} */
+
+/* Optional arrow styling */
+.embla__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  color: white;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.embla__arrow--left {
+  left: 10px;
+}
+
+.embla__arrow--right {
+  right: 10px;
+}
+
+
+.embla__slide__number {
+  box-shadow: inset 0 0 0 0.2rem var(--detail-medium-contrast);
+  font-size: 4rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--slide-height);
+  user-select: none;
+}
+
+.embla__button__prev{
+  width: auto;
+  height: 100px;
+  background: rgba(0, 0, 0, 0);
+  position: absolute;
+  transform: translateY(-100%);
+  z-index: 10;
+  color: white;
+  cursor: pointer;
+  filter: invert();
+  border: none;
+  height: 50vw;
+  left: auto;
+}
+.embla__button__prev img{
+  width: 3rem;
+  box-shadow: 1px black;
+  /* filter: drop-shadow(3px 5px 2px rgba(255, 255, 255, 0.4)); */
+}
+
+.embla__button__next{
+  width: auto;
+  height: 100px;
+  background: rgba(0, 0, 0, 0);
+  position: absolute;
+  transform: translateY(-100%);
+  z-index: 10;
+  color: white;
+  cursor: pointer;
+  filter: invert();
+  border: none;
+  right: 0;
+  height: 50vw;
+}
+
+.embla__button__next img{
+  width: 3rem;
+  box-shadow: 1px black;
+  /* filter: drop-shadow(3px 5px 2px rgba(255, 255, 255, 0.4)); */
+}
+
+
+/* Only style the embla carousel with the emblaFullWidth class */
+/* .emblaFullWidth {
+  position: relative;
+  overflow: hidden;
+  width: 100vw;  
+}
+
+.emblaFullWidth .embla__viewport {
+  width: 100%; 
+  overflow: hidden;
+}
+
+.emblaFullWidth .embla__container {
+  display: flex;
+}
+
+.emblaFullWidth .embla__slide {
+  flex: 0 0 100%;
+  width: 100%; 
+}
+
+.emblaFullWidth .embla__slide img {
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover;  
+  object-position: center;  
+} */
+
+
+
+@media (max-width: 1000px) {
+  .embla__slide__inner{
+    height: 60vh;
+    width: 100%;
+  }
+  /* Only style the embla carousel with the emblaFullWidth class */
+  .emblaFullWidth {
+    position: relative;
+    overflow: hidden;
+    width: 90%;  /* Makes the carousel span the full viewport width */
+  }
+
+  .emblaFullWidth .embla__viewport {
+    width: 100%; /* Ensures the viewport is 100% of its container */
+    overflow: hidden;
+  }
+
+  .emblaFullWidth .embla__container {
+    display: flex;
+  }
+
+  .emblaFullWidth .embla__slide {
+    flex: 0 0 100%; /* Ensures each slide takes up the full width of the viewport */
+    width: 100%;  /* Each slide will be 100% of the viewport width */
+  }
+}
+
+/*mobile*/
+@media (max-width: 600px) {
+  .embla_embla__slide__img__fwezK {
+    width: auto;
+    height: 85vh;
+  }
+  .embla__slide__text{
+    left: 0rem;
+  }
+  .embla__slide__img{
+    width: auto;
+    height: 100vh;
+  }
+  .embla__button__next{
+    display: NONE;
+  }
+  .embla__button__prev{
+    display: NONE;
+  }
+  .embla__slide__inner{
+    height: 100vh;
+  }
+  .embla__slide{
+    max-width: 100%;
+  }
+}
+
