@@ -3,15 +3,14 @@ import { useState, useEffect } from "react";
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../firebase/firebaseConfig";
 import styles from "../../styles/uploader.module.css";
-import ArtistUploader from "../firebase/ArtistUploader";
-import ExhibitionUploader from "../firebase/ExhibitionUploader";
-import FairUploader from "../firebase/FairUpdater";
-import HeadquarterEditor from "../firebase/HeadquarterEditor";
-import ArtistsList from "../firebase/ArtistsList";
-import { runMigration } from "../firebase/migrateArtworks";
+import ComunidadUploader from "../firebase/ComunidadUploader";
+import EventUploader from "../firebase/EventUploader";
+import PressUploader from "../firebase/PressUploader";
+import CommunityList from "../firebase/CommunityList";
+import EventList from "../firebase/EventList";
 
 export default function Home() {
-  const [activeSection, setActiveSection] = useState("artist");
+  const [activeSection, setActiveSection] = useState("community");
   const [user, setUser] = useState(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -97,53 +96,57 @@ export default function Home() {
           <p className={styles.title}> What are you working on?</p>
         </div>
         <div className={styles.navContainer}>
-          <button onClick={() => setActiveSection("artist")} className={styles.navButton}>Artists</button>
-          <button onClick={() => setActiveSection("artistsList")} className={styles.navButton}>Artist List</button>
-          <button onClick={() => setActiveSection("exhibition")} className={styles.navButton}>Exhibitions</button>
+          <button onClick={() => setActiveSection("community")} className={styles.navButton}>Community</button>
+          <button onClick={() => setActiveSection("artistsList")} className={styles.navButton}>Community List</button>
+          <button onClick={() => setActiveSection("events")} className={styles.navButton}>Eventos</button>
+          <button onClick={() => setActiveSection("press")} className={styles.navButton}>Prensa</button>
+          <button onClick={() => setActiveSection("eventsList")} className={styles.navButton}>Event List</button>
+
           {/* <button onClick={runMigration} className={styles.subtitle} style={{ backgroundColor: "#ff6b6b", color: "white" }}>Migrate Artworks</button> */}
           {/* <button onClick={() => setActiveSection("fair")} className={styles.subtitle}>Fairs</button>
           <button onClick={() => setActiveSection("headquarter")} className={styles.subtitle}>Headquarters</button> */}
         </div>
 
-        {/* Artist Section */}
-        {activeSection === "artist" && (
-          <div id="artist" style={{ width: "100%", padding: "1rem", display: "flex", flexDirection: "column", gap: "2rem", maxWidth: "1000px", margin: "auto" }}>
-            <p className={styles.title}>ARTIST UPLOADER</p>
-            <ArtistUploader />
+        {/* Events Section */}
+        {activeSection === "events" && (
+          <div id="events" style={{ width: "100%", padding: "1rem", display: "flex", flexDirection: "column", gap: "2rem", maxWidth: "1000px", margin: "auto" }}>
+            <p className={styles.title}>EVENTOS UPLOADER</p>
+            <EventUploader />
           </div>
         )}
 
-        {/* Artists List Section */}
+        {/* Press Section */}
+        {activeSection === "press" && (
+          <div id="press" style={{ width: "100%", padding: "1rem", display: "flex", flexDirection: "column", gap: "2rem", maxWidth: "1000px", margin: "auto" }}>
+            <p className={styles.title}>PRENSA UPLOADER</p>
+            <PressUploader />
+          </div>
+        )}
+
+        {/* Community Members List Section */}
         {activeSection === "artistsList" && (
-          <div id="artistsList" style={{ width: "100%", padding: "1rem", display: "flex", flexDirection: "column", gap: "2rem", maxWidth: "1000px", margin: "auto" }}>
-            <p className={styles.title}>ALL ARTISTS</p>
-            <ArtistsList />
+          <div id="community-list" style={{ width: "100%", padding: "1rem", display: "flex", flexDirection: "column", gap: "2rem", maxWidth: "1000px", margin: "auto" }}>
+            <p className={styles.title}>LISTA DE LA COMUNIDAD</p>
+            <CommunityList />
           </div>
         )}
 
-        {/* Exhibition Section */}
-        {activeSection === "exhibition" && (
-          <div id="exhibition" style={{ width: "100%", padding: "1rem", display: "flex", flexDirection: "column", gap: "2rem", maxWidth: "1000px", margin: "auto" }}>
-            <p className={styles.title}>EXHIBITION UPLOADER</p>
-            <ExhibitionUploader />
+        {/* Events List Section */}
+        {activeSection === "eventsList" && (
+          <div id="events-list" style={{ width: "100%", padding: "1rem", display: "flex", flexDirection: "column", gap: "2rem", maxWidth: "1000px", margin: "auto" }}>
+            <p className={styles.title}>LISTA DE EVENTOS</p>
+            <EventList />
           </div>
         )}
 
-        {/* Fair Section */}
-        {activeSection === "fair" && (
-          <div id="fair" style={{ width: "100%", padding: "1rem", display: "flex", flexDirection: "column", gap: "2rem" }}>
-            <p className={styles.title}>FAIR UPDATER</p>
-            <FairUploader />
+        {/* Community Section */}
+        {activeSection === "community" && (
+          <div id="community" style={{ width: "100%", padding: "1rem", display: "flex", flexDirection: "column", gap: "2rem", maxWidth: "1000px", margin: "auto" }}>
+            <p className={styles.title}>COMUNIDAD UPLOADER</p>
+            <ComunidadUploader />
           </div>
         )}
 
-        {/* Headquarter Section */}
-        {activeSection === "headquarter" && (
-          <div id="headquarter" style={{ width: "100%", padding: "1rem", display: "flex", flexDirection: "column", gap: "2rem" }}>
-            <p className={styles.title}>HEADQUARTER EDITOR</p>
-            <HeadquarterEditor />
-          </div>
-        )}
       </main>
     </div>
   );

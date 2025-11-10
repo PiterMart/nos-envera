@@ -1,5 +1,5 @@
 "use client";
-import ArtistsList from "../firebase/ArtistsList";
+import ArtistsList from "../firebase/CommunityList";
 import styles from "../../styles/page.module.css";
 
 export default function ArtistsListPage() {
