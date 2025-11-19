@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { firestore, storage } from "./firebaseConfig";
 import { getDocs, collection, doc, updateDoc, Timestamp, getDoc, setDoc } from "firebase/firestore";  
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { logCreate, logUpdate, RESOURCE_TYPES } from "./activityLogger";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import styles from "../../styles/uploader.module.css";
@@ -368,6 +369,10 @@ export default function EventUploader() {
 
       if (selectedEvent) {
         await updateDoc(doc(firestore, "events", selectedEvent), eventData);
+        await logUpdate(RESOURCE_TYPES.EVENT, selectedEvent, {
+          eventName: name,
+          fieldsUpdated: Object.keys(eventData),
+        });
         if (deletedExistingImages.length > 0) {
           await Promise.all(
             deletedExistingImages.map(url => 
@@ -381,6 +386,9 @@ export default function EventUploader() {
       } else {
         // Use setDoc instead of addDoc to use the pre-generated ID
         await setDoc(doc(firestore, "events", eventId), eventData);
+        await logCreate(RESOURCE_TYPES.EVENT, eventId, {
+          eventName: name,
+        });
         setSuccess("¡Evento creado con exito!");
       }
 
@@ -897,7 +905,9 @@ const uploadImages = async (eventId) => {
 
       // Use setDoc instead of addDoc to use the pre-generated ID
       await setDoc(doc(firestore, "events", eventId), newEventData);
-  
+      await logCreate(RESOURCE_TYPES.EVENT, eventId, {
+        eventName: formData.name,
+      });
 
       setSuccess("¡Evento creado con exito!");
       resetForm();
