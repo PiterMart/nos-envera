@@ -11,6 +11,7 @@ import {
   updateDoc,
   Timestamp,
 } from "firebase/firestore";
+import { logCreate, logUpdate, RESOURCE_TYPES } from "./activityLogger";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import styles from "../../styles/uploader.module.css";
@@ -247,9 +248,16 @@ export default function ArticlesUploader() {
 
       if (selectedArticleId) {
         await updateDoc(doc(firestore, "articles", articleId), payload);
+        await logUpdate(RESOURCE_TYPES.ARTICLE, articleId, {
+          articleTitle: trimmedTitle,
+          fieldsUpdated: Object.keys(payload),
+        });
         setSuccess("¡Artículo actualizado con éxito!");
       } else {
         await setDoc(doc(firestore, "articles", articleId), payload);
+        await logCreate(RESOURCE_TYPES.ARTICLE, articleId, {
+          articleTitle: trimmedTitle,
+        });
         setSuccess("¡Artículo creado con éxito!");
         resetForm();
       }

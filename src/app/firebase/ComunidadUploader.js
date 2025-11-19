@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { firestore, storage } from "./firebaseConfig";
 import { getDocs, collection, doc, updateDoc, Timestamp, getDoc, setDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { logCreate, logUpdate, RESOURCE_TYPES } from "./activityLogger";
 import styles from "../../styles/uploader.module.css";
 import imageCompression from "browser-image-compression";
 
@@ -386,12 +387,19 @@ export default function MemberUploader() {
 
       if (selectedMember) {
         await updateDoc(doc(firestore, "members", memberId), memberData);
+        await logUpdate(RESOURCE_TYPES.MEMBER, memberId, {
+          memberName: name,
+          fieldsUpdated: Object.keys(memberData),
+        });
         await fetchMembers();
         await handleMemberSelection(memberId);
         setSuccess("Miembro actualizado correctamente. Por favor recarga la página para ver los cambios.");
       } else {
         const memberRef = doc(firestore, "members", memberId);
         await setDoc(memberRef, memberData);
+        await logCreate(RESOURCE_TYPES.MEMBER, memberId, {
+          memberName: name,
+        });
         await fetchMembers();
         await handleMemberSelection(memberId);
         setSuccess("Miembro creado correctamente. Por favor recarga la página para ver el nuevo miembro.");

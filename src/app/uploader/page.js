@@ -1,7 +1,8 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../firebase/firebaseConfig";
+import { logLogin, logLogout } from "../firebase/activityLogger";
 import styles from "../../styles/uploader.module.css";
 import ComunidadUploader from "../firebase/ComunidadUploader";
 import EventUploader from "../firebase/EventUploader";
@@ -16,13 +17,25 @@ export default function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const previousUserRef = useRef(null);
 
   useEffect(() => {
     console.log("Checking authentication...");
   
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       console.log("User Status:", currentUser);
+      const previousUser = previousUserRef.current;
+      previousUserRef.current = currentUser;
       setUser(currentUser);
+      
+      // Log login when user changes from null to authenticated
+      if (currentUser && !previousUser) {
+        await logLogin();
+      }
+      // Log logout when user changes from authenticated to null
+      if (!currentUser && previousUser) {
+        await logLogout();
+      }
     });
   
     return () => unsubscribe();
@@ -33,12 +46,14 @@ export default function Home() {
     setError(""); // Clear previous errorsL
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      // Login logging is handled in onAuthStateChanged
     } catch (error) {
       setError("Correo electrónico o contraseña inválidos.");
     }
   };
 
   const handleLogout = async () => {
+    await logLogout();
     await signOut(auth);
   };
 
