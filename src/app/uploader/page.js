@@ -5,7 +5,7 @@ import { auth } from "../firebase/firebaseConfig";
 import styles from "../../styles/uploader.module.css";
 import ComunidadUploader from "../firebase/ComunidadUploader";
 import EventUploader from "../firebase/EventUploader";
-import PressUploader from "../firebase/PressUploader";
+import ArticlesUploader from "../firebase/ArticlesUploader";
 import CommunityList from "../firebase/CommunityList";
 import EventList from "../firebase/EventList";
 
@@ -99,7 +99,7 @@ export default function Home() {
           <button onClick={() => setActiveSection("community")} className={styles.navButton}>Community</button>
           <button onClick={() => setActiveSection("artistsList")} className={styles.navButton}>Community List</button>
           <button onClick={() => setActiveSection("events")} className={styles.navButton}>Eventos</button>
-          <button onClick={() => setActiveSection("press")} className={styles.navButton}>Prensa</button>
+          <button onClick={() => setActiveSection("features")} className={styles.navButton}>Artículos</button>
           <button onClick={() => setActiveSection("eventsList")} className={styles.navButton}>Event List</button>
 
           {/* <button onClick={runMigration} className={styles.subtitle} style={{ backgroundColor: "#ff6b6b", color: "white" }}>Migrate Artworks</button> */}
@@ -115,11 +115,11 @@ export default function Home() {
           </div>
         )}
 
-        {/* Press Section */}
-        {activeSection === "press" && (
-          <div id="press" style={{ width: "100%", padding: "1rem", display: "flex", flexDirection: "column", gap: "2rem", maxWidth: "1000px", margin: "auto" }}>
-            <p className={styles.title}>PRENSA UPLOADER</p>
-            <PressUploader />
+        {/* Articles Section */}
+        {activeSection === "features" && (
+          <div id="features" style={{ width: "100%", padding: "1rem", display: "flex", flexDirection: "column", gap: "2rem", maxWidth: "1000px", margin: "auto" }}>
+            <p className={styles.title}>ARTÍCULOS UPLOADER</p>
+            <ArticlesUploader />
           </div>
         )}
 

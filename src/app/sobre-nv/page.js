@@ -50,13 +50,6 @@ export default function SobreNV() {
 
             {/* Header */}
             <div style={{textAlign: 'center', marginBottom: '3rem'}}>
-              <h1 
-                className={`${styles.sectionSubtitle} ${visibleSubtitles.has('subtitle1') ? styles.sectionSubtitleVisible : ''}`}
-                data-subtitle-id="subtitle1"
-                style={{fontSize: '3rem', lineHeight: '3rem', marginBottom: '1rem'}}
-              >
-                SOBRE NOS EN VERA
-              </h1>
             </div>
               {/* Imagen representativa */}
               <div 

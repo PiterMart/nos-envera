@@ -8,6 +8,8 @@ import { collection, doc, getDoc, getDocs, query, where } from "firebase/firesto
 
 const FALLBACK_IMAGE = "https://via.placeholder.com/1600x900.png?text=Performance";
 const PERFORMANCE_TYPE = "performance";
+const RESIDENCY_TYPE = "residency";
+const TRAINING_TYPE = "training";
 
 const isLikelyVideo = (url = "") => {
   return url.toLowerCase().endsWith(".mp4") || url.toLowerCase().includes("mime=video");
@@ -46,6 +48,15 @@ const normalizeEventTypes = (rawTypes) => {
 
 const eventContainsPerformance = (eventTypes) =>
   eventTypes.some((type) => type.toLowerCase() === PERFORMANCE_TYPE);
+
+const eventContainsResidency = (eventTypes) =>
+  eventTypes.some((type) => type.toLowerCase() === RESIDENCY_TYPE);
+
+const eventContainsTraining = (eventTypes) =>
+  eventTypes.some((type) => type.toLowerCase() === TRAINING_TYPE);
+
+const eventContainsPerformanceOrResidencyOrTraining = (eventTypes) =>
+  eventContainsPerformance(eventTypes) || eventContainsResidency(eventTypes) || eventContainsTraining(eventTypes);
 
 const normalizeArrayOfPeople = (value) => {
   if (!Array.isArray(value)) return [];
@@ -123,7 +134,7 @@ const normalizeEventDoc = (docData, docId) => {
   if (!docData) return null;
 
   const eventTypes = normalizeEventTypes(docData.event_type || docData.eventType || docData.type);
-  if (!eventContainsPerformance(eventTypes)) {
+  if (!eventContainsPerformanceOrResidencyOrTraining(eventTypes)) {
     return null;
   }
 
@@ -186,14 +197,14 @@ export default function PerformanceDetail({ params }) {
           if (normalized) {
             setPerformance(normalized);
           } else {
-            setError("La actividad encontrada no corresponde a una performance.");
+            setError("La actividad encontrada no corresponde a una performance, residencia o formación.");
           }
         } else {
-          setError("Performance no encontrada.");
+          setError("Actividad no encontrada.");
         }
       } catch (err) {
         console.error("Error fetching performance:", err);
-        setError("Ocurrió un error al cargar la performance.");
+        setError("Ocurrió un error al cargar la actividad.");
       } finally {
         setLoading(false);
       }
@@ -251,7 +262,13 @@ export default function PerformanceDetail({ params }) {
                 ) : null}
               </h1>
               <Link
-                href="/perfos"
+                href={
+                  performance?.eventTypes?.some((type) => type.toLowerCase() === RESIDENCY_TYPE)
+                    ? "/residencias"
+                    : performance?.eventTypes?.some((type) => type.toLowerCase() === TRAINING_TYPE)
+                    ? "/formacion"
+                    : "/perfos"
+                }
                 style={{
                   textDecoration: "none",
                   fontSize: "0.9rem",
@@ -266,12 +283,12 @@ export default function PerformanceDetail({ params }) {
             </div>
 
             {loading ? (
-              <div style={{ textAlign: "center", padding: "3rem", color: "#666" }}>Cargando performance…</div>
+              <div style={{ textAlign: "center", padding: "3rem", color: "#666" }}>Cargando actividad…</div>
             ) : error ? (
               <div style={{ textAlign: "center", padding: "3rem", color: "#c00" }}>{error}</div>
             ) : !performance ? (
               <div style={{ textAlign: "center", padding: "3rem", color: "#666" }}>
-                No encontramos la performance solicitada.
+                No encontramos la actividad solicitada.
               </div>
             ) : (
               <>

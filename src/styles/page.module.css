@@ -1021,3 +1021,13 @@
 
 /* Team Page */
 /* Team-specific styles moved to `equipo.module.css`. */
+
+/* Comunidad Member Link Hover Effect */
+.memberLink {
+  transition: color 0.3s ease-in;
+}
+
+.memberLink:hover {
+  color: #007bff;
+  transition: color 0.3s ease-in;
+}

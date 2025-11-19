@@ -5,7 +5,7 @@ import { collection, getDocs } from "firebase/firestore";
 import styles from "../../styles/page.module.css";
 import { firestore } from "../firebase/firebaseConfig";
 
-const formatPressDate = (value) => {
+const formatArticleDate = (value) => {
   if (!value) return "";
   try {
     if (typeof value.toDate === "function") {
@@ -28,13 +28,13 @@ const formatPressDate = (value) => {
 
     return String(value);
   } catch (error) {
-    console.error("Failed to format press date:", error);
+    console.error("Failed to format article date:", error);
     return "";
   }
 };
 
-export default function PressPage() {
-  const [pressItems, setPressItems] = useState([]);
+export default function ArticlesPage() {
+  const [articleItems, setArticleItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [visibleSubtitles, setVisibleSubtitles] = useState(new Set());
@@ -53,11 +53,11 @@ export default function PressPage() {
   };
 
   useEffect(() => {
-    const fetchPress = async () => {
+    const fetchArticles = async () => {
       setLoading(true);
       setError(null);
       try {
-        const snapshot = await getDocs(collection(firestore, "press"));
+        const snapshot = await getDocs(collection(firestore, "articles"));
         const items = snapshot.docs
           .map((docSnap) => {
             const data = docSnap.data() || {};
@@ -95,16 +95,16 @@ export default function PressPage() {
             return bTime - aTime;
           });
 
-        setPressItems(items);
+        setArticleItems(items);
       } catch (err) {
-        console.error("Failed to load press items:", err);
-        setError("No se pudieron cargar las notas de prensa. Intenta nuevamente.");
+        console.error("Failed to load article items:", err);
+        setError("No se pudieron cargar los artículos. Intenta nuevamente.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPress();
+    fetchArticles();
   }, []);
 
   useEffect(() => {
@@ -129,7 +129,7 @@ export default function PressPage() {
     subtitleElements.forEach((element) => observer.observe(element));
 
     return () => observer.disconnect();
-  }, [pressItems]);
+  }, [articleItems]);
 
   return (
     <div className={styles.page}>
@@ -159,7 +159,7 @@ export default function PressPage() {
                   marginBottom: "1rem",
                 }}
               >
-                PRENSA
+                ARTÍCULOS
               </h1>
               <p
                 style={{
@@ -175,7 +175,7 @@ export default function PressPage() {
             <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
               {loading && (
                 <div style={{ textAlign: "center", padding: "3rem", color: "#666" }}>
-                  <p>Cargando notas de prensa...</p>
+                  <p>Cargando artículos...</p>
                 </div>
               )}
 
@@ -185,13 +185,13 @@ export default function PressPage() {
                 </div>
               )}
 
-              {!loading && !error && pressItems.length === 0 && (
+              {!loading && !error && articleItems.length === 0 && (
                 <div style={{ textAlign: "center", padding: "3rem", color: "#666" }}>
-                  <p>Aún no hay notas de prensa cargadas.</p>
+                  <p>Aún no hay artículos cargados.</p>
                 </div>
               )}
 
-              {!loading && !error && pressItems.length > 0 && (
+              {!loading && !error && articleItems.length > 0 && (
                 <ul
                   style={{
                     listStyle: "none",
@@ -200,11 +200,11 @@ export default function PressPage() {
                     borderTop: "1px solid #e0e0e0",
                   }}
                 >
-                  {pressItems.map((pressItem) => {
-                    const isExpanded = expandedItems.has(pressItem.id);
+                  {articleItems.map((articleItem) => {
+                    const isExpanded = expandedItems.has(articleItem.id);
                     return (
                       <li
-                        key={pressItem.id}
+                        key={articleItem.id}
                         style={{
                           borderBottom: "1px solid #e0e0e0",
                           padding: "0.5rem 0",
@@ -212,7 +212,7 @@ export default function PressPage() {
                       >
                         <button
                           type="button"
-                          onClick={() => toggleExpanded(pressItem.id)}
+                          onClick={() => toggleExpanded(articleItem.id)}
                           aria-expanded={isExpanded}
                           style={{
                             width: "100%",
@@ -231,18 +231,18 @@ export default function PressPage() {
                         >
                           <span
                             className={`${styles.sectionSubtitle} ${
-                              visibleSubtitles.has(`subtitle-${pressItem.id}`)
+                              visibleSubtitles.has(`subtitle-${articleItem.id}`)
                                 ? styles.sectionSubtitleVisible
                                 : ""
                             }`}
-                            data-subtitle-id={`subtitle-${pressItem.id}`}
+                            data-subtitle-id={`subtitle-${articleItem.id}`}
                             style={{
                               display: "block",
                               fontSize: "1.2rem",
                               lineHeight: "1.4rem",
                             }}
                           >
-                            {pressItem.title}
+                            {articleItem.title}
                           </span>
                           <span
                             style={{
@@ -268,21 +268,21 @@ export default function PressPage() {
                               color: "#333",
                             }}
                           >
-                            {pressItem.subtitle && (
-                              <p style={{ fontWeight: "500" }}>{pressItem.subtitle}</p>
+                            {articleItem.subtitle && (
+                              <p style={{ fontWeight: "500" }}>{articleItem.subtitle}</p>
                             )}
 
-                            {pressItem.date && (
-                              <p style={{ color: "#666" }}>{formatPressDate(pressItem.date)}</p>
+                            {articleItem.date && (
+                              <p style={{ color: "#666" }}>{formatArticleDate(articleItem.date)}</p>
                             )}
 
-                            {pressItem.description && (
+                            {articleItem.description && (
                               <p style={{ lineHeight: "1.6rem", marginBottom: "0.5rem" }}>
-                                {pressItem.description}
+                                {articleItem.description}
                               </p>
                             )}
 
-                            {pressItem.links && pressItem.links.length > 0 && (
+                            {articleItem.links && articleItem.links.length > 0 && (
                               <div
                                 style={{
                                   display: "flex",
@@ -290,9 +290,9 @@ export default function PressPage() {
                                   gap: "0.5rem",
                                 }}
                               >
-                                {pressItem.links.map((link, linkIndex) => (
+                                {articleItem.links.map((link, linkIndex) => (
                                   <a
-                                    key={`${pressItem.id}-link-${linkIndex}`}
+                                    key={`${articleItem.id}-link-${linkIndex}`}
                                     href={link.url}
                                     target="_blank"
                                     rel="noopener noreferrer"

@@ -37,6 +37,7 @@ export default function MemberUploader() {
   const [isDragOver, setIsDragOver] = useState(false);
   const [isCvDragOver, setIsCvDragOver] = useState(false);
   const [roleInput, setRoleInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const fetchMembers = useCallback(async () => {
     try {
@@ -300,6 +301,26 @@ export default function MemberUploader() {
     return Array.from(roles).sort((a, b) => a.localeCompare(b));
   }, [members]);
 
+  const sortedAndFilteredMembers = useMemo(() => {
+    let filtered = members;
+    
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      filtered = members.filter((member) => {
+        const name = (member.name || "").toLowerCase();
+        return name.includes(query);
+      });
+    }
+    
+    // Sort alphabetically by name
+    return [...filtered].sort((a, b) => {
+      const nameA = (a.name || "").toLowerCase();
+      const nameB = (b.name || "").toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  }, [members, searchQuery]);
+
   const handleAddRole = () => {
     const value = roleInput.trim();
     if (!value) {
@@ -387,9 +408,24 @@ export default function MemberUploader() {
     <div className={styles.form}>
       <div>
         <p className={styles.subtitle}>SELECCIONA MIEMBRO PARA EDITAR</p>
+        <div style={{ marginBottom: "0.5rem" }}>
+          <input
+            type="text"
+            placeholder="Buscar miembro..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "0.5rem",
+              fontSize: "1rem",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+            }}
+          />
+        </div>
         <select value={selectedMember || ""} onChange={(event) => handleMemberSelection(event.target.value)}>
           <option value="">Crear nuevo miembro</option>
-          {members.map((member) => (
+          {sortedAndFilteredMembers.map((member) => (
             <option key={member.id} value={member.id}>
               {member.name}
             </option>

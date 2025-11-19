@@ -1,7 +1,8 @@
 import "../styles/globals.css";
-import Nav from "../components/nav";
+import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import LoadingProvider from "../components/LoadingProvider";
+import RecentEvents from "../components/RecentEvents";
 
 
 export const metadata = {
@@ -29,10 +30,11 @@ export default function RootLayout({ children }) {
           }}>
             <main className="mainContent">
               {children}
+              <RecentEvents />
+              <Footer />
             </main>
             <Nav/>
           </div>
-          {/* <Footer/> */}
         </LoadingProvider>
       </body>
     </html>

@@ -23,17 +23,17 @@ const createEmptyForm = () => ({
   links: [{ title: "", url: "" }],
 });
 
-export default function PressUploader() {
+export default function ArticlesUploader() {
   const [formData, setFormData] = useState(() => createEmptyForm());
-  const [pressDocs, setPressDocs] = useState([]);
-  const [selectedPressId, setSelectedPressId] = useState("");
+  const [articlesDocs, setArticlesDocs] = useState([]);
+  const [selectedArticleId, setSelectedArticleId] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
-  const fetchPressDocuments = useCallback(async () => {
+  const fetchArticlesDocuments = useCallback(async () => {
     try {
-      const snapshot = await getDocs(collection(firestore, "press"));
+      const snapshot = await getDocs(collection(firestore, "articles"));
       const documents = snapshot.docs
         .map((docSnap) => {
           const data = docSnap.data();
@@ -70,20 +70,20 @@ export default function PressUploader() {
           return timeB - timeA;
         });
 
-      setPressDocs(documents);
+      setArticlesDocs(documents);
     } catch (err) {
-      console.error("Error fetching press documents:", err);
-      setError("No se pudieron cargar los articulos de prensa.");
+      console.error("Error fetching articles documents:", err);
+      setError("No se pudieron cargar los artículos.");
     }
   }, []);
 
   useEffect(() => {
-    fetchPressDocuments();
-  }, [fetchPressDocuments]);
+    fetchArticlesDocuments();
+  }, [fetchArticlesDocuments]);
 
   const resetForm = () => {
     setFormData(createEmptyForm());
-    setSelectedPressId("");
+    setSelectedArticleId("");
   };
 
   const handleInputChange = (field) => (event) => {
@@ -145,29 +145,29 @@ export default function PressUploader() {
     setSuccess(null);
   };
 
-  const handlePressSelection = async (pressId) => {
+  const handleArticleSelection = async (articleId) => {
     setError(null);
     setSuccess(null);
 
-    if (!pressId) {
+    if (!articleId) {
       resetForm();
       setError(null);
       setSuccess(null);
       return;
     }
 
-    setSelectedPressId(pressId);
+    setSelectedArticleId(articleId);
 
     try {
-      const pressDoc = await getDoc(doc(firestore, "press", pressId));
+      const articleDoc = await getDoc(doc(firestore, "articles", articleId));
 
-      if (!pressDoc.exists()) {
-        setError("No se encontro el articulo seleccionado.");
+      if (!articleDoc.exists()) {
+        setError("No se encontró el artículo seleccionado.");
         resetForm();
         return;
       }
 
-      const data = pressDoc.data();
+      const data = articleDoc.data();
       const rawDate = data.date;
       const parsedDate =
         rawDate && typeof rawDate.toDate === "function"
@@ -198,8 +198,8 @@ export default function PressUploader() {
         })(),
       });
     } catch (err) {
-      console.error("Error loading press document:", err);
-      setError("No se pudo cargar el articulo seleccionado.");
+      console.error("Error loading article document:", err);
+      setError("No se pudo cargar el artículo seleccionado.");
     }
   };
 
@@ -234,7 +234,7 @@ export default function PressUploader() {
         throw new Error("Agrega al menos un enlace valido.");
       }
 
-      const pressId = selectedPressId || doc(collection(firestore, "press")).id;
+      const articleId = selectedArticleId || doc(collection(firestore, "articles")).id;
 
       const payload = {
         title: trimmedTitle,
@@ -245,19 +245,19 @@ export default function PressUploader() {
         link: sanitizedLinks[0]?.url || "",
       };
 
-      if (selectedPressId) {
-        await updateDoc(doc(firestore, "press", pressId), payload);
-        setSuccess("¡Articulo actualizado con exito!");
+      if (selectedArticleId) {
+        await updateDoc(doc(firestore, "articles", articleId), payload);
+        setSuccess("¡Artículo actualizado con éxito!");
       } else {
-        await setDoc(doc(firestore, "press", pressId), payload);
-        setSuccess("¡Articulo creado con exito!");
+        await setDoc(doc(firestore, "articles", articleId), payload);
+        setSuccess("¡Artículo creado con éxito!");
         resetForm();
       }
 
-      await fetchPressDocuments();
+      await fetchArticlesDocuments();
     } catch (err) {
-      console.error("Error saving press document:", err);
-      setError(err.message || "No se pudo guardar el articulo de prensa.");
+      console.error("Error saving article document:", err);
+      setError(err.message || "No se pudo guardar el artículo.");
     } finally {
       setLoading(false);
     }
@@ -266,27 +266,27 @@ export default function PressUploader() {
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
       <div>
-        <p className={styles.subtitle}>Selecciona un articulo de prensa para editar</p>
+        <p className={styles.subtitle}>Selecciona un artículo para editar</p>
         <select
-          value={selectedPressId}
-          onChange={(event) => handlePressSelection(event.target.value)}
+          value={selectedArticleId}
+          onChange={(event) => handleArticleSelection(event.target.value)}
         >
-          <option value="">Crear nuevo articulo</option>
-          {pressDocs.map((press) => (
-            <option key={press.id} value={press.id}>
-              {press.title}
-              {press.date
-                ? ` (${press.date.toLocaleDateString("es-ES")})`
+          <option value="">Crear nuevo artículo</option>
+          {articlesDocs.map((article) => (
+            <option key={article.id} value={article.id}>
+              {article.title}
+              {article.date
+                ? ` (${article.date.toLocaleDateString("es-ES")})`
                 : ""}
             </option>
           ))}
         </select>
       </div>
 
-      {selectedPressId && (
+      {selectedArticleId && (
         <div className={styles.artistIdDisplay}>
-          <span className={styles.artistIdLabel}>ID del articulo:</span>
-          <span className={styles.artistIdValue}>{selectedPressId}</span>
+          <span className={styles.artistIdLabel}>ID del artículo:</span>
+          <span className={styles.artistIdValue}>{selectedArticleId}</span>
         </div>
       )}
 
@@ -295,7 +295,7 @@ export default function PressUploader() {
           <p className={styles.subtitle}>Titulo</p>
           <input
             name="title"
-            placeholder="Titulo del articulo"
+            placeholder="Titulo del artículo"
             value={formData.title}
             onChange={handleInputChange("title")}
           />
@@ -305,7 +305,7 @@ export default function PressUploader() {
           <p className={styles.subtitle}>Subtitulo</p>
           <input
             name="subtitle"
-            placeholder="Subtitulo del articulo (opcional)"
+            placeholder="Subtitulo del artículo (opcional)"
             value={formData.subtitle}
             onChange={handleInputChange("subtitle")}
           />
@@ -326,7 +326,7 @@ export default function PressUploader() {
           <p className={styles.subtitle}>Enlaces</p>
           {(formData.links || []).map((linkEntry, index) => (
             <div
-              key={`press-link-${index}`}
+              key={`article-link-${index}`}
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -390,7 +390,7 @@ export default function PressUploader() {
             Agregar otro enlace
           </button>
           <p className={styles.helpText}>
-            Puedes agregar multiples enlaces relacionados con el articulo.
+            Puedes agregar múltiples enlaces relacionados con el artículo.
           </p>
         </div>
 
@@ -398,13 +398,13 @@ export default function PressUploader() {
           <p className={styles.subtitle}>Descripcion</p>
           <textarea
             name="description"
-            placeholder="Resumen del articulo o notas adicionales"
+            placeholder="Resumen del artículo o notas adicionales"
             value={formData.description}
             onChange={handleInputChange("description")}
             rows={4}
           />
           <p className={styles.helpText}>
-            Este texto se mostrara junto al articulo en la pagina de prensa.
+            Este texto se mostrará junto al artículo en la página.
           </p>
         </div>
       </div>
@@ -413,12 +413,12 @@ export default function PressUploader() {
         <p className={styles.subtitle}>¿Todo listo?</p>
         <button type="submit" disabled={loading}>
           {loading
-            ? selectedPressId
+            ? selectedArticleId
               ? "Actualizando..."
               : "Guardando..."
-            : selectedPressId
-            ? "Actualizar articulo"
-            : "Agregar articulo"}
+            : selectedArticleId
+            ? "Actualizar artículo"
+            : "Agregar artículo"}
         </button>
       </div>
 

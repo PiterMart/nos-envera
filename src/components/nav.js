@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -17,14 +17,49 @@ export default function Nav() {
         { name: 'EQUIPO', path: '/equipo' },
         { name: 'FORMACIÓN', path: '/formacion' },
         { name: 'RESIDENCIAS', path: '/residencias' },
-        { name: 'PRENSA', path: '/prensa' },
-        { name: 'CONTACTO', path: '/contacto' },
+        { name: 'ARTÍCULOS', path: '/articulos' },
+        { name: 'CONTACTO', path: '/contacto', isFooter: true },
     ];
 
+    // Scroll to footer when hash is present in URL (e.g., after navigation)
+    useEffect(() => {
+        const handleHashChange = () => {
+            if (window.location.hash === '#footer') {
+                setTimeout(() => {
+                    const footer = document.getElementById('footer');
+                    if (footer) {
+                        footer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }, 300); // Delay to allow page to render
+            }
+        };
+
+        // Check on mount and path change
+        handleHashChange();
+        window.addEventListener('hashchange', handleHashChange);
+        
+        return () => {
+            window.removeEventListener('hashchange', handleHashChange);
+        };
+    }, [currentPath]);
 
     const handleNavigation = (page, e) => {
-        // All pages are now standalone pages, no homepage sections
         setIsMenuOpen(false);
+        
+        // If it's the CONTACTO button, scroll to footer instead of navigating
+        if (page.isFooter) {
+            e.preventDefault();
+            
+            // Small delay to ensure menu closes smoothly
+            setTimeout(() => {
+                const footer = document.getElementById('footer');
+                if (footer) {
+                    footer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // Update URL without triggering navigation
+                    window.history.pushState(null, '', '#footer');
+                }
+            }, 100);
+        }
     };
 
     const toggleMenu = () => {
@@ -60,13 +95,22 @@ export default function Nav() {
                     <ul>
                         {pages.map((page, index) => (
                             <li key={index}>
-                                <Link
-                                    href={page.path}
-                                    className={isCurrent(page.path) ? styles.page_current : ''}
-                                    onClick={(e) => handleNavigation(page, e)}
-                                >
-                                    {page.name}
-                                </Link>
+                                {page.isFooter ? (
+                                    <a
+                                        href="#footer"
+                                        onClick={(e) => handleNavigation(page, e)}
+                                    >
+                                        {page.name}
+                                    </a>
+                                ) : (
+                                    <Link
+                                        href={page.path}
+                                        className={isCurrent(page.path) ? styles.page_current : ''}
+                                        onClick={(e) => handleNavigation(page, e)}
+                                    >
+                                        {page.name}
+                                    </Link>
+                                )}
                             </li>
                         ))}
                     </ul>
