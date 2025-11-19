@@ -16,7 +16,7 @@ export default function EventUploader() {
   const [artistCatalog, setArtistCatalog] = useState([]);
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const eventTypeOptions = ["Performance", "Training", "Residency"];
+  const eventTypeOptions = ["Presentación", "Formación", "Residencia"];
   const [communityMembers, setCommunityMembers] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
@@ -633,7 +633,7 @@ export default function EventUploader() {
       return await getDownloadURL(bannerRef);
     } catch (error) {
       console.error("Error compressing banner image:", error);
-      throw new Error("Banner image upload failed");
+      throw new Error("No se pudo subir la imagen del banner");
     }
   };
 
@@ -664,7 +664,7 @@ export default function EventUploader() {
       }
     } catch (error) {
       console.error("Error uploading flyer:", error);
-      throw new Error("Flyer upload failed");
+      throw new Error("No se pudo subir el flyer");
     }
   };
 

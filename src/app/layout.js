@@ -4,7 +4,6 @@ import Footer from "../components/Footer";
 import LoadingProvider from "../components/LoadingProvider";
 import RecentEvents from "../components/RecentEvents";
 
-
 export const metadata = {
   title: "Nos en Vera",
   description: "Espacio de arte y cultura dedicado a la promoción de artistas emergentes y la experimentación artística",

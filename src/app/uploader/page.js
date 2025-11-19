@@ -8,6 +8,7 @@ import EventUploader from "../firebase/EventUploader";
 import ArticlesUploader from "../firebase/ArticlesUploader";
 import CommunityList from "../firebase/CommunityList";
 import EventList from "../firebase/EventList";
+import ArticlesList from "../firebase/ArticlesList";
 
 export default function Home() {
   const [activeSection, setActiveSection] = useState("community");
@@ -33,7 +34,7 @@ export default function Home() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
-      setError("Invalid email or password.");
+      setError("Correo electrónico o contraseña inválidos.");
     }
   };
 
@@ -50,30 +51,30 @@ export default function Home() {
   if (!user) {
     return (
       <div className={styles.loginContainer}> {/* Add CSS Module class */}
-        <h2 className={styles.loginTitle}>Hello. <br></br> Login to access the admin panel.</h2>
+        <h2 className={styles.loginTitle}>Hola. <br></br> Inicia sesión para acceder al panel de administración.</h2>
         {error && <p className={styles.error}>{error}</p>}
         <div className={styles.formGroup}>
-        <p className={styles.helpText}>Email</p>
+        <p className={styles.helpText}>Correo electrónico</p>
           <input
             type="email"
-            placeholder="Email"
+            placeholder="Correo electrónico"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             onKeyDown={handleKeyPress}
             className={styles.input}
           />
-          <p className={styles.helpText}>Password</p>
+          <p className={styles.helpText}>Contraseña</p>
           <input
             type="password"
-            placeholder="Password"
+            placeholder="Contraseña"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             onKeyDown={handleKeyPress}
             className={styles.input}
           />
-          <p className={styles.helpText}>Forgot your password? Contact the administrator.</p>
+          <p className={styles.helpText}>¿Olvidaste tu contraseña? Contacta al administrador.</p>
           <button onClick={handleLogin} className={styles.loginButton}>
-            Login
+            Iniciar sesión
           </button>
         </div>
       </div>
@@ -90,27 +91,30 @@ export default function Home() {
 
         {/* Navigation Buttons */}
         <button onClick={handleLogout} className={styles.logoutButton}>
-          Logout
+          Cerrar sesión
         </button>
         <div style={{ margin: "auto" }}>
-          <p className={styles.title}> What are you working on?</p>
+          <p className={styles.title}> ¿En qué estás trabajando?</p>
         </div>
         <div className={styles.navContainer}>
-          <button onClick={() => setActiveSection("community")} className={styles.navButton}>Community</button>
-          <button onClick={() => setActiveSection("artistsList")} className={styles.navButton}>Community List</button>
-          <button onClick={() => setActiveSection("events")} className={styles.navButton}>Eventos</button>
-          <button onClick={() => setActiveSection("features")} className={styles.navButton}>Artículos</button>
-          <button onClick={() => setActiveSection("eventsList")} className={styles.navButton}>Event List</button>
-
-          {/* <button onClick={runMigration} className={styles.subtitle} style={{ backgroundColor: "#ff6b6b", color: "white" }}>Migrate Artworks</button> */}
-          {/* <button onClick={() => setActiveSection("fair")} className={styles.subtitle}>Fairs</button>
-          <button onClick={() => setActiveSection("headquarter")} className={styles.subtitle}>Headquarters</button> */}
+          <div className={styles.navGroup}>
+            <button onClick={() => setActiveSection("community")} className={styles.navButton}>COMUNIDAD</button>
+            <button onClick={() => setActiveSection("artistsList")} className={styles.navButton}>Lista de Comunidad</button>
+          </div>
+          <div className={styles.navGroup}>
+            <button onClick={() => setActiveSection("events")} className={styles.navButton}>EVENTOS</button>
+            <button onClick={() => setActiveSection("eventsList")} className={styles.navButton}>Lista de Eventos</button>
+          </div>
+          <div className={styles.navGroup}>
+            <button onClick={() => setActiveSection("features")} className={styles.navButton}>ARTÍCULOS</button>
+            <button onClick={() => setActiveSection("articlesList")} className={styles.navButton}>Lista de Artículos</button>
+          </div>
         </div>
 
         {/* Events Section */}
         {activeSection === "events" && (
           <div id="events" style={{ width: "100%", padding: "1rem", display: "flex", flexDirection: "column", gap: "2rem", maxWidth: "1000px", margin: "auto" }}>
-            <p className={styles.title}>EVENTOS UPLOADER</p>
+            <p className={styles.title}>EVENTOS</p>
             <EventUploader />
           </div>
         )}
@@ -118,7 +122,7 @@ export default function Home() {
         {/* Articles Section */}
         {activeSection === "features" && (
           <div id="features" style={{ width: "100%", padding: "1rem", display: "flex", flexDirection: "column", gap: "2rem", maxWidth: "1000px", margin: "auto" }}>
-            <p className={styles.title}>ARTÍCULOS UPLOADER</p>
+            <p className={styles.title}>ARTÍCULOS</p>
             <ArticlesUploader />
           </div>
         )}
@@ -142,8 +146,16 @@ export default function Home() {
         {/* Community Section */}
         {activeSection === "community" && (
           <div id="community" style={{ width: "100%", padding: "1rem", display: "flex", flexDirection: "column", gap: "2rem", maxWidth: "1000px", margin: "auto" }}>
-            <p className={styles.title}>COMUNIDAD UPLOADER</p>
+            <p className={styles.title}>COMUNIDAD</p>
             <ComunidadUploader />
+          </div>
+        )}
+
+        {/* Articles List Section */}
+        {activeSection === "articlesList" && (
+          <div id="articles-list" style={{ width: "100%", padding: "1rem", display: "flex", flexDirection: "column", gap: "2rem", maxWidth: "1000px", margin: "auto" }}>
+            <p className={styles.title}>LISTA DE ARTÍCULOS</p>
+            <ArticlesList />
           </div>
         )}
 

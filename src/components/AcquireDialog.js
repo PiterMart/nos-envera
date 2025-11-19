@@ -79,31 +79,31 @@ const AcquireDialog = ({ isOpen, onClose, artwork, artist }) => {
         </button>
 
         <h2 className={styles.title}>
-          Acquire &ldquo;{artwork?.title}&rdquo;
+          Adquirir &ldquo;{artwork?.title}&rdquo;
         </h2>
 
         {artist && (
           <p className={styles.subtitle}>
-            by {artist.name}
+            por {artist.name}
           </p>
         )}
 
         {submitStatus === 'success' && (
           <div className={`${styles.alert} ${styles.alertSuccess}`}>
-            Thank you for your interest! We&apos;ll contact you soon.
+            ¡Gracias por tu interés! Te contactaremos pronto.
           </div>
         )}
 
         {submitStatus === 'error' && (
           <div className={`${styles.alert} ${styles.alertError}`}>
-            There was an error submitting your request. Please try again.
+            Hubo un error al enviar tu solicitud. Por favor intenta de nuevo.
           </div>
         )}
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.formGroup}>
             <label className={styles.label}>
-              Full Name <span className={styles.required}>*</span>
+              Nombre completo <span className={styles.required}>*</span>
             </label>
             <input
               type="text"
@@ -117,7 +117,7 @@ const AcquireDialog = ({ isOpen, onClose, artwork, artist }) => {
 
           <div className={styles.formGroup}>
             <label className={styles.label}>
-              Email Address <span className={styles.required}>*</span>
+              Correo electrónico <span className={styles.required}>*</span>
             </label>
             <input
               type="email"
@@ -131,7 +131,7 @@ const AcquireDialog = ({ isOpen, onClose, artwork, artist }) => {
 
           <div className={styles.formGroup}>
             <label className={styles.label}>
-              Phone Number <span style={{ fontWeight: "200", color: "#707984"}} >(optional)</span>
+              Número de teléfono <span style={{ fontWeight: "200", color: "#707984"}} >(opcional)</span>
             </label>
             <input
               type="tel"
@@ -145,7 +145,7 @@ const AcquireDialog = ({ isOpen, onClose, artwork, artist }) => {
           <div className={styles.formRow}>
             <div className={styles.formGroup}>
               <label className={styles.label}>
-                Country <span className={styles.required}>*</span>
+                País <span className={styles.required}>*</span>
               </label>
               <input
                 type="text"
@@ -158,7 +158,7 @@ const AcquireDialog = ({ isOpen, onClose, artwork, artist }) => {
             </div>
             <div className={styles.formGroup}>
               <label className={styles.label}>
-                City <span className={styles.required}>*</span>
+                Ciudad <span className={styles.required}>*</span>
               </label>
               <input
                 type="text"
@@ -173,14 +173,14 @@ const AcquireDialog = ({ isOpen, onClose, artwork, artist }) => {
 
           <div className={styles.formGroup}>
             <label className={styles.label}>
-              Message
+              Mensaje
             </label>
             <textarea
               name="message"
               value={formData.message}
               onChange={handleInputChange}
               rows="4"
-              placeholder="Tell us about your interest in this artwork..."
+              placeholder="Cuéntanos sobre tu interés en esta obra..."
               className={styles.textarea}
             />
           </div>
@@ -191,14 +191,14 @@ const AcquireDialog = ({ isOpen, onClose, artwork, artist }) => {
               onClick={onClose}
               className={`${styles.button} ${styles.buttonSecondary}`}
             >
-              Cancel
+              Cancelar
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
               className={`${styles.button} ${styles.buttonPrimary}`}
             >
-              {isSubmitting ? 'Sending...' : 'Send Inquiry'}
+              {isSubmitting ? 'Enviando...' : 'Enviar consulta'}
             </button>
           </div>
         </form>

@@ -33,6 +33,7 @@ export default function CommunityList() {
   const [error, setError] = useState(null);
   const [sortMode, setSortMode] = useState("role-asc");
   const [roleFilter, setRoleFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -72,18 +73,31 @@ export default function CommunityList() {
   }, [members]);
 
   const filteredMembers = useMemo(() => {
-    if (roleFilter === "all") {
-      return members;
+    let filtered = members;
+
+    // Filter by role
+    if (roleFilter !== "all") {
+      filtered = filtered.filter((member) => {
+        const roles = getMemberRoles(member);
+        const normalizedFilter = roleFilter === DEFAULT_ROLE_LABEL ? "" : roleFilter;
+        if (normalizedFilter === "") {
+          return roles.length === 0;
+        }
+        return roles.includes(normalizedFilter);
+      });
     }
-    return members.filter((member) => {
-      const roles = getMemberRoles(member);
-      const normalizedFilter = roleFilter === DEFAULT_ROLE_LABEL ? "" : roleFilter;
-      if (normalizedFilter === "") {
-        return roles.length === 0;
-      }
-      return roles.includes(normalizedFilter);
-    });
-  }, [members, roleFilter]);
+
+    // Filter by search query (names only)
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      filtered = filtered.filter((member) => {
+        const name = (member.name || member.fullName || member.displayName || "").toLowerCase();
+        return name.includes(query);
+      });
+    }
+
+    return filtered;
+  }, [members, roleFilter, searchQuery]);
 
   const sortedMembers = useMemo(() => {
     const comparator = (a, b) => {
@@ -128,6 +142,17 @@ export default function CommunityList() {
           Comunidad ({sortedMembers.length})
         </h2>
         <div style={{ marginLeft: "auto", display: "flex", flexWrap: "wrap", gap: "1rem" }}>
+          <div>
+            <p className={styles.subtitle} style={{ marginBottom: "0.25rem" }}>Buscar</p>
+            <input
+              type="text"
+              placeholder="Buscar por nombre..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className={styles.input}
+              style={{ minWidth: "250px" }}
+            />
+          </div>
           <div>
             <p className={styles.subtitle} style={{ marginBottom: "0.25rem" }}>Filtrar por rol</p>
             <select
