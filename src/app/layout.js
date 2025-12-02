@@ -23,10 +23,7 @@ export default function RootLayout({ children }) {
         }}
       >
         <LoadingProvider>
-          <div style={{
-            display: 'flex',
-            minHeight: '100vh'
-          }}>
+          <div className="appGrid">
             <main className="mainContent">
               {children}
               <RecentEvents />

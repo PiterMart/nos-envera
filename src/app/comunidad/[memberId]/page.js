@@ -140,15 +140,11 @@ export default function ComunidadMemberPage({ params }) {
           {!isLoading && !error && member && (
             <section className={detailStyles.profile}>
               <div className={detailStyles.mediaColumn}>
-                <div className={detailStyles.imageWrapper}>
-                  {member.profilePicture ? (
+                {member.profilePicture && member.profilePicture.trim() && (
+                  <div className={detailStyles.imageWrapper}>
                     <img src={member.profilePicture} alt={`Retrato de ${member.name}`} className={detailStyles.image} />
-                  ) : (
-                    <div className={detailStyles.imagePlaceholder} aria-hidden>
-                      {member.name?.charAt(0) ?? "?"}
-                    </div>
-                  )}
-                </div>
+                  </div>
+                )}
 
                 <div className={detailStyles.identityCard}>
                   <h1 className={detailStyles.name}>{member.name}</h1>
@@ -218,6 +214,8 @@ export default function ComunidadMemberPage({ params }) {
     </div>
   );
 }
+
+
 
 
 
