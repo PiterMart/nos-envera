@@ -39,6 +39,7 @@ export default function MemberUploader() {
   const [isCvDragOver, setIsCvDragOver] = useState(false);
   const [roleInput, setRoleInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [showSearchResults, setShowSearchResults] = useState(false);
 
   const fetchMembers = useCallback(async () => {
     try {
@@ -75,6 +76,8 @@ export default function MemberUploader() {
     setProfilePicturePreview(null);
     setCvFile(null);
     setRoleInput("");
+    setSearchQuery("");
+    setShowSearchResults(false);
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -118,6 +121,8 @@ export default function MemberUploader() {
             : [],
         });
         setRoleInput("");
+        setSearchQuery("");
+        setShowSearchResults(false);
 
         if (profilePicturePreview?.startsWith("blob:")) {
           URL.revokeObjectURL(profilePicturePreview);
@@ -302,25 +307,59 @@ export default function MemberUploader() {
     return Array.from(roles).sort((a, b) => a.localeCompare(b));
   }, [members]);
 
-  const sortedAndFilteredMembers = useMemo(() => {
-    let filtered = members;
-    
-    // Filter by search query
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase().trim();
-      filtered = members.filter((member) => {
-        const name = (member.name || "").toLowerCase();
-        return name.includes(query);
-      });
+  // Filter members based on search query with relevance sorting
+  const filteredMembers = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return members;
     }
+    const query = searchQuery.toLowerCase().trim();
+    const matches = members.filter((member) => {
+      const name = (member.name || "").toLowerCase();
+      return name.includes(query);
+    });
     
+    // Sort by relevance (exact matches first, then by position of match)
+    const sorted = matches.sort((a, b) => {
+      const nameA = (a.name || "").toLowerCase();
+      const nameB = (b.name || "").toLowerCase();
+      
+      // Exact match gets highest priority
+      if (nameA === query) return -1;
+      if (nameB === query) return 1;
+      
+      // Starts with query gets second priority
+      if (nameA.startsWith(query)) return -1;
+      if (nameB.startsWith(query)) return 1;
+      
+      // Otherwise sort by position of match (earlier match = higher priority)
+      const indexA = nameA.indexOf(query);
+      const indexB = nameB.indexOf(query);
+      if (indexA !== indexB) return indexA - indexB;
+      
+      // Finally sort alphabetically
+      return nameA.localeCompare(nameB);
+    });
+    
+    return sorted;
+  }, [members, searchQuery]);
+
+  // Get top 4 search results for dropdown
+  const topSearchResults = useMemo(() => {
+    if (!searchQuery.trim() || filteredMembers.length === 0) {
+      return [];
+    }
+    return filteredMembers.slice(0, 4);
+  }, [filteredMembers, searchQuery]);
+
+  // Sorted alphabetical list for dropdown
+  const sortedAndFilteredMembers = useMemo(() => {
     // Sort alphabetically by name
-    return [...filtered].sort((a, b) => {
+    return [...members].sort((a, b) => {
       const nameA = (a.name || "").toLowerCase();
       const nameB = (b.name || "").toLowerCase();
       return nameA.localeCompare(nameB);
     });
-  }, [members, searchQuery]);
+  }, [members]);
 
   const handleAddRole = () => {
     const value = roleInput.trim();
@@ -416,12 +455,30 @@ export default function MemberUploader() {
     <div className={styles.form}>
       <div>
         <p className={styles.subtitle}>SELECCIONA MIEMBRO PARA EDITAR</p>
-        <div style={{ marginBottom: "0.5rem" }}>
+        <div style={{ marginBottom: "0.5rem", position: "relative" }}>
           <input
             type="text"
             placeholder="Buscar miembro..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setShowSearchResults(true);
+            }}
+            onFocus={() => {
+              if (searchQuery.trim()) {
+                setShowSearchResults(true);
+              }
+            }}
+            onBlur={(e) => {
+              // Delay hiding dropdown to allow click events
+              setTimeout(() => {
+                // Check if the blur is due to clicking on a result
+                const relatedTarget = e.relatedTarget || document.activeElement;
+                if (!relatedTarget || !relatedTarget.closest('.member-search-results-dropdown')) {
+                  setShowSearchResults(false);
+                }
+              }, 200);
+            }}
             style={{
               width: "100%",
               padding: "0.5rem",
@@ -430,9 +487,95 @@ export default function MemberUploader() {
               borderRadius: "4px",
             }}
           />
+          {/* Search Results Dropdown */}
+          {showSearchResults && searchQuery.trim() && topSearchResults.length > 0 && (
+            <div 
+              className="member-search-results-dropdown"
+              onMouseDown={(e) => e.preventDefault()} // Prevent input blur
+              style={{
+                position: "absolute",
+                top: "100%",
+                left: 0,
+                right: 0,
+                backgroundColor: "#fff",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                marginTop: "0.25rem",
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+                zIndex: 1000,
+                maxHeight: "300px",
+                overflowY: "auto",
+              }}
+            >
+              {topSearchResults.map((member) => (
+                <div
+                  key={member.id}
+                  onClick={() => {
+                    handleMemberSelection(member.id);
+                    setSearchQuery("");
+                    setShowSearchResults(false);
+                  }}
+                  style={{
+                    padding: "0.75rem 1rem",
+                    cursor: "pointer",
+                    borderBottom: "1px solid #eee",
+                    transition: "background-color 0.2s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "#f5f5f5";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "transparent";
+                  }}
+                >
+                  <div style={{ fontWeight: "500", color: "#333" }}>
+                    {member.name}
+                  </div>
+                  {member.origin && (
+                    <div style={{ fontSize: "0.85rem", color: "#666", marginTop: "0.25rem" }}>
+                      {member.origin}
+                    </div>
+                  )}
+                </div>
+              ))}
+              {filteredMembers.length > 4 && (
+                <div style={{
+                  padding: "0.5rem 1rem",
+                  fontSize: "0.85rem",
+                  color: "#666",
+                  borderTop: "1px solid #eee",
+                  backgroundColor: "#f9f9f9",
+                }}>
+                  +{filteredMembers.length - 4} más resultados. Usa el campo de búsqueda para filtrar.
+                </div>
+              )}
+            </div>
+          )}
+          {showSearchResults && searchQuery.trim() && topSearchResults.length === 0 && (
+            <div 
+              className="member-search-results-dropdown"
+              onMouseDown={(e) => e.preventDefault()}
+              style={{
+                position: "absolute",
+                top: "100%",
+                left: 0,
+                right: 0,
+                backgroundColor: "#fff",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                marginTop: "0.25rem",
+                padding: "0.75rem 1rem",
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+                zIndex: 1000,
+                color: "#666",
+              }}
+            >
+              No se encontraron miembros
+            </div>
+          )}
         </div>
         <select value={selectedMember || ""} onChange={(event) => handleMemberSelection(event.target.value)}>
-          <option value="">Crear nuevo miembro</option>
+          <option value="">Crear nuevo miembro (orden alfabético)</option>
           {sortedAndFilteredMembers.map((member) => (
             <option key={member.id} value={member.id}>
               {member.name}

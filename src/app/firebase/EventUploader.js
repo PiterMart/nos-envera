@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { firestore, storage } from "./firebaseConfig";
 import { getDocs, collection, doc, updateDoc, Timestamp, getDoc, setDoc } from "firebase/firestore";  
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -44,6 +44,10 @@ export default function EventUploader() {
   const [flyerPreview, setFlyerPreview] = useState(null);
   const [directorInput, setDirectorInput] = useState("");
   const [artistInput, setArtistInput] = useState("");
+  const [directorSearchQuery, setDirectorSearchQuery] = useState("");
+  const [artistSearchQuery, setArtistSearchQuery] = useState("");
+  const [showDirectorSearchResults, setShowDirectorSearchResults] = useState(false);
+  const [showArtistSearchResults, setShowArtistSearchResults] = useState(false);
   const fileInputRef = useRef(null);
   const bannerInputRef = useRef(null);
   const flyerInputRef = useRef(null);
@@ -174,7 +178,7 @@ export default function EventUploader() {
                   : null,
                 time: entry?.time || "",
               }))
-              .filter((entry) => entry.date instanceof Date && !isNaN(entry.date.getTime()) || entry.time)
+              .filter((entry) => entry.date instanceof Date && !isNaN(entry.date.getTime()))
           : [];
 
         const fallbackDates = mappedDates.length > 0
@@ -239,7 +243,7 @@ export default function EventUploader() {
           description: data.description || [],
           isFeatured: data.isFeatured || false,
           dates:
-            fallbackDates.filter((entry) => entry.date instanceof Date && !isNaN(entry.date.getTime()) || entry.time).length > 0
+            fallbackDates.filter((entry) => entry.date instanceof Date && !isNaN(entry.date.getTime())).length > 0
               ? fallbackDates.map((entry) => ({
                   date: entry.date instanceof Date && !isNaN(entry.date.getTime()) ? entry.date : null,
                   time: entry.time || "",
@@ -257,6 +261,10 @@ export default function EventUploader() {
         });
         setDirectorInput("");
         setArtistInput("");
+        setDirectorSearchQuery("");
+        setArtistSearchQuery("");
+        setShowDirectorSearchResults(false);
+        setShowArtistSearchResults(false);
   
         const existingGalleryData = data.gallery || [];
         setExistingGallery(existingGalleryData);
@@ -283,14 +291,14 @@ export default function EventUploader() {
           date: entry?.date ? new Date(entry.date) : null,
           time: entry?.time ? entry.time.trim() : "",
         }))
-        .filter((entry) => entry.date instanceof Date && !isNaN(entry.date.getTime()) || entry.time);
+        .filter((entry) => entry.date instanceof Date && !isNaN(entry.date.getTime()));
 
       if (!name || sanitizedDates.length === 0) {
-        throw new Error("Por favor agrega al menos una fecha y horario validos.");
+        throw new Error("Por favor agrega al menos una fecha valida.");
       }
 
-      if (sanitizedDates.some((entry) => !(entry.date instanceof Date) || isNaN(entry.date.getTime()) || !entry.time)) {
-        throw new Error("Cada funcion debe tener una fecha y un horario.");
+      if (sanitizedDates.some((entry) => !(entry.date instanceof Date) || isNaN(entry.date.getTime()))) {
+        throw new Error("Cada funcion debe tener una fecha valida.");
       }
 
       const slug = generateSlug(name);
@@ -490,6 +498,59 @@ export default function EventUploader() {
     (member) => !(formData.directors || []).some((director) => director.memberId === member.id)
   );
 
+  // Filter directors based on search query
+  const filteredDirectors = useMemo(() => {
+    if (!directorSearchQuery.trim()) {
+      return availableCommunityDirectors;
+    }
+    const query = directorSearchQuery.toLowerCase().trim();
+    const matches = availableCommunityDirectors.filter((member) => {
+      const name = (member.name || member.slug || member.id || "").toLowerCase();
+      return name.includes(query);
+    });
+    
+    // Sort by relevance (exact matches first, then by position of match)
+    const sorted = matches.sort((a, b) => {
+      const nameA = (a.name || a.slug || a.id || "").toLowerCase();
+      const nameB = (b.name || b.slug || b.id || "").toLowerCase();
+      
+      // Exact match gets highest priority
+      if (nameA === query) return -1;
+      if (nameB === query) return 1;
+      
+      // Starts with query gets second priority
+      if (nameA.startsWith(query)) return -1;
+      if (nameB.startsWith(query)) return 1;
+      
+      // Otherwise sort by position of match (earlier match = higher priority)
+      const indexA = nameA.indexOf(query);
+      const indexB = nameB.indexOf(query);
+      if (indexA !== indexB) return indexA - indexB;
+      
+      // Finally sort alphabetically
+      return nameA.localeCompare(nameB);
+    });
+    
+    return sorted;
+  }, [availableCommunityDirectors, directorSearchQuery]);
+
+  // Get top 4 search results for directors dropdown
+  const topDirectorSearchResults = useMemo(() => {
+    if (!directorSearchQuery.trim() || filteredDirectors.length === 0) {
+      return [];
+    }
+    return filteredDirectors.slice(0, 4);
+  }, [filteredDirectors, directorSearchQuery]);
+
+  // Sorted alphabetical list for directors dropdown
+  const sortedDirectors = useMemo(() => {
+    return [...availableCommunityDirectors].sort((a, b) => {
+      const nameA = (a.name || a.slug || a.id || "").toLowerCase();
+      const nameB = (b.name || b.slug || b.id || "").toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  }, [availableCommunityDirectors]);
+
   const handleManualArtistAdd = () => {
     const name = artistInput.trim();
     if (!name) return;
@@ -526,6 +587,59 @@ export default function EventUploader() {
   const availableCommunityArtists = communityMembers.filter(
     (member) => !(formData.artists || []).some((artist) => artist.memberId === member.id)
   );
+
+  // Filter artists based on search query
+  const filteredArtists = useMemo(() => {
+    if (!artistSearchQuery.trim()) {
+      return availableCommunityArtists;
+    }
+    const query = artistSearchQuery.toLowerCase().trim();
+    const matches = availableCommunityArtists.filter((member) => {
+      const name = (member.name || member.slug || member.id || "").toLowerCase();
+      return name.includes(query);
+    });
+    
+    // Sort by relevance (exact matches first, then by position of match)
+    const sorted = matches.sort((a, b) => {
+      const nameA = (a.name || a.slug || a.id || "").toLowerCase();
+      const nameB = (b.name || b.slug || b.id || "").toLowerCase();
+      
+      // Exact match gets highest priority
+      if (nameA === query) return -1;
+      if (nameB === query) return 1;
+      
+      // Starts with query gets second priority
+      if (nameA.startsWith(query)) return -1;
+      if (nameB.startsWith(query)) return 1;
+      
+      // Otherwise sort by position of match (earlier match = higher priority)
+      const indexA = nameA.indexOf(query);
+      const indexB = nameB.indexOf(query);
+      if (indexA !== indexB) return indexA - indexB;
+      
+      // Finally sort alphabetically
+      return nameA.localeCompare(nameB);
+    });
+    
+    return sorted;
+  }, [availableCommunityArtists, artistSearchQuery]);
+
+  // Get top 4 search results for artists dropdown
+  const topArtistSearchResults = useMemo(() => {
+    if (!artistSearchQuery.trim() || filteredArtists.length === 0) {
+      return [];
+    }
+    return filteredArtists.slice(0, 4);
+  }, [filteredArtists, artistSearchQuery]);
+
+  // Sorted alphabetical list for artists dropdown
+  const sortedArtists = useMemo(() => {
+    return [...availableCommunityArtists].sort((a, b) => {
+      const nameA = (a.name || a.slug || a.id || "").toLowerCase();
+      const nameB = (b.name || b.slug || b.id || "").toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  }, [availableCommunityArtists]);
 
   const handleBannerChange = (e) => {
     const file = e.target.files[0];
@@ -792,6 +906,10 @@ const uploadImages = async (eventId) => {
     setNewImages([]);
     setDirectorInput("");
     setArtistInput("");
+    setDirectorSearchQuery("");
+    setArtistSearchQuery("");
+    setShowDirectorSearchResults(false);
+    setShowArtistSearchResults(false);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -832,14 +950,14 @@ const uploadImages = async (eventId) => {
           date: entry?.date ? new Date(entry.date) : null,
           time: entry?.time ? entry.time.trim() : "",
         }))
-        .filter((entry) => entry.date instanceof Date && !isNaN(entry.date.getTime()) || entry.time);
+        .filter((entry) => entry.date instanceof Date && !isNaN(entry.date.getTime()));
 
       if (!name || sanitizedDates.length === 0) {
-        throw new Error("Por favor agrega al menos una fecha y horario validos.");
+        throw new Error("Por favor agrega al menos una fecha valida.");
       }
 
-      if (sanitizedDates.some((entry) => !(entry.date instanceof Date) || isNaN(entry.date.getTime()) || !entry.time)) {
-        throw new Error("Cada funcion debe tener una fecha y un horario.");
+      if (sanitizedDates.some((entry) => !(entry.date instanceof Date) || isNaN(entry.date.getTime()))) {
+        throw new Error("Cada funcion debe tener una fecha valida.");
       }
 
       const slug = generateSlug(name);
@@ -1007,6 +1125,123 @@ const uploadImages = async (eventId) => {
             </div>
 
             {communityMembers.length > 0 && (
+              <div style={{ position: "relative" }}>
+                <input
+                  type="text"
+                  placeholder="Buscar director en la comunidad..."
+                  value={directorSearchQuery}
+                  onChange={(e) => {
+                    setDirectorSearchQuery(e.target.value);
+                    setShowDirectorSearchResults(true);
+                  }}
+                  onFocus={() => {
+                    if (directorSearchQuery.trim()) {
+                      setShowDirectorSearchResults(true);
+                    }
+                  }}
+                  onBlur={(e) => {
+                    // Delay hiding dropdown to allow click events
+                    setTimeout(() => {
+                      // Check if the blur is due to clicking on a result
+                      const relatedTarget = e.relatedTarget || document.activeElement;
+                      if (!relatedTarget || !relatedTarget.closest('.director-search-results-dropdown')) {
+                        setShowDirectorSearchResults(false);
+                      }
+                    }, 200);
+                  }}
+                  style={{
+                    width: "100%",
+                    padding: "0.5rem",
+                    fontSize: "1rem",
+                    border: "1px solid #ccc",
+                    borderRadius: "4px",
+                  }}
+                />
+                {/* Search Results Dropdown */}
+                {showDirectorSearchResults && directorSearchQuery.trim() && topDirectorSearchResults.length > 0 && (
+                  <div 
+                    className="director-search-results-dropdown"
+                    onMouseDown={(e) => e.preventDefault()} // Prevent input blur
+                    style={{
+                      position: "absolute",
+                      top: "100%",
+                      left: 0,
+                      right: 0,
+                      backgroundColor: "#fff",
+                      border: "1px solid #ccc",
+                      borderRadius: "4px",
+                      marginTop: "0.25rem",
+                      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+                      zIndex: 1000,
+                      maxHeight: "300px",
+                      overflowY: "auto",
+                    }}
+                  >
+                    {topDirectorSearchResults.map((member) => (
+                      <div
+                        key={member.id}
+                        onClick={() => {
+                          handleCommunityDirectorAdd(member.id);
+                          setDirectorSearchQuery("");
+                          setShowDirectorSearchResults(false);
+                        }}
+                        style={{
+                          padding: "0.75rem 1rem",
+                          cursor: "pointer",
+                          borderBottom: "1px solid #eee",
+                          transition: "background-color 0.2s",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = "#f5f5f5";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = "transparent";
+                        }}
+                      >
+                        <div style={{ fontWeight: "500", color: "#333" }}>
+                          {member.name || member.slug || member.id}
+                        </div>
+                      </div>
+                    ))}
+                    {filteredDirectors.length > 4 && (
+                      <div style={{
+                        padding: "0.5rem 1rem",
+                        fontSize: "0.85rem",
+                        color: "#666",
+                        borderTop: "1px solid #eee",
+                        backgroundColor: "#f9f9f9",
+                      }}>
+                        +{filteredDirectors.length - 4} más resultados. Usa el campo de búsqueda para filtrar.
+                      </div>
+                    )}
+                  </div>
+                )}
+                {showDirectorSearchResults && directorSearchQuery.trim() && topDirectorSearchResults.length === 0 && (
+                  <div 
+                    className="director-search-results-dropdown"
+                    onMouseDown={(e) => e.preventDefault()}
+                    style={{
+                      position: "absolute",
+                      top: "100%",
+                      left: 0,
+                      right: 0,
+                      backgroundColor: "#fff",
+                      border: "1px solid #ccc",
+                      borderRadius: "4px",
+                      marginTop: "0.25rem",
+                      padding: "0.75rem 1rem",
+                      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+                      zIndex: 1000,
+                      color: "#666",
+                    }}
+                  >
+                    No se encontraron directores
+                  </div>
+                )}
+              </div>
+            )}
+
+            {communityMembers.length > 0 && (
               <select
                 defaultValue=""
                 onChange={(e) => {
@@ -1018,8 +1253,8 @@ const uploadImages = async (eventId) => {
                 }}
                 style={{ maxWidth: '100%', padding: '0.5rem' }}
               >
-                <option value="">Seleccionar director desde la comunidad</option>
-                {availableCommunityDirectors.map((member) => (
+                <option value="">Seleccionar director desde la comunidad (orden alfabético)</option>
+                {sortedDirectors.map((member) => (
                   <option key={member.id} value={member.id}>
                     {member.name || member.slug || member.id}
                   </option>
@@ -1055,7 +1290,7 @@ const uploadImages = async (eventId) => {
                 ))}
               </div>
             )}
-            <p className={styles.helpText}>Puedes seleccionar directores desde la comunidad o agregarlos manualmente.</p>
+            <p className={styles.helpText}>Puedes buscar y seleccionar directores desde la comunidad o agregarlos manualmente.</p>
           </div>
         </div>
 
@@ -1097,11 +1332,14 @@ const uploadImages = async (eventId) => {
                   selected={schedule.date}
                   onChange={(date) => handleScheduleDateChange(index, date)}
                   placeholderText="Selecciona la fecha"
+                  scrollableYearDropdown={true}
+                  showMonthDropdown={true}
+                  showYearDropdown={true}
                 />
               </div>
 
               <div className={styles.inputGroup}>
-                <p className={styles.subtitle}>HORARIO</p>
+                <p className={styles.subtitle}>HORARIO (OPCIONAL)</p>
                 <input
                   type="time"
                   value={schedule.time || ""}
@@ -1128,7 +1366,7 @@ const uploadImages = async (eventId) => {
           >
             Agregar otra funcion
           </button>
-          <p className={styles.helpText}>Puedes agregar multiples fechas y horarios para el evento.</p>
+          <p className={styles.helpText}>Puedes agregar multiples fechas para el evento. El horario es opcional.</p>
         </div>
       </div>
 
@@ -1352,6 +1590,123 @@ const uploadImages = async (eventId) => {
               </div>
 
               {communityMembers.length > 0 && (
+                <div style={{ position: "relative" }}>
+                  <input
+                    type="text"
+                    placeholder="Buscar artista en la comunidad..."
+                    value={artistSearchQuery}
+                    onChange={(e) => {
+                      setArtistSearchQuery(e.target.value);
+                      setShowArtistSearchResults(true);
+                    }}
+                    onFocus={() => {
+                      if (artistSearchQuery.trim()) {
+                        setShowArtistSearchResults(true);
+                      }
+                    }}
+                    onBlur={(e) => {
+                      // Delay hiding dropdown to allow click events
+                      setTimeout(() => {
+                        // Check if the blur is due to clicking on a result
+                        const relatedTarget = e.relatedTarget || document.activeElement;
+                        if (!relatedTarget || !relatedTarget.closest('.artist-search-results-dropdown')) {
+                          setShowArtistSearchResults(false);
+                        }
+                      }, 200);
+                    }}
+                    style={{
+                      width: "100%",
+                      padding: "0.5rem",
+                      fontSize: "1rem",
+                      border: "1px solid #ccc",
+                      borderRadius: "4px",
+                    }}
+                  />
+                  {/* Search Results Dropdown */}
+                  {showArtistSearchResults && artistSearchQuery.trim() && topArtistSearchResults.length > 0 && (
+                    <div 
+                      className="artist-search-results-dropdown"
+                      onMouseDown={(e) => e.preventDefault()} // Prevent input blur
+                      style={{
+                        position: "absolute",
+                        top: "100%",
+                        left: 0,
+                        right: 0,
+                        backgroundColor: "#fff",
+                        border: "1px solid #ccc",
+                        borderRadius: "4px",
+                        marginTop: "0.25rem",
+                        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+                        zIndex: 1000,
+                        maxHeight: "300px",
+                        overflowY: "auto",
+                      }}
+                    >
+                      {topArtistSearchResults.map((member) => (
+                        <div
+                          key={member.id}
+                          onClick={() => {
+                            handleCommunityArtistAdd(member.id);
+                            setArtistSearchQuery("");
+                            setShowArtistSearchResults(false);
+                          }}
+                          style={{
+                            padding: "0.75rem 1rem",
+                            cursor: "pointer",
+                            borderBottom: "1px solid #eee",
+                            transition: "background-color 0.2s",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = "#f5f5f5";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = "transparent";
+                          }}
+                        >
+                          <div style={{ fontWeight: "500", color: "#333" }}>
+                            {member.name || member.slug || member.id}
+                          </div>
+                        </div>
+                      ))}
+                      {filteredArtists.length > 4 && (
+                        <div style={{
+                          padding: "0.5rem 1rem",
+                          fontSize: "0.85rem",
+                          color: "#666",
+                          borderTop: "1px solid #eee",
+                          backgroundColor: "#f9f9f9",
+                        }}>
+                          +{filteredArtists.length - 4} más resultados. Usa el campo de búsqueda para filtrar.
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {showArtistSearchResults && artistSearchQuery.trim() && topArtistSearchResults.length === 0 && (
+                    <div 
+                      className="artist-search-results-dropdown"
+                      onMouseDown={(e) => e.preventDefault()}
+                      style={{
+                        position: "absolute",
+                        top: "100%",
+                        left: 0,
+                        right: 0,
+                        backgroundColor: "#fff",
+                        border: "1px solid #ccc",
+                        borderRadius: "4px",
+                        marginTop: "0.25rem",
+                        padding: "0.75rem 1rem",
+                        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+                        zIndex: 1000,
+                        color: "#666",
+                      }}
+                    >
+                      No se encontraron artistas
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {communityMembers.length > 0 && (
                 <select
                   defaultValue=""
                   onChange={(e) => {
@@ -1363,8 +1718,8 @@ const uploadImages = async (eventId) => {
                   }}
                   style={{ maxWidth: '100%', padding: '0.5rem' }}
                 >
-                  <option value="">Seleccionar artista desde la comunidad</option>
-                  {availableCommunityArtists.map((member) => (
+                  <option value="">Seleccionar artista desde la comunidad (orden alfabético)</option>
+                  {sortedArtists.map((member) => (
                     <option key={member.id} value={member.id}>
                       {member.name || member.slug || member.id}
                     </option>
@@ -1400,7 +1755,7 @@ const uploadImages = async (eventId) => {
                   ))}
                 </div>
               )}
-              <p className={styles.helpText}>Puedes seleccionar artistas desde la comunidad o agregarlos manualmente.</p>
+              <p className={styles.helpText}>Puedes buscar y seleccionar artistas desde la comunidad o agregarlos manualmente.</p>
             </div>
           </div>
         </div>
