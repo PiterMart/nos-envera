@@ -5,7 +5,7 @@ import Link from "next/link";
 import { firestore } from "../firebase/firebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
 
-const RESIDENCY_TYPE = "residency";
+const RESIDENCY_TYPE = "Residencia";
 const FALLBACK_IMAGE = "https://via.placeholder.com/600x800.png?text=Residency";
 
 const normalizeEventTypes = (rawTypes) => {
@@ -19,7 +19,7 @@ const normalizeEventTypes = (rawTypes) => {
 };
 
 const eventContainsResidency = (eventTypes) =>
-  eventTypes.some((type) => type.toLowerCase() === RESIDENCY_TYPE);
+  eventTypes.some((type) => type.toLowerCase() === RESIDENCY_TYPE.toLowerCase());
 
 const parseDateEntry = (entry) => {
   if (!entry) return null;
