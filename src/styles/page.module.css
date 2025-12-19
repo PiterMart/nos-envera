@@ -250,12 +250,13 @@
   margin-top: 10vh;
   align-items: center;
   justify-items: center;
-  min-height: 100svh;
   gap: 64px;
   position: relative;
   width: 100%;
   overflow-x: hidden;
   overflow-y: auto;
+  padding: 1rem;
+  margin-bottom: 5rem;
 }
 .page_container{
   width: 100%;

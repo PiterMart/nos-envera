@@ -8,7 +8,7 @@ import { collection, doc, getDoc, getDocs, query, where } from "firebase/firesto
 
 const FALLBACK_IMAGE = "https://via.placeholder.com/1600x900.png?text=Performance";
 const PERFORMANCE_TYPE = "performance";
-const RESIDENCY_TYPE = "residency";
+const RESIDENCY_TYPE = "Residencia";
 const TRAINING_TYPE = "training";
 
 const isLikelyVideo = (url = "") => {
@@ -50,7 +50,7 @@ const eventContainsPerformance = (eventTypes) =>
   eventTypes.some((type) => type.toLowerCase() === PERFORMANCE_TYPE);
 
 const eventContainsResidency = (eventTypes) =>
-  eventTypes.some((type) => type.toLowerCase() === RESIDENCY_TYPE);
+  eventTypes.some((type) => type.toLowerCase() === RESIDENCY_TYPE.toLowerCase());
 
 const eventContainsTraining = (eventTypes) =>
   eventTypes.some((type) => type.toLowerCase() === TRAINING_TYPE);
@@ -244,12 +244,12 @@ export default function PerformanceDetail({ params }) {
         <div className={styles.homepage_container} style={{ paddingTop: "2rem" }}>
           <div
             style={{
-              maxWidth: "960px",
               margin: "0 auto",
               width: "100%",
               display: "flex",
               flexDirection: "column",
               gap: "2rem",
+              marginBottom: "10rem",
             }}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -263,7 +263,7 @@ export default function PerformanceDetail({ params }) {
               </h1>
               <Link
                 href={
-                  performance?.eventTypes?.some((type) => type.toLowerCase() === RESIDENCY_TYPE)
+                  performance?.eventTypes?.some((type) => type.toLowerCase() === RESIDENCY_TYPE.toLowerCase())
                     ? "/residencias"
                     : performance?.eventTypes?.some((type) => type.toLowerCase() === TRAINING_TYPE)
                     ? "/formacion"

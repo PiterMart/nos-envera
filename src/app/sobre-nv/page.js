@@ -46,7 +46,7 @@ export default function SobreNV() {
     <div className={styles.page}>
       <div className={styles.page_container}>
         <div className={styles.homepage_container} style={{paddingTop: '2rem'}}>
-          <div style={{display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', margin: "auto", maxWidth: '666px'}}>
+          <div style={{display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', margin: "auto"}}>
 
             {/* Header */}
             <div style={{textAlign: 'center', marginBottom: '3rem'}}>
@@ -62,7 +62,7 @@ export default function SobreNV() {
                   alt="Espacio Nos en Vera"
                   width={600}
                   height={400}
-                  style={{maxWidth: '100%', height: 'auto'}}
+                  style={{width: '100%', height: 'auto'}}
                 />
               </div>
 

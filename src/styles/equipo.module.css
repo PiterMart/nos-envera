@@ -3,9 +3,7 @@
   flex-direction: column;
   gap: 1.5rem;
   width: 100%;
-  max-width: 1200px;
   margin: 0 auto 6rem auto;
-  padding: 0 1.5rem;
   box-sizing: border-box;
 }
 
@@ -159,7 +157,6 @@
   }
 
   .carouselSection {
-    padding: 0 1rem;
   }
 
   .carouselControls {

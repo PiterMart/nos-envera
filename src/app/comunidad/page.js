@@ -214,7 +214,7 @@ export default function Comunidad() {
       className={styles.page}
       style={{ position: "relative", minHeight: "100vh", zIndex: 1 }}
     >
-      <img
+      {/* <img
         src="/NV-isologo.png"
         alt="Nos en Vera Isologo"
         style={{
@@ -227,7 +227,7 @@ export default function Comunidad() {
           pointerEvents: "none",
           zIndex: 0,
         }}
-      />
+      /> */}
       <div className={styles.page_container} style={{ position: "relative", zIndex: 2, maxWidth: "1200px", margin: "0 auto" }}>
         {!isLoading && !error && (
           <div className={detailStyles.backRow} style={{ position: "sticky", top: "2rem", zIndex: 10, backgroundColor: "var(--background)", paddingTop: "1rem", paddingBottom: "1rem" }}>
