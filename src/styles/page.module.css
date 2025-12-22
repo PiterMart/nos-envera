@@ -302,7 +302,7 @@
   text-transform: uppercase;
   font-weight: 300;
   letter-spacing: 3rem;
-  text-align: center;
+  text-align: left;
   margin-bottom: 36px;
   margin: auto;
 }
@@ -311,6 +311,33 @@
   font-size: 1.5rem;
   font-weight: 400;
   text-align: right;
+}
+
+/* Page Header Styles */
+.pageHeader {
+  text-align: left;
+  margin-bottom: 2rem;
+}
+
+.pageHeader h1 {
+  font-size: 3rem;
+  line-height: 3rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: 1px;
+  font-weight: 300;
+  text-transform: uppercase;
+}
+
+.pageHeaderSmall {
+  text-align: left;
+  margin-bottom: 2rem;
+}
+
+.pageHeaderSmall h1 {
+  font-size: 2.5rem;
+  line-height: 2.5rem;
+  margin-bottom: 1rem;
+  font-weight: 300;
 }
 
 /* Navigation Button Styles */

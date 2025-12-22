@@ -145,22 +145,15 @@ export default function ArticlesPage() {
               maxWidth: "800px",
             }}
           >
-            <div style={{ textAlign: "center", marginBottom: "3rem" }}>
-              <h1
-                className={`${styles.sectionSubtitle} ${
-                  visibleSubtitles.has("subtitle1")
-                    ? styles.sectionSubtitleVisible
-                    : ""
-                }`}
-                data-subtitle-id="subtitle1"
-                style={{
-                  fontSize: "3rem",
-                  lineHeight: "3rem",
-                  marginBottom: "1rem",
-                }}
-              >
-                ARTÍCULOS
-              </h1>
+            <header
+              className={`${styles.pageHeader} ${
+                visibleSubtitles.has("subtitle1")
+                  ? styles.sectionSubtitleVisible
+                  : ""
+              }`}
+              data-subtitle-id="subtitle1"
+            >
+              <h1>ARTÍCULOS</h1>
               <p
                 style={{
                   lineHeight: "1.6rem",
@@ -170,7 +163,7 @@ export default function ArticlesPage() {
               >
                 Entrevistas, notas y artículos sobre Nos en Vera.
               </p>
-            </div>
+            </header>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
               {loading && (

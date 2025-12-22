@@ -19,7 +19,9 @@ export default function Artistas() {
           </div>
           <div className={styles.artists_page}>
             <div style={{display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', margin: "auto", maxWidth: '800px', marginTop: '5rem'}}>
-              <h1 style={{fontSize: '2.5rem', fontWeight: '300', marginBottom: '2rem'}}>Artistas</h1>
+              <header className={styles.pageHeaderSmall}>
+                <h1>Artistas</h1>
+              </header>
               
               <p style={{lineHeight: '1.5rem', textAlign: 'justify', marginTop: '2rem'}}>
                 Nuestra selección de artistas representa una diversidad de voces, técnicas y perspectivas que enriquecen el panorama del arte contemporáneo.

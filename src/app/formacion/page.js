@@ -5,7 +5,7 @@ import Link from "next/link";
 import { firestore } from "../firebase/firebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
 
-const TRAINING_TYPE = "training";
+const TRAINING_TYPES = ["Formación", "Formacion"];
 const FALLBACK_IMAGE = "https://via.placeholder.com/600x800.png?text=Training";
 
 const normalizeEventTypes = (rawTypes) => {
@@ -19,7 +19,11 @@ const normalizeEventTypes = (rawTypes) => {
 };
 
 const eventContainsTraining = (eventTypes) =>
-  eventTypes.some((type) => type.toLowerCase() === TRAINING_TYPE);
+  eventTypes.some((type) => 
+    TRAINING_TYPES.some((trainingType) => 
+      type.toLowerCase() === trainingType.toLowerCase()
+    )
+  );
 
 const parseDateEntry = (entry) => {
   if (!entry) return null;
@@ -128,10 +132,8 @@ export default function Formacion() {
       <div className={styles.page_container}>
         <div className={styles.homepage_container} style={{ paddingTop: "2rem" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "2rem", width: "100%", margin: "auto", maxWidth: "1200px" }}>
-            <header style={{ textAlign: "center" }}>
-              <h1 style={{ fontSize: "3rem", lineHeight: "3rem", marginBottom: "0.5rem", letterSpacing: "1px" }}>
-                FORMACIÓN
-              </h1>
+            <header className={styles.pageHeader}>
+              <h1>FORMACIÓN</h1>
             </header>
 
             {loading ? (

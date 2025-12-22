@@ -98,8 +98,8 @@ export default function Highlights() {
                 marginTop: "5rem",
               }}
             >
-              <header style={{ textAlign: "center" }}>
-                <h1 style={{ fontSize: "2.5rem", fontWeight: "300", marginBottom: "1rem" }}>Highlights</h1>
+              <header className={styles.pageHeaderSmall}>
+                <h1>Highlights</h1>
                 <p style={{ lineHeight: "1.5rem", textAlign: "justify" }}>
                   Highlights presenta una selección curada de lo más destacado en arte contemporáneo, incluyendo exposiciones notables, obras excepcionales y eventos culturales de relevancia.
                 </p>

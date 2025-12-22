@@ -7,9 +7,9 @@ import { firestore } from "../../firebase/firebaseConfig";
 import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 
 const FALLBACK_IMAGE = "https://via.placeholder.com/1600x900.png?text=Performance";
-const PERFORMANCE_TYPE = "performance";
+const PERFORMANCE_TYPES = ["Presentación", "Presentacion", "presentación", "presentacion", "performance"];
 const RESIDENCY_TYPE = "Residencia";
-const TRAINING_TYPE = "training";
+const TRAINING_TYPES = ["Formación", "Formacion", "training"];
 
 const isLikelyVideo = (url = "") => {
   return url.toLowerCase().endsWith(".mp4") || url.toLowerCase().includes("mime=video");
@@ -47,13 +47,21 @@ const normalizeEventTypes = (rawTypes) => {
 };
 
 const eventContainsPerformance = (eventTypes) =>
-  eventTypes.some((type) => type.toLowerCase() === PERFORMANCE_TYPE);
+  eventTypes.some((type) => 
+    PERFORMANCE_TYPES.some((performanceType) => 
+      type.toLowerCase() === performanceType.toLowerCase()
+    )
+  );
 
 const eventContainsResidency = (eventTypes) =>
   eventTypes.some((type) => type.toLowerCase() === RESIDENCY_TYPE.toLowerCase());
 
 const eventContainsTraining = (eventTypes) =>
-  eventTypes.some((type) => type.toLowerCase() === TRAINING_TYPE);
+  eventTypes.some((type) => 
+    TRAINING_TYPES.some((trainingType) => 
+      type.toLowerCase() === trainingType.toLowerCase()
+    )
+  );
 
 const eventContainsPerformanceOrResidencyOrTraining = (eventTypes) =>
   eventContainsPerformance(eventTypes) || eventContainsResidency(eventTypes) || eventContainsTraining(eventTypes);
@@ -145,7 +153,7 @@ const normalizeEventDoc = (docData, docId) => {
 
   return {
     id: docId,
-    name: docData.name || docData.title || "Performance",
+    name: docData.name || docData.title || "Presentación",
     subtitle: docData.subtitle || "",
     description: normalizeDescription(docData.description),
     artists: normalizeArrayOfPeople(docData.artists),
@@ -253,19 +261,25 @@ export default function PerformanceDetail({ params }) {
             }}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <h1 style={{ fontSize: "2.5rem", fontWeight: 600, letterSpacing: "1px" }}>
-                {performance?.name || "Performance"}
-                {enriched?.year ? (
-                  <span style={{ fontSize: "1.5rem", fontWeight: 400, color: "#666", marginLeft: "0.5rem" }}>
-                    · {enriched.year}
-                  </span>
-                ) : null}
-              </h1>
+              <header className={styles.pageHeaderSmall}>
+                <h1 style={{ fontWeight: 600, letterSpacing: "1px" }}>
+                  {performance?.name || "Performance"}
+                  {enriched?.year ? (
+                    <span style={{ fontSize: "1.5rem", fontWeight: 400, color: "#666", marginLeft: "0.5rem" }}>
+                      · {enriched.year}
+                    </span>
+                  ) : null}
+                </h1>
+              </header>
               <Link
                 href={
                   performance?.eventTypes?.some((type) => type.toLowerCase() === RESIDENCY_TYPE.toLowerCase())
                     ? "/residencias"
-                    : performance?.eventTypes?.some((type) => type.toLowerCase() === TRAINING_TYPE)
+                    : performance?.eventTypes?.some((type) => 
+                        TRAINING_TYPES.some((trainingType) => 
+                          type.toLowerCase() === trainingType.toLowerCase()
+                        )
+                      )
                     ? "/formacion"
                     : "/perfos"
                 }

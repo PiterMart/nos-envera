@@ -49,7 +49,7 @@ export default function SobreNV() {
           <div style={{display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', margin: "auto"}}>
 
             {/* Header */}
-            <div style={{textAlign: 'center', marginBottom: '3rem'}}>
+            <div style={{textAlign: 'left', marginBottom: '3rem'}}>
             </div>
               {/* Imagen representativa */}
               <div 

@@ -128,10 +128,8 @@ export default function Residencias() {
       <div className={styles.page_container}>
         <div className={styles.homepage_container} style={{ paddingTop: "2rem" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "2rem", width: "100%", margin: "auto", maxWidth: "1200px" }}>
-            <header style={{ textAlign: "center" }}>
-              <h1 style={{ fontSize: "3rem", lineHeight: "3rem", marginBottom: "0.5rem", letterSpacing: "1px" }}>
-                RESIDENCIAS
-              </h1>
+            <header className={styles.pageHeader}>
+              <h1>RESIDENCIAS</h1>
             </header>
 
             {loading ? (

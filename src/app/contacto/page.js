@@ -1,7 +1,15 @@
+import styles from "../styles/page.module.css";
+
 export default function Contacto() {
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Contacto</h1>
+    <div className={styles.page}>
+      <main className={styles.main}>
+        <div className={styles.page_container}>
+          <header className={styles.pageHeaderSmall}>
+            <h1>Contacto</h1>
+          </header>
+        </div>
+      </main>
     </div>
   );
 }

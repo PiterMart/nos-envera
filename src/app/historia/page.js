@@ -19,7 +19,9 @@ export default function Historia() {
           </div>
           <div className={styles.artists_page}>
             <div style={{display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', margin: "auto", maxWidth: '800px', marginTop: '5rem'}}>
-              <h1 style={{fontSize: '2.5rem', fontWeight: '300', marginBottom: '2rem'}}>Historia</h1>
+              <header className={styles.pageHeaderSmall}>
+                <h1>Historia</h1>
+              </header>
               
               <p style={{lineHeight: '1.5rem', textAlign: 'justify', marginTop: '2rem'}}>
                 La historia de ARTWINGS está marcada por la evolución de una visión que conecta el arte contemporáneo con el impacto social, creando puentes entre la expresión creativa y la transformación colectiva.

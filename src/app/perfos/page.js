@@ -5,7 +5,7 @@ import Link from "next/link";
 import { firestore } from "../firebase/firebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
 
-const PERFORMANCE_TYPE = "performance";
+const PERFORMANCE_TYPES = ["Presentación", "Presentacion", "presentación", "presentacion", "performance"];
 const FALLBACK_IMAGE = "https://via.placeholder.com/600x800.png?text=Performance";
 
 const normalizeEventTypes = (rawTypes) => {
@@ -19,7 +19,11 @@ const normalizeEventTypes = (rawTypes) => {
 };
 
 const eventContainsPerformance = (eventTypes) =>
-  eventTypes.some((type) => type.toLowerCase() === PERFORMANCE_TYPE);
+  eventTypes.some((type) => 
+    PERFORMANCE_TYPES.some((performanceType) => 
+      type.toLowerCase() === performanceType.toLowerCase()
+    )
+  );
 
 const parseDateEntry = (entry) => {
   if (!entry) return null;
@@ -90,7 +94,7 @@ export default function Perfos() {
 
             const imageUrl = eventDoc.banner || eventDoc.flyer || eventDoc.gallery?.[0]?.url || FALLBACK_IMAGE;
             const slug = eventDoc.slug || eventDoc.id;
-            const title = eventDoc.name || eventDoc.title || "Performance";
+            const title = eventDoc.name || eventDoc.title || "Presentación";
             const year = extractYear(dates) ?? "—";
 
             return {
@@ -128,10 +132,8 @@ export default function Perfos() {
       <div className={styles.page_container}>
         <div className={styles.homepage_container} style={{ paddingTop: "2rem" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "2rem", width: "100%", margin: "auto", maxWidth: "1200px" }}>
-            <header style={{ textAlign: "center" }}>
-              <h1 style={{ fontSize: "3rem", lineHeight: "3rem", marginBottom: "0.5rem", letterSpacing: "1px" }}>
-                PERFOS
-              </h1>
+            <header className={styles.pageHeader}>
+              <h1>PERFOS</h1>
             </header>
 
             {loading ? (
