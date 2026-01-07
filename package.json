@@ -15,19 +15,19 @@
     "embla-carousel-auto-scroll": "^8.4.0",
     "embla-carousel-autoplay": "^8.4.0",
     "embla-carousel-react": "^8.3.1",
-    "firebase": "^10.14.1",
+    "firebase": "^12.7.0",
     "framer-motion": "^11.11.17",
-    "next": "14.2.15",
+    "next": "^16.1.1",
     "nodemailer": "^7.0.6",
-    "react": "^18",
+    "react": "^19.2.3",
     "react-datepicker": "^7.5.0",
-    "react-dom": "^18",
-    "react-image-lightbox": "^5.1.4",
+    "react-dom": "^19.2.3",
     "react-scroll-parallax": "^3.4.5",
-    "react-type-animation": "^3.2.0"
+    "react-type-animation": "^3.2.0",
+    "yet-another-react-lightbox": "^3.28.0"
   },
   "devDependencies": {
     "eslint": "^8",
-    "eslint-config-next": "14.2.15"
+    "eslint-config-next": "^16.1.1"
   }
 }
