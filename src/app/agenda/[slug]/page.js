@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { use, useEffect, useMemo, useState } from "react";
 import styles from "../../../styles/page.module.css";
 import { firestore } from "../../firebase/firebaseConfig";
 import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
@@ -171,7 +171,7 @@ const normalizeEventDoc = (docData, docId) => {
 };
 
 export default function PerformanceDetail({ params }) {
-  const { slug } = params;
+  const { slug } = use(params);
   const [performance, setPerformance] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

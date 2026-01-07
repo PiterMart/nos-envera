@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { use, useEffect, useMemo, useState } from "react";
 import { doc, getDoc, getDocs, collection, query, where } from "firebase/firestore";
 import pageStyles from "../../../styles/page.module.css";
 import detailStyles from "../../../styles/equipoDetail.module.css";
@@ -39,7 +39,7 @@ const normalizeArray = (value) => {
 };
 
 export default function TeamMemberPage({ params }) {
-  const { memberId } = params;
+  const { memberId } = use(params);
   const [member, setMember] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
