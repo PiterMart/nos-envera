@@ -23,13 +23,15 @@ export default function RootLayout({ children }) {
         }}
       >
         <LoadingProvider>
+          <Nav/>
           <div className="appGrid">
             <main className="mainContent">
               {children}
-              <RecentEvents />
+              <div>
+              {/* <RecentEvents /> */}
               <Footer />
+              </div>
             </main>
-            <Nav/>
           </div>
         </LoadingProvider>
       </body>

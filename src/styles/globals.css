@@ -164,37 +164,21 @@ a {
   text-decoration: none;
 }
 
-/* Grid Layout for App */
+/* Grid Layout for App - Full Width */
 .appGrid {
-  display: grid;
-  grid-template-columns: 1fr 420px;
-  grid-template-areas: "main nav";
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
   width: 100%;
   position: relative;
 }
 
 .mainContent {
-  grid-area: main;
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
   box-sizing: border-box;
-}
-
-/* Mobile: Stack layout */
-@media (max-width: 768px) {
-  .appGrid {
-    grid-template-columns: 1fr;
-    grid-template-areas: 
-      "nav"
-      "main";
-  }
-  
-  .mainContent {
-    width: 100%;
-    margin-top: 0;
-  }
+  padding-top: 80px; /* Space for fixed navbar */
 }
 
 .type-display {

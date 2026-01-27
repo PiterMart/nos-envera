@@ -247,7 +247,6 @@
   font-family: 'Inter', sans-serif;
   display: flex;
   flex-direction: column;
-  margin-top: 10vh;
   align-items: center;
   justify-items: center;
   gap: 64px;
@@ -1058,4 +1057,11 @@
 .memberLink:hover {
   color: #007bff;
   transition: color 0.3s ease-in;
+}
+
+/* Full Width Image */
+.fullWidthImage {
+  width: 100%;
+  height: auto;
+  display: block;
 }

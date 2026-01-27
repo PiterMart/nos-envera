@@ -1,8 +1,8 @@
 "use client";
 import styles from "../../styles/page.module.css";
 import React, { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { firestore } from "../firebase/firebaseConfig";
+import Grid from "../../components/grid";
 import { collection, getDocs } from "firebase/firestore";
 
 const PERFORMANCE_TYPES = ["Presentación", "Presentacion", "presentación", "presentacion", "performance"];
@@ -145,67 +145,7 @@ export default function Perfos() {
                 <p>No hay perfos registradas todavía.</p>
               </div>
             ) : (
-              <section
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-                  gap: "2rem",
-                  justifyItems: "center",
-                }}
-              >
-                {cards.map((card) => (
-                  <Link
-                    href={`/agenda/${card.slug}`}
-                    key={card.id}
-                    style={{
-                      width: "100%",
-                      maxWidth: "300px",
-                      textDecoration: "none",
-                      color: "inherit",
-                    }}
-                  >
-                    <article
-                      style={{
-                        width: "100%",
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "0.75rem",
-                        textAlign: "center",
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: "100%",
-                          aspectRatio: "1 / 1",
-                          overflow: "hidden",
-                          backgroundColor: "#f0f0f0",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          transition: "transform 0.3s ease",
-                        }}
-                      >
-                        <img
-                          src={card.imageUrl}
-                          alt={card.title}
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                            display: "block",
-                          }}
-                        />
-                      </div>
-                      <h2 style={{ fontSize: "1.1rem", fontWeight: 600, letterSpacing: "0.5px" }}>
-                        {card.title}
-                        {card.year && card.year !== "—" ? (
-                          <span style={{ fontWeight: 400, color: "#666", marginLeft: "0.35rem" }}>· {card.year}</span>
-                        ) : null}
-                      </h2>
-                    </article>
-                  </Link>
-                ))}
-              </section>
+              <Grid cards={cards} />
             )}
           </div>
         </div>

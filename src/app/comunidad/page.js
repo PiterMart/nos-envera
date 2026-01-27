@@ -1,10 +1,33 @@
 "use client";
 import styles from "../../styles/page.module.css";
 import detailStyles from "../../styles/equipoDetail.module.css";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import Link from "next/link";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { firestore } from "../firebase/firebaseConfig";
+
+const BREAKPOINT_SM = 480;
+const BREAKPOINT_MD = 768;
+
+// Seeded RNG for deterministic shuffle (same order on resize)
+function mulberry32(seed) {
+  return function () {
+    let t = (seed += 0x6d2b79f5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function shuffledIndices(n, seed = 12345) {
+  const rng = mulberry32(seed);
+  const arr = Array.from({ length: n }, (_, i) => i);
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
 
 export default function Comunidad() {
   const [memberNames, setMemberNames] = useState([]);
@@ -15,30 +38,62 @@ export default function Comunidad() {
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isOrdered, setIsOrdered] = useState(false);
   const [justDragged, setJustDragged] = useState(false);
+  const [width, setWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1024);
   const containerRef = useRef(null);
   const dragStartRef = useRef({ x: 0, y: 0, id: null });
   const hasDraggedRef = useRef(false);
 
-  // Initialize layouts when memberNames change (only if not ordered)
+  useEffect(() => {
+    const onResize = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  // Initialize layouts when memberNames, width, or isOrdered change
   useEffect(() => {
     if (!memberNames.length || isOrdered) {
       setMemberLayouts({});
       return;
     }
 
+    const n = memberNames.length;
+    const isMobile = width < BREAKPOINT_SM;
+    const isTablet = width >= BREAKPOINT_SM && width < BREAKPOINT_MD;
+
+    let cols;
+    if (isMobile) cols = 2;
+    else if (isTablet) cols = 3;
+    else cols = Math.max(1, Math.ceil(Math.sqrt(n * 1.2)));
+
+    const rows = Math.ceil(n / cols);
+    const cellW = isMobile ? 96 / cols : 90 / cols;
+    const cellH = 85 / rows;
+    const padLeft = isMobile ? 2 : 5;
+    const padTop = 7;
+
+    const jitterFactor = isMobile ? 0.1 : isTablet ? 0.25 : 0.5;
+    const rotationRange = isMobile ? 8 : isTablet ? 16 : 20;
+    const scaleMin = isMobile ? 0.88 : 0.9;
+    const scaleRange = isMobile ? 0.12 : 0.4;
+
+    const layoutRng = mulberry32(45678);
+    const cellIndices = shuffledIndices(n);
+
+    const inset = 0.02 * cellW;
     const layouts = memberNames.reduce((acc, { id }, index) => {
-      // Distribute more evenly across the page
-      // Use the full width by distributing from left to right
-      const horizontalSpread = (index / Math.max(memberNames.length - 1, 1)) * 85 + 5; // 5% to 90%
-      const verticalVariation = 10 + Math.random() * 80; // Keep vertical random for visual interest
-      const randomLeft = horizontalSpread + (Math.random() - 0.5) * 10; // Add some randomness but keep distribution
-      const randomTop = verticalVariation;
-      const randomRotation = Math.random() * 40 - 20;
-      const randomScale = 0.9 + Math.random() * 0.4;
+      const cellIndex = cellIndices[index];
+      const col = cellIndex % cols;
+      const row = Math.floor(cellIndex / cols);
+      const jitterW = (layoutRng() - 0.5) * cellW * jitterFactor;
+      const jitterH = (layoutRng() - 0.5) * cellH * jitterFactor;
+      const left = padLeft + col * cellW + inset + jitterW;
+      const top = padTop + (row + 0.5) * cellH + jitterH;
+      const randomRotation = layoutRng() * 2 * rotationRange - rotationRange;
+      const randomScale = scaleMin + layoutRng() * scaleRange;
 
       acc[id] = {
-        top: `${Math.max(5, Math.min(95, randomTop))}%`,
-        left: `${Math.max(2, Math.min(95, randomLeft))}%`,
+        top: `${Math.max(2, Math.min(96, top))}%`,
+        left: `${Math.max(2, Math.min(96, left))}%`,
         rotation: randomRotation,
         scale: randomScale,
       };
@@ -46,7 +101,7 @@ export default function Comunidad() {
     }, {});
 
     setMemberLayouts(layouts);
-  }, [memberNames, isOrdered]);
+  }, [memberNames, isOrdered, width]);
 
   useEffect(() => {
     const fetchMemberNames = async () => {
@@ -182,6 +237,17 @@ export default function Comunidad() {
     };
   }, [dragging, dragOffset]);
 
+  const scatterLayout = useMemo(() => {
+    const n = memberNames.length;
+    if (!n || isOrdered) return { minHeightVh: 70 };
+    const isM = width < BREAKPOINT_SM;
+    const isT = width >= BREAKPOINT_SM && width < BREAKPOINT_MD;
+    const cols = isM ? 2 : isT ? 3 : Math.max(1, Math.ceil(Math.sqrt(n * 1.2)));
+    const rows = Math.ceil(n / cols);
+    const minHeightVh = isM && rows > 6 ? Math.min(110, 70 + (rows - 6) * 4) : 70;
+    return { minHeightVh };
+  }, [memberNames.length, isOrdered, width]);
+
   const startDrag = (clientX, clientY, id, e) => {
     if (!containerRef.current) return;
 
@@ -258,7 +324,7 @@ export default function Comunidad() {
               gap: "1.5rem",
               width: "100%",
               margin: 0,
-              padding: "0 1.5rem",
+              padding: width < BREAKPOINT_SM ? "0 0.75rem" : "0 1.5rem",
             }}
           >
             {isLoading && (
@@ -279,8 +345,12 @@ export default function Comunidad() {
                       margin: 0,
                       width: "100%",
                       display: "grid",
-                      gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+                      gridTemplateColumns:
+                        width < BREAKPOINT_SM
+                          ? "repeat(2, 1fr)"
+                          : "repeat(auto-fill, minmax(220px, 1fr))",
                       gap: "0.5rem 1rem",
+                      textAlign: "left",
                     }}
                   >
                     {memberNames.map(({ id, name, slug, team }) => {
@@ -297,13 +367,14 @@ export default function Comunidad() {
                             href={href}
                             className={styles.memberLink}
                             style={{
-                              fontSize: "1.2rem",
+                              fontSize: width < BREAKPOINT_SM ? "1rem" : "1.2rem",
                               fontWeight: 700,
                               fontFamily:
                                 "'Avenir Next Medium', 'Avenir Next', 'AvenirNext-Medium', 'AvenirNext', sans-serif",
                               color: "#000",
                               textDecoration: "none",
                               display: "block",
+                              textAlign: "left",
                             }}
                           >
                             {name}
@@ -335,7 +406,7 @@ export default function Comunidad() {
                       margin: 0,
                       width: "100%",
                       position: "relative",
-                      minHeight: "70vh",
+                      minHeight: `${scatterLayout.minHeightVh}vh`,
                       touchAction: dragging ? "none" : "auto",
                     }}
                   >
@@ -390,7 +461,7 @@ export default function Comunidad() {
                               }
                             }}
                             style={{
-                              fontSize: "1.2rem",
+                              fontSize: width < BREAKPOINT_SM ? "1rem" : "1.2rem",
                               fontWeight: 700,
                               fontFamily:
                                 "'Avenir Next Medium', 'Avenir Next', 'AvenirNext-Medium', 'AvenirNext', sans-serif",
@@ -409,7 +480,7 @@ export default function Comunidad() {
                       );
                     })}
                     {memberNames.length === 0 && (
-                      <li
+                        <li
                         style={{
                           border: "1px solid #e0e0e0",
                           borderRadius: "8px",

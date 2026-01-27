@@ -4,6 +4,8 @@ import styles from "../styles/page.module.css";
 import React, { useEffect, useState, useRef } from "react";
 import Lightbox from "../components/Lightbox";
 import Link from "next/link";
+import Hero from "../components/Hero";
+import Section1 from "../components/Section1";
 
 export default function Home() {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
@@ -122,7 +124,10 @@ export default function Home() {
 
   return (
     <div className={styles.page}>
-      
+      <Hero />
+      <Section1 />
+      <Image src="/nv1.jpg" alt="Section image" width={1000} height={1000} className={styles.fullWidthImage} />
+      <Image src="/nv2.jpg" alt="Section image" width={1000} height={1000} className={styles.fullWidthImage} />
       <main className={styles.main}>
       </main>
 
