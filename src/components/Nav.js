@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { TransitionLink } from './TransitionLink';
+import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import styles from '../styles/nav.module.css';
@@ -11,10 +11,13 @@ export default function Nav() {
 
     const pages = [
         { name: 'NOS', path: '/' },
-        { name: 'AGENDA', path: '/agenda' },
+        { name: 'PERFOS', path: '/perfos' },
+        { name: 'HIGHLIGHTS', path: '/highlights' },
         { name: 'COMUNIDAD', path: '/comunidad' },
         { name: 'EQUIPO', path: '/equipo' },
-        { name: 'HIGHLIGHTS', path: '/highlights' },
+        { name: 'FORMACIÓN', path: '/formacion' },
+        { name: 'RESIDENCIAS', path: '/residencias' },
+        { name: 'ARTÍCULOS', path: '/articulos' },
         { name: 'CONTACTO', path: '/contacto' },
     ];
 
@@ -60,13 +63,13 @@ export default function Nav() {
                     <ul>
                         {pages.map((page, index) => (
                             <li key={index}>
-                                <TransitionLink
+                                <Link
                                     href={page.path}
                                     className={isCurrent(page.path) ? styles.page_current : ''}
                                     onClick={(e) => handleNavigation(page, e)}
                                 >
                                     {page.name}
-                                </TransitionLink>
+                                </Link>
                             </li>
                         ))}
                     </ul>

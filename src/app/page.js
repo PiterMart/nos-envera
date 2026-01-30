@@ -6,6 +6,7 @@ import Lightbox from "../components/Lightbox";
 import Link from "next/link";
 import Hero from "../components/Hero";
 import Section1 from "../components/Section1";
+import Section3 from "../components/Section3";
 
 export default function Home() {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
@@ -127,6 +128,7 @@ export default function Home() {
       <Hero />
       <div style={{ height: '100vh', width: '100%' }} aria-hidden="true" />
       <Section1 />
+      <Section3 />
       <Image src="/nv1.jpg" alt="Section image" width={1000} height={1000} className={styles.fullWidthImage} />
       <Image src="/nv2.jpg" alt="Section image" width={1000} height={1000} className={styles.fullWidthImage} />
       <main className={styles.main}>
