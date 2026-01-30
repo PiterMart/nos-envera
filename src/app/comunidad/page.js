@@ -37,7 +37,9 @@ export default function Comunidad() {
   const [dragging, setDragging] = useState(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isOrdered, setIsOrdered] = useState(false);
+  const [listFade, setListFade] = useState(1);
   const [justDragged, setJustDragged] = useState(false);
+  const fadeTimeoutRef = useRef(null);
   const [width, setWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1024);
   const containerRef = useRef(null);
   const dragStartRef = useRef({ x: 0, y: 0, id: null });
@@ -48,6 +50,24 @@ export default function Comunidad() {
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
+
+  useEffect(() => {
+    return () => {
+      if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
+    };
+  }, []);
+
+  const handleOrdenarClick = () => {
+    if (listFade < 1) return;
+    setListFade(0);
+    fadeTimeoutRef.current = setTimeout(() => {
+      setIsOrdered((prev) => !prev);
+      fadeTimeoutRef.current = setTimeout(() => {
+        setListFade(1);
+        fadeTimeoutRef.current = null;
+      }, 50);
+    }, 250);
+  };
 
   // Initialize layouts when memberNames, width, or isOrdered change
   useEffect(() => {
@@ -325,24 +345,32 @@ export default function Comunidad() {
                 <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
                   <button
                     type="button"
-                    onClick={() => setIsOrdered(!isOrdered)}
+                    onClick={handleOrdenarClick}
                     className={styles.ordenarButtonBreathing}
+                    disabled={listFade < 1}
                     style={{
                       background: "none",
                       border: "2px solid black",
                       borderRadius: "0.5rem",
-                      cursor: "pointer",
+                      cursor: listFade < 1 ? "not-allowed" : "pointer",
                       font: "inherit",
                       padding: "0.5rem 1rem",
                       margin: 0,
                       fontWeight: 700,
                       fontSize: "1.5rem",
                       textTransform: "uppercase",
+                      opacity: listFade < 1 ? 0.7 : 1,
                     }}
                   >
                     {isOrdered ? "Desordenar" : "Ordenar"}
                   </button>
                 </div>
+                <div
+                  style={{
+                    opacity: listFade,
+                    transition: "opacity 0.25s ease",
+                  }}
+                >
                 {isOrdered ? (
                   <ul
                     style={{
@@ -501,6 +529,7 @@ export default function Comunidad() {
                     )}
                   </ul>
                 )}
+                </div>
               </>
             )}
           </div>
