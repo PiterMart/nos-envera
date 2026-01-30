@@ -41,6 +41,7 @@ const imgStyles = {
 };
 
 const yearHeadingBase = {
+  fontFamily: "var(--font-family-base)",
   margin: 0,
   marginBottom: "0.5rem",
   fontSize: "3.75rem",
@@ -70,24 +71,28 @@ function groupByYear(cards) {
   return keys.map((year) => [year, byYear[year]]);
 }
 
-export default function Grid({ cards }) {
+export default function Grid({ cards, hideImages = false }) {
   const groups = groupByYear(cards);
+  const dynamicGridStyles = {
+    ...gridStyles,
+    gap: hideImages ? "0.25rem" : gridStyles.gap,
+  };
 
   return (
     <section style={{ display: "flex", flexDirection: "column", gap: "0.5rem", width: "100%" }}>
       {groups.map(([year, groupCards], idx) => (
         <div key={year} style={{ width: "100%" }}>
           <h2 style={{ ...yearHeadingBase, marginTop: idx === 0 ? 0 : "1.5rem" }}>{year}</h2>
-          <div style={gridStyles}>
+          <div style={dynamicGridStyles}>
             {groupCards.map((card) => (
               <Link href={`/agenda/${card.slug}`} key={card.id} style={linkStyles}>
                 <article style={articleStyles}>
-                  {card.imageUrl ? (
+                  {!hideImages && card.imageUrl ? (
                     <div style={imageWrapperStyles}>
                       <img src={card.imageUrl} alt={card.title} style={imgStyles} />
                     </div>
                   ) : null}
-                  <h3 style={{ fontSize: "1.1rem", fontWeight: 600, letterSpacing: "0.5px", margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <h3 style={{ fontSize: "1.1rem", fontWeight: 400, letterSpacing: "0.5px", margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
                     <span style={{ color: "black", fontSize: "0.6em", lineHeight: 1 }}>{CARD_DOT}</span>
                     {card.title}
                   </h3>

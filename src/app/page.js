@@ -125,6 +125,7 @@ export default function Home() {
   return (
     <div className={styles.page}>
       <Hero />
+      <div style={{ height: '100vh', width: '100%' }} aria-hidden="true" />
       <Section1 />
       <Image src="/nv1.jpg" alt="Section image" width={1000} height={1000} className={styles.fullWidthImage} />
       <Image src="/nv2.jpg" alt="Section image" width={1000} height={1000} className={styles.fullWidthImage} />

@@ -13,37 +13,19 @@ export default function Contacto() {
     <div className={styles.page}>
       <main className={styles.main}>
         <div className={styles.page_container}>
-          <header className={styles.pageHeaderSmall}>
-            <h1>Contacto</h1>
+          <header className={styles.pageHeader}>
+            <h1>CONTACTO</h1>
           </header>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem', width: '100%', maxWidth: '1200px', margin: 'auto', marginTop: '2rem' }}>
             {/* Contact Information */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem' }}>
               <div>
-                <h3 className={FooterStyles.contactTitle} style={{ marginBottom: '1rem' }}>CONTACTO</h3>
+                <h3 className={FooterStyles.contactTitle} style={{ marginBottom: '1rem' }}>MAIL</h3>
                 <div className={FooterStyles.contactInfo}>
-                  {contactInfo.instagram && (
-                    <p>
-                      <a 
-                        href={contactInfo.instagram} 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        className={FooterStyles.contactLink}
-                      >
-                        @nos.envera
-                      </a>
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <h3 className={FooterStyles.contactTitle} style={{ marginBottom: '1rem' }}>UBICACIÓN</h3>
-                <div className={FooterStyles.locationInfo}>
-                  {contactInfo.address && (
-                    <p className={FooterStyles.address}>{contactInfo.address}</p>
-                  )}
+                  <p>
+                    <a href="mailto:nos.envera@gmail.com">nos.envera@gmail.com</a>
+                  </p>
                 </div>
               </div>
             </div>
@@ -51,6 +33,14 @@ export default function Contacto() {
             {/* Map */}
             {contactInfo.googleMapsEmbed && (
               <div className={FooterStyles.mapContainer}>
+                <div>
+                  <h3 className={FooterStyles.contactTitle} style={{ marginBottom: '1rem' }}>UBICACIÓN</h3>
+                  <div className={FooterStyles.locationInfo}>
+                    {contactInfo.address && (
+                      <p className={FooterStyles.address}>{contactInfo.address}</p>
+                    )}
+                  </div>
+                </div>
                 <iframe
                   src={contactInfo.googleMapsEmbed}
                   width="100%"

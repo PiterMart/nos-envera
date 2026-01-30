@@ -295,24 +295,9 @@ export default function Comunidad() {
         }}
       /> */}
       <div className={styles.page_container} style={{ position: "relative", zIndex: 2, maxWidth: "1200px", margin: "0 auto" }}>
-        {!isLoading && !error && (
-          <div className={detailStyles.backRow} style={{ position: "sticky", top: "2rem", zIndex: 10, backgroundColor: "var(--background)", paddingTop: "1rem", paddingBottom: "1rem" }}>
-            <button
-              onClick={() => setIsOrdered(!isOrdered)}
-              className={detailStyles.backLink}
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                font: "inherit",
-                padding: 0,
-                margin: 0,
-              }}
-            >
-              <span>{isOrdered ? "Desordenar" : "Ordenar"}</span>
-            </button>
-          </div>
-        )}
+        <header className={styles.pageHeader}>
+          <h1>COMUNIDAD</h1>
+        </header>
         <div
           className={styles.homepage_container}
           style={{ paddingTop: "2rem" }}
@@ -337,6 +322,27 @@ export default function Comunidad() {
 
             {!isLoading && !error && (
               <>
+                <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+                  <button
+                    type="button"
+                    onClick={() => setIsOrdered(!isOrdered)}
+                    className={styles.ordenarButtonBreathing}
+                    style={{
+                      background: "none",
+                      border: "2px solid black",
+                      borderRadius: "0.5rem",
+                      cursor: "pointer",
+                      font: "inherit",
+                      padding: "0.5rem 1rem",
+                      margin: 0,
+                      fontWeight: 700,
+                      fontSize: "1.5rem",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {isOrdered ? "Desordenar" : "Ordenar"}
+                  </button>
+                </div>
                 {isOrdered ? (
                   <ul
                     style={{

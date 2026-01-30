@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import Link from "next/link";
+import { TransitionLink } from './TransitionLink';
 import { usePathname } from "next/navigation";
 import styles from "../styles/Footer.module.css";
 import RecentEvents from './RecentEvents';
@@ -10,13 +10,10 @@ export default function Footer() {
 
   const pages = [
     { name: 'NOS', path: '/' },
-    { name: 'PERFOS', path: '/perfos' },
-    { name: 'HIGHLIGHTS', path: '/highlights' },
+    { name: 'AGENDA', path: '/agenda' },
     { name: 'COMUNIDAD', path: '/comunidad' },
     { name: 'EQUIPO', path: '/equipo' },
-    { name: 'FORMACIÓN', path: '/formacion' },
-    { name: 'RESIDENCIAS', path: '/residencias' },
-    { name: 'ARTÍCULOS', path: '/articulos' },
+    { name: 'HIGHLIGHTS', path: '/highlights' },
     { name: 'CONTACTO', path: '/contacto' },
   ];
 
@@ -43,13 +40,13 @@ export default function Footer() {
             <ul>
               {pages.map((page, index) => (
                 <li key={index}>
-                  <Link
+                  <TransitionLink
                     href={page.path}
                     className={isCurrent(page.path) ? styles.page_current : ''}
                     onClick={scrollToTop}
                   >
                     {page.name}
-                  </Link>
+                  </TransitionLink>
                 </li>
               ))}
             </ul>

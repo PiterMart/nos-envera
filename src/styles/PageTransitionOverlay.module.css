@@ -1,0 +1,21 @@
+/* White curtain: slides in from left to cover page, then slides out to right when new page is ready */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  z-index: 99999;
+  transform: translateX(-100%);
+  transition: transform 400ms ease-in-out;
+  pointer-events: auto;
+}
+
+.overlay.entering {
+  transform: translateX(0);
+}
+
+.overlay.exiting {
+  transform: translateX(100%);
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { TransitionLink } from "../../../components/TransitionLink";
 import { use, useEffect, useMemo, useState } from "react";
 import { doc, getDoc, getDocs, collection, query, where } from "firebase/firestore";
 import pageStyles from "../../../styles/page.module.css";
@@ -122,10 +122,10 @@ export default function ComunidadMemberPage({ params }) {
       <main className={pageStyles.main}>
         <div className={pageStyles.page_container}>
           <div className={detailStyles.backRow}>
-            <Link href="/comunidad" className={detailStyles.backLink}>
+            <TransitionLink href="/comunidad" direction="back" className={detailStyles.backLink}>
               <span aria-hidden>←</span>
               <span>Volver a comunidad</span>
-            </Link>
+            </TransitionLink>
           </div>
 
           {isLoading && (

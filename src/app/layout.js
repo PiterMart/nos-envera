@@ -2,7 +2,9 @@ import "../styles/globals.css";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import LoadingProvider from "../components/LoadingProvider";
-import RecentEvents from "../components/RecentEvents";
+import PageTransitionProvider from "../components/PageTransitionProvider";
+import PageTransitionWrapper from "../components/PageTransitionWrapper";
+import ScrollToTop from "../components/ScrollToTop";
 
 export const metadata = {
   title: "Nos en Vera",
@@ -15,7 +17,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="es">
-      <body 
+      <body
         style={{
           minHeight: '100vh',
           margin: 0,
@@ -23,16 +25,20 @@ export default function RootLayout({ children }) {
         }}
       >
         <LoadingProvider>
-          <Nav/>
+          <PageTransitionProvider>
+            <ScrollToTop />
+            <Nav />
           <div className="appGrid">
             <main className="mainContent">
-              {children}
+              <PageTransitionWrapper>
+                {children}
+              </PageTransitionWrapper>
               <div>
-              {/* <RecentEvents /> */}
-              <Footer />
+                <Footer />
               </div>
             </main>
           </div>
+          </PageTransitionProvider>
         </LoadingProvider>
       </body>
     </html>

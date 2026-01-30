@@ -63,8 +63,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--background);
-
-  
+  cursor: crosshair;
 }
 
 * {
@@ -270,4 +269,48 @@ a {
   html {
     color-scheme: dark;
   }
+}
+
+/* Page transitions: wipe left-to-right (back) or right-to-left (forward) */
+@keyframes page-transition-old-slide-out-left {
+  to {
+    transform: translateX(-100%);
+  }
+}
+@keyframes page-transition-old-slide-out-right {
+  to {
+    transform: translateX(100%);
+  }
+}
+@keyframes page-transition-new-slide-in-from-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@keyframes page-transition-new-slide-in-from-left {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Forward: old slides left, new from right */
+html[data-transition-direction="forward"]::view-transition-old(page-content) {
+  animation: page-transition-old-slide-out-left 0.35s ease-in-out both;
+}
+html[data-transition-direction="forward"]::view-transition-new(page-content) {
+  animation: page-transition-new-slide-in-from-right 0.35s ease-in-out both;
+}
+
+/* Back: old slides right, new from left */
+html[data-transition-direction="back"]::view-transition-old(page-content) {
+  animation: page-transition-old-slide-out-right 0.35s ease-in-out both;
+}
+html[data-transition-direction="back"]::view-transition-new(page-content) {
+  animation: page-transition-new-slide-in-from-left 0.35s ease-in-out both;
 }
