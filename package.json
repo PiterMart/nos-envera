@@ -19,6 +19,7 @@
     "framer-motion": "^11.11.17",
     "next": "^16.1.1",
     "nodemailer": "^7.0.6",
+    "prop-types": "^15.8.1",
     "react": "^19.2.3",
     "react-datepicker": "^7.5.0",
     "react-dom": "^19.2.3",
@@ -27,7 +28,8 @@
     "yet-another-react-lightbox": "^3.28.0"
   },
   "devDependencies": {
-    "eslint": "^8",
-    "eslint-config-next": "^16.1.1"
+    "eslint": "^9",
+    "eslint-config-next": "^16.1.1",
+    "typescript": "^5"
   }
 }

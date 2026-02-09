@@ -63,8 +63,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--background);
-
-  
+  cursor: crosshair;
 }
 
 * {
@@ -164,37 +163,21 @@ a {
   text-decoration: none;
 }
 
-/* Grid Layout for App */
+/* Grid Layout for App - Full Width */
 .appGrid {
-  display: grid;
-  grid-template-columns: 1fr 420px;
-  grid-template-areas: "main nav";
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
   width: 100%;
   position: relative;
 }
 
 .mainContent {
-  grid-area: main;
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
   box-sizing: border-box;
-}
-
-/* Mobile: Stack layout */
-@media (max-width: 768px) {
-  .appGrid {
-    grid-template-columns: 1fr;
-    grid-template-areas: 
-      "nav"
-      "main";
-  }
-  
-  .mainContent {
-    width: 100%;
-    margin-top: 0;
-  }
+  padding-top: 80px; /* Space for fixed navbar */
 }
 
 .type-display {
@@ -286,4 +269,48 @@ a {
   html {
     color-scheme: dark;
   }
+}
+
+/* Page transitions: wipe left-to-right (back) or right-to-left (forward) */
+@keyframes page-transition-old-slide-out-left {
+  to {
+    transform: translateX(-100%);
+  }
+}
+@keyframes page-transition-old-slide-out-right {
+  to {
+    transform: translateX(100%);
+  }
+}
+@keyframes page-transition-new-slide-in-from-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@keyframes page-transition-new-slide-in-from-left {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Forward: old slides left, new from right */
+html[data-transition-direction="forward"]::view-transition-old(page-content) {
+  animation: page-transition-old-slide-out-left 0.35s ease-in-out both;
+}
+html[data-transition-direction="forward"]::view-transition-new(page-content) {
+  animation: page-transition-new-slide-in-from-right 0.35s ease-in-out both;
+}
+
+/* Back: old slides right, new from left */
+html[data-transition-direction="back"]::view-transition-old(page-content) {
+  animation: page-transition-old-slide-out-right 0.35s ease-in-out both;
+}
+html[data-transition-direction="back"]::view-transition-new(page-content) {
+  animation: page-transition-new-slide-in-from-left 0.35s ease-in-out both;
 }

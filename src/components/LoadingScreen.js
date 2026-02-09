@@ -22,11 +22,6 @@ export default function LoadingScreen({ onLoadingComplete, isLoading = true }) {
         isFadingOut ? styles.fadeOut : ''
       }`}
     >
-      <img
-        src="/NV-isologo.png"
-        alt="Nos Envera logo"
-        className={styles.logo}
-      />
     </div>
   );
 }

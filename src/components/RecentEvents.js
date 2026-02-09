@@ -3,7 +3,7 @@ import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { firestore } from "../app/firebase/firebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
-import styles from "./RecentEvents.module.css";
+import styles from "../styles/RecentEvents.module.css";
 
 const formatDate = (value) => {
   if (!value) return null;

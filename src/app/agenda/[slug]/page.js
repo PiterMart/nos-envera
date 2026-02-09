@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { TransitionLink } from "../../../components/TransitionLink";
 import React, { use, useEffect, useMemo, useState } from "react";
 import styles from "../../../styles/page.module.css";
 import { firestore } from "../../firebase/firebaseConfig";
@@ -251,50 +252,24 @@ export default function PerformanceDetail({ params }) {
       <div className={styles.page_container}>
         <div className={styles.homepage_container} style={{ paddingTop: "2rem" }}>
           <div
+            className={styles.contentMaxWidth}
             style={{
-              margin: "0 auto",
-              width: "100%",
               display: "flex",
               flexDirection: "column",
               gap: "2rem",
               marginBottom: "10rem",
             }}
           >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <header className={styles.pageHeaderSmall}>
-                <h1 style={{ fontWeight: 600, letterSpacing: "1px" }}>
-                  {performance?.name || "Performance"}
-                  {enriched?.year ? (
-                    <span style={{ fontSize: "1.5rem", fontWeight: 400, color: "#666", marginLeft: "0.5rem" }}>
-                      · {enriched.year}
-                    </span>
-                  ) : null}
-                </h1>
-              </header>
-              <Link
-                href={
-                  performance?.eventTypes?.some((type) => type.toLowerCase() === RESIDENCY_TYPE.toLowerCase())
-                    ? "/residencias"
-                    : performance?.eventTypes?.some((type) => 
-                        TRAINING_TYPES.some((trainingType) => 
-                          type.toLowerCase() === trainingType.toLowerCase()
-                        )
-                      )
-                    ? "/formacion"
-                    : "/perfos"
-                }
-                style={{
-                  textDecoration: "none",
-                  fontSize: "0.9rem",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.5px",
-                  color: "#222",
-                  borderBottom: "1px solid #222",
-                }}
-              >
-                Volver al archivo
-              </Link>
-            </div>
+            <header className={styles.pageHeaderSmall} style={{ display: "flex", flexDirection: "column", justifyContent: "flex-end", marginBottom: 0 }}>
+              <h1 style={{ fontWeight: 600, letterSpacing: "1px", marginBottom: 0 }}>
+                {performance?.name || "Performance"}
+                {enriched?.year ? (
+                  <span style={{ fontSize: "1.5rem", fontWeight: 400, color: "#666", marginLeft: "0.5rem" }}>
+                    · {enriched.year}
+                  </span>
+                ) : null}
+              </h1>
+            </header>
 
             {loading ? (
               <div style={{ textAlign: "center", padding: "3rem", color: "#666" }}>Cargando actividad…</div>
@@ -306,133 +281,134 @@ export default function PerformanceDetail({ params }) {
               </div>
             ) : (
               <>
-                <section style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+                <section className={styles.responsiveSection} style={{ display: "flex", flexDirection: "row", gap: "1.5rem", alignItems: "flex-start" }}>
                   <div
+                    className={styles.responsiveImageContainer}
                     style={{
-                      width: "100%",
-                      aspectRatio: "16 / 9",
+                      minWidth: "5rem",
+                      maxWidth: "50%",
+                      flexShrink: 0,
                       backgroundColor: "#f0f0f0",
                       overflow: "hidden",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
                   >
                     <img
                       src={performance.banner || performance.flyer || FALLBACK_IMAGE}
                       alt={performance.name || "Performance"}
-                      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                      style={{ minWidth: "5rem", width: "100%", height: "auto", objectFit: "contain", display: "block" }}
                     />
                   </div>
 
-                  {performance.subtitle ? (
-                    <p style={{ fontSize: "1.1rem", color: "#444" }}>{performance.subtitle}</p>
-                  ) : null}
+                  <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", flex: 1, textAlign: "left", alignItems: "flex-start" }}>
+                    {performance.subtitle ? (
+                      <p style={{ fontSize: "1.1rem", color: "#444", margin: 0, textAlign: "left" }}>{performance.subtitle}</p>
+                    ) : null}
 
-                  {performance.description?.length > 0 ? (
-                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem", lineHeight: "1.7" }}>
-                      {performance.description.map((paragraph, index) => (
-                        <p key={`desc-${index}`} style={{ margin: 0 }}>
-                          {paragraph}
-                        </p>
-                      ))}
-                    </div>
-                  ) : null}
+                    {performance.description?.length > 0 ? (
+                      <div style={{ display: "flex", flexDirection: "column", gap: "1rem", lineHeight: "1.7", textAlign: "left" }}>
+                        {performance.description.map((paragraph, index) => (
+                          <p key={`desc-${index}`} style={{ margin: 0, textAlign: "left" }}>
+                            {paragraph}
+                          </p>
+                        ))}
+                      </div>
+                    ) : null}
+
+                    {performance.artists?.length ? (
+                      <div style={{ textAlign: "left", alignSelf: "flex-start" }}>
+                        <h2 style={{ fontSize: "1.1rem", textTransform: "uppercase", letterSpacing: "0.5px", textAlign: "left" }}>Artistas</h2>
+                        <ul style={{ listStyle: "none", padding: 0, margin: "0.5rem 0 0 0", display: "flex", flexDirection: "column", gap: "0.35rem", textAlign: "left" }}>
+                          {performance.artists.map((artist, index) => (
+                            <li key={`artist-${index}`} style={{ color: "#444", textAlign: "left" }}>
+                              {artist.name}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
+
+                    {performance.directors?.length ? (
+                      <div style={{ textAlign: "left", alignSelf: "flex-start" }}>
+                        <h2 style={{ fontSize: "1.1rem", textTransform: "uppercase", letterSpacing: "0.5px", textAlign: "left" }}>Directores</h2>
+                        <ul style={{ listStyle: "none", padding: 0, margin: "0.5rem 0 0 0", display: "flex", flexDirection: "column", gap: "0.35rem", textAlign: "left" }}>
+                          {performance.directors.map((director, index) => (
+                            <li key={`director-${index}`} style={{ color: "#444", textAlign: "left" }}>
+                              {director.name}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
+
+                    {enriched?.formattedDates?.length ? (
+                      <div style={{ textAlign: "left", alignSelf: "flex-start" }}>
+                        <h2 style={{ fontSize: "1.1rem", textTransform: "uppercase", letterSpacing: "0.5px", textAlign: "left" }}>Funciones</h2>
+                        <ul style={{ listStyle: "none", padding: 0, margin: "0.5rem 0 0 0", display: "flex", flexDirection: "column", gap: "0.35rem", textAlign: "left" }}>
+                          {enriched.formattedDates.map((entry, index) => (
+                            <li key={`date-${index}`} style={{ color: "#444", textAlign: "left" }}>
+                              {entry.dateLabel || "Fecha por confirmar"}
+                              {entry.time ? ` · ${entry.time}` : ""}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
+
+                    {(performance.address || performance.googleMapsLink || performance.purchaseLink) ? (
+                      <div style={{ textAlign: "left", alignSelf: "flex-start" }}>
+                        <h2 style={{ fontSize: "1.1rem", textTransform: "uppercase", letterSpacing: "0.5px", textAlign: "left" }}>Ubicación</h2>
+                        {performance.address ? (
+                          <p style={{ color: "#444", marginTop: "0.5rem", textAlign: "left" }}>{performance.address}</p>
+                        ) : null}
+                        {performance.googleMapsLink ? (
+                          <a
+                            href={performance.googleMapsLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              display: "inline-block",
+                              marginTop: "0.75rem",
+                              paddingBottom: "0.2rem",
+                              borderBottom: "1px solid #222",
+                              fontSize: "0.9rem",
+                              letterSpacing: "0.5px",
+                              color: "#222",
+                              textDecoration: "none",
+                              textAlign: "left",
+                            }}
+                          >
+                            Ver en Google Maps
+                          </a>
+                        ) : null}
+                        {performance.purchaseLink ? (
+                          <a
+                            href={performance.purchaseLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              display: "inline-block",
+                              marginTop: "0.75rem",
+                              padding: "0.6rem 1.2rem",
+                              backgroundColor: "#111",
+                              color: "#fff",
+                              textDecoration: "none",
+                              letterSpacing: "0.5px",
+                              fontSize: "0.85rem",
+                              textTransform: "uppercase",
+                              textAlign: "left",
+                            }}
+                          >
+                            Comprar entradas
+                          </a>
+                        ) : null}
+                      </div>
+                    ) : null}
+                  </div>
                 </section>
-
-                <section
-                  style={{
-                    display: "grid",
-                    gap: "1.5rem",
-                    gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-                  }}
-                >
-                  {performance.artists?.length ? (
-                    <div>
-                      <h2 style={{ fontSize: "1.1rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>Artistas</h2>
-                      <ul style={{ listStyle: "none", padding: 0, margin: "0.5rem 0 0 0", display: "flex", flexDirection: "column", gap: "0.35rem" }}>
-                        {performance.artists.map((artist, index) => (
-                          <li key={`artist-${index}`} style={{ color: "#444" }}>
-                            {artist.name}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ) : null}
-
-                  {performance.directors?.length ? (
-                    <div>
-                      <h2 style={{ fontSize: "1.1rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>Directores</h2>
-                      <ul style={{ listStyle: "none", padding: 0, margin: "0.5rem 0 0 0", display: "flex", flexDirection: "column", gap: "0.35rem" }}>
-                        {performance.directors.map((director, index) => (
-                          <li key={`director-${index}`} style={{ color: "#444" }}>
-                            {director.name}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ) : null}
-
-                  {enriched?.formattedDates?.length ? (
-                    <div>
-                      <h2 style={{ fontSize: "1.1rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>Funciones</h2>
-                      <ul style={{ listStyle: "none", padding: 0, margin: "0.5rem 0 0 0", display: "flex", flexDirection: "column", gap: "0.35rem" }}>
-                        {enriched.formattedDates.map((entry, index) => (
-                          <li key={`date-${index}`} style={{ color: "#444" }}>
-                            {entry.dateLabel || "Fecha por confirmar"}
-                            {entry.time ? ` · ${entry.time}` : ""}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ) : null}
-
-                  {(performance.address || performance.googleMapsLink || performance.purchaseLink) ? (
-                    <div>
-                      <h2 style={{ fontSize: "1.1rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>Ubicación</h2>
-                      {performance.address ? (
-                        <p style={{ color: "#444", marginTop: "0.5rem" }}>{performance.address}</p>
-                      ) : null}
-                      {performance.googleMapsLink ? (
-                        <a
-                          href={performance.googleMapsLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            display: "inline-block",
-                            marginTop: "0.75rem",
-                            paddingBottom: "0.2rem",
-                            borderBottom: "1px solid #222",
-                            fontSize: "0.9rem",
-                            letterSpacing: "0.5px",
-                            color: "#222",
-                            textDecoration: "none",
-                          }}
-                        >
-                          Ver en Google Maps
-                        </a>
-                      ) : null}
-                      {performance.purchaseLink ? (
-                        <a
-                          href={performance.purchaseLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            display: "inline-block",
-                            marginTop: "0.75rem",
-                            padding: "0.6rem 1.2rem",
-                            backgroundColor: "#111",
-                            color: "#fff",
-                            textDecoration: "none",
-                            letterSpacing: "0.5px",
-                            fontSize: "0.85rem",
-                            textTransform: "uppercase",
-                          }}
-                        >
-                          Comprar entradas
-                        </a>
-                      ) : null}
-                    </div>
-                  ) : null}
-                </section>
-
+{/* 
                 {performance.flyer ? (
                   <section style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                     <h2 style={{ fontSize: "1.1rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>Flyer</h2>
@@ -452,7 +428,7 @@ export default function PerformanceDetail({ params }) {
                       />
                     )}
                   </section>
-                ) : null}
+                ) : null} */}
 
                 {performance.gallery?.length ? (
                   <section style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -479,6 +455,26 @@ export default function PerformanceDetail({ params }) {
                     </div>
                   </section>
                 ) : null}
+
+                <TransitionLink
+                  href="/agenda"
+                  direction="back"
+                  style={{
+                    textDecoration: "none",
+                    fontSize: "0.9rem",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                    color: "#222",
+                    borderBottom: "1px solid #222",
+                    marginTop: "2rem",
+                    alignSelf: "flex-end",
+                    textAlign: "right",
+                    display: "inline-block",
+                    marginLeft: "auto",
+                  }}
+                >
+                  ← Volver al archivo
+                </TransitionLink>
               </>
             )}
           </div>

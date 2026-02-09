@@ -1,26 +1,24 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
+import { useState, useEffect, useRef } from 'react';
 import LoadingScreen from './LoadingScreen';
 
 export default function LoadingProvider({ children }) {
   const [isLoading, setIsLoading] = useState(true);
   const [contentLoaded, setContentLoaded] = useState(false);
-  const pathname = usePathname();
+  const hasInitialLoad = useRef(false);
 
   useEffect(() => {
-    // Reset loading state on route change
-    setIsLoading(true);
-    setContentLoaded(false);
-    
-    // Simulate content loading
+    // Only run loading screen on first mount (initial page load), not on route changes
+    if (hasInitialLoad.current) return;
+    hasInitialLoad.current = true;
+
     const timer = setTimeout(() => {
       setContentLoaded(true);
     }, 800);
 
     return () => clearTimeout(timer);
-  }, [pathname]);
+  }, []);
 
   const handleLoadingComplete = () => {
     setIsLoading(false);
@@ -29,9 +27,9 @@ export default function LoadingProvider({ children }) {
   return (
     <>
       {isLoading && (
-        <LoadingScreen 
-          onLoadingComplete={handleLoadingComplete} 
-          isLoading={!contentLoaded} 
+        <LoadingScreen
+          onLoadingComplete={handleLoadingComplete}
+          isLoading={!contentLoaded}
         />
       )}
       {children}

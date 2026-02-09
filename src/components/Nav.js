@@ -10,7 +10,7 @@ export default function Nav() {
     const currentPath = usePathname();
 
     const pages = [
-        { name: 'NOS', path: '/sobre-nv' },
+        { name: 'NOS', path: '/' },
         { name: 'PERFOS', path: '/perfos' },
         { name: 'HIGHLIGHTS', path: '/highlights' },
         { name: 'COMUNIDAD', path: '/comunidad' },
@@ -18,7 +18,7 @@ export default function Nav() {
         { name: 'FORMACIÓN', path: '/formacion' },
         { name: 'RESIDENCIAS', path: '/residencias' },
         { name: 'ARTÍCULOS', path: '/articulos' },
-        { name: 'CONTACTO', path: '/contacto', isFooter: true },
+        { name: 'CONTACTO', path: '/contacto' },
     ];
 
     // Scroll to footer when hash is present in URL (e.g., after navigation)
@@ -45,21 +45,6 @@ export default function Nav() {
 
     const handleNavigation = (page, e) => {
         setIsMenuOpen(false);
-        
-        // If it's the CONTACTO button, scroll to footer instead of navigating
-        if (page.isFooter) {
-            e.preventDefault();
-            
-            // Small delay to ensure menu closes smoothly
-            setTimeout(() => {
-                const footer = document.getElementById('footer');
-                if (footer) {
-                    footer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    // Update URL without triggering navigation
-                    window.history.pushState(null, '', '#footer');
-                }
-            }, 100);
-        }
     };
 
     const toggleMenu = () => {
@@ -73,48 +58,38 @@ export default function Nav() {
 
     return (
         <>
-            <Link href="/">
-                <Image
-                    src="/NV-logotypo.png"
-                    alt="Nos en Vera"
-                    width={120}
-                    height={48}
-                    className={styles.nav_logo}
-                    priority={true}
-                    quality={100}
-                    unoptimized={true}
-                />
-            </Link>
-            <div className={styles.nav}>
-                <button className={`${styles.navButton} ${isMenuOpen ? styles.open : ''}`} onClick={toggleMenu}>
-                    <span className={styles.bar}></span>
-                    <span className={styles.bar}></span>
-                    <span className={styles.bar}></span>
-                </button>
+            <div className={`${styles.nav} ${isMenuOpen ? styles.nav_active : ''}`}>
                 <div className={`${styles.nav_list} ${isMenuOpen ? styles.nav_list_active : ''}`} id="navMenu">
                     <ul>
                         {pages.map((page, index) => (
                             <li key={index}>
-                                {page.isFooter ? (
-                                    <a
-                                        href="#footer"
-                                        onClick={(e) => handleNavigation(page, e)}
-                                    >
-                                        {page.name}
-                                    </a>
-                                ) : (
-                                    <Link
-                                        href={page.path}
-                                        className={isCurrent(page.path) ? styles.page_current : ''}
-                                        onClick={(e) => handleNavigation(page, e)}
-                                    >
-                                        {page.name}
-                                    </Link>
-                                )}
+                                <Link
+                                    href={page.path}
+                                    className={isCurrent(page.path) ? styles.page_current : ''}
+                                    onClick={(e) => handleNavigation(page, e)}
+                                >
+                                    {page.name}
+                                </Link>
                             </li>
                         ))}
                     </ul>
                 </div>
+                <button 
+                    className={styles.nav_logo_button} 
+                    onClick={toggleMenu}
+                    aria-label="Toggle menu"
+                >
+                    <Image
+                        src="/NV_Iso3D_4.png"
+                        alt="Nos en Vera Menu"
+                        width={120}
+                        height={120}
+                        className={styles.nav_logo_image}
+                        priority={true}
+                        quality={100}
+                        unoptimized={true}
+                    />
+                </button>
             </div>
         </>
     );

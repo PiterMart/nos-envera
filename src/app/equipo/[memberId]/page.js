@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { TransitionLink } from "../../../components/TransitionLink";
 import { use, useEffect, useMemo, useState } from "react";
 import { doc, getDoc, getDocs, collection, query, where } from "firebase/firestore";
 import pageStyles from "../../../styles/page.module.css";
@@ -116,11 +116,12 @@ export default function TeamMemberPage({ params }) {
     <div className={pageStyles.page}>
       <main className={pageStyles.main}>
         <div className={pageStyles.page_container}>
+          <div className={pageStyles.contentMaxWidth}>
           <div className={detailStyles.backRow}>
-            <Link href="/equipo" className={detailStyles.backLink}>
+            <TransitionLink href="/equipo" direction="back" className={detailStyles.backLink}>
               <span aria-hidden>←</span>
               <span>Volver a equipo</span>
-            </Link>
+            </TransitionLink>
           </div>
 
           {isLoading && (
@@ -212,6 +213,7 @@ export default function TeamMemberPage({ params }) {
               </div>
             </section>
           )}
+          </div>
         </div>
       </main>
       <footer className={pageStyles.footer}></footer>

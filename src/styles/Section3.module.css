@@ -1,0 +1,53 @@
+.section {
+  width: 100%;
+  padding: 10vh 1rem;
+  position: relative;
+  z-index: 2;
+  background-color: #0000008f;
+  color: #fff;
+  border-radius: 1rem;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header {
+  text-align: left;
+}
+
+.section header h1 {
+  color: #fff;
+  font-family: var(--font-family-base);
+  font-size: clamp(3rem, 8vw, 6rem);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+  letter-spacing: 1px;
+}
+
+.titleButton {
+  display: inline-block;
+  background: none;
+  border: 2px solid #fff;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font: inherit;
+  padding: 0.5rem 1rem;
+  margin: auto;
+  font-family: var(--font-family-base);
+  font-size: clamp(3rem, 8vw, 6rem);
+  line-height: 1;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #fff;
+  font-weight: 700;
+}
+
+.titleButton:hover {
+  text-decoration: none;
+}

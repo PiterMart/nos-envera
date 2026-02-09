@@ -1,22 +1,32 @@
 .footer {
   width: 100%;
   margin-top: auto;
+  margin-left: 0;
   padding-top: 3rem;
   padding-bottom: 2rem;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
-  background-color: var(--background);
+  background-color: white;
+  position: relative;
+  z-index: 2;
 }
 
 .footerContent {
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: auto;
+  margin: 0;
   padding: 2rem 1rem;
   display: flex;
   flex-direction: column;
   gap: 3rem;
 }
 
-/* Navigation Links */
+/* Navigation Links and Social Media Container */
+.footerNavSocial {
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
 .footerNav {
   width: 100%;
 }
@@ -51,6 +61,27 @@
 
 .footerNav li a.page_current {
   color: #007bff;
+}
+
+/* Social Media */
+.footerSocial {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.socialLink {
+  font-family: var(--font-family-base);
+  font-size: 1.2rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--foreground);
+  text-decoration: none;
+  transition: color 0.3s ease-in;
+}
+
+.socialLink:hover {
+  color: #007bff;
+  transition: color 0.3s ease-in;
 }
 
 /* Contact Information */
@@ -130,7 +161,7 @@
 
 /* Copyright */
 .footerCopyright {
-  text-align: center;
+  text-align: left;
   padding-top: 2rem;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
@@ -142,11 +173,41 @@
   margin: 0;
 }
 
+/* Desktop: Nav and Social side by side, 50% each */
+@media (min-width: 769px) {
+  .footerNavSocial {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 2rem;
+  }
+
+  .footerNav {
+    width: 50%;
+    flex: 0 0 50%;
+  }
+
+  .footerSocial {
+    width: 50%;
+    flex: 0 0 50%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+}
+
 /* Responsive styles */
 @media (max-width: 768px) {
   .footerContent {
     padding: 2rem 1rem;
     gap: 2rem;
+  }
+
+  .footerNavSocial {
+    gap: 1.5rem;
+  }
+
+  .footerNav {
+    width: 100%;
   }
 
   .footerNav ul {
@@ -158,35 +219,18 @@
     font-size: 1rem;
   }
 
-  .footerContact {
-    grid-template-columns: 1fr;
-    gap: 2rem;
+  .footerSocial {
+    width: 100%;
+    justify-content: flex-start;
   }
 
-  .contactTitle {
-    font-size: 1.2rem;
-  }
-
-  .contactInfo p,
-  .locationInfo p {
-    font-size: 0.9rem;
-  }
-
-  .address {
-    font-size: 0.9rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .mapContainer {
-    margin-top: 0.75rem;
-  }
-
-  .mapContainer iframe {
-    height: 250px;
+  .socialLink {
+    font-size: 1rem;
   }
 
   .footerCopyright {
     padding-top: 1.5rem;
+    text-align: left;
   }
 
   .footerCopyright p {

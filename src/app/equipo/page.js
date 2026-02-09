@@ -114,6 +114,9 @@ export default function Equipo() {
     <div className={pageStyles.page}>
       <main className={pageStyles.main}>
         <div className={pageStyles.page_container}>
+          <header className={pageStyles.pageHeader}>
+            <h1>EQUIPO NOS ENVERA</h1>
+          </header>
           {isLoading && (
             <div className={pageStyles.loading_container}>
               <div className={pageStyles.loading_spinner} />

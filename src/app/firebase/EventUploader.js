@@ -48,6 +48,8 @@ export default function EventUploader() {
   const [artistSearchQuery, setArtistSearchQuery] = useState("");
   const [showDirectorSearchResults, setShowDirectorSearchResults] = useState(false);
   const [showArtistSearchResults, setShowArtistSearchResults] = useState(false);
+  const [eventSearchQuery, setEventSearchQuery] = useState("");
+  const [showEventSearchResults, setShowEventSearchResults] = useState(false);
   const fileInputRef = useRef(null);
   const bannerInputRef = useRef(null);
   const flyerInputRef = useRef(null);
@@ -263,8 +265,10 @@ export default function EventUploader() {
         setArtistInput("");
         setDirectorSearchQuery("");
         setArtistSearchQuery("");
+        setEventSearchQuery("");
         setShowDirectorSearchResults(false);
         setShowArtistSearchResults(false);
+        setShowEventSearchResults(false);
   
         const existingGalleryData = data.gallery || [];
         setExistingGallery(existingGalleryData);
@@ -641,6 +645,55 @@ export default function EventUploader() {
     });
   }, [availableCommunityArtists]);
 
+  // Filter events based on search query with relevance sorting
+  const filteredEvents = useMemo(() => {
+    if (!eventSearchQuery.trim()) {
+      return events;
+    }
+    const query = eventSearchQuery.toLowerCase().trim();
+    const matches = events.filter((event) => {
+      const name = (event.name || "").toLowerCase();
+      return name.includes(query);
+    });
+
+    // Sort by relevance (exact matches first, then by position of match)
+    const sorted = matches.sort((a, b) => {
+      const nameA = (a.name || "").toLowerCase();
+      const nameB = (b.name || "").toLowerCase();
+
+      if (nameA === query) return -1;
+      if (nameB === query) return 1;
+
+      if (nameA.startsWith(query)) return -1;
+      if (nameB.startsWith(query)) return 1;
+
+      const indexA = nameA.indexOf(query);
+      const indexB = nameB.indexOf(query);
+      if (indexA !== indexB) return indexA - indexB;
+
+      return nameA.localeCompare(nameB);
+    });
+
+    return sorted;
+  }, [events, eventSearchQuery]);
+
+  // Get top 4 search results for events dropdown
+  const topEventSearchResults = useMemo(() => {
+    if (!eventSearchQuery.trim() || filteredEvents.length === 0) {
+      return [];
+    }
+    return filteredEvents.slice(0, 4);
+  }, [filteredEvents, eventSearchQuery]);
+
+  // Sorted alphabetical list for events dropdown
+  const sortedEvents = useMemo(() => {
+    return [...events].sort((a, b) => {
+      const nameA = (a.name || "").toLowerCase();
+      const nameB = (b.name || "").toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  }, [events]);
+
   const handleBannerChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -908,8 +961,10 @@ const uploadImages = async (eventId) => {
     setArtistInput("");
     setDirectorSearchQuery("");
     setArtistSearchQuery("");
+    setEventSearchQuery("");
     setShowDirectorSearchResults(false);
     setShowArtistSearchResults(false);
+    setShowEventSearchResults(false);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -1042,12 +1097,128 @@ const uploadImages = async (eventId) => {
     <div className={styles.form}>
       <div>
         <p className={styles.subtitle}>SELECCIONA UN EVENTO PARA EDITAR</p>
+        <div style={{ marginBottom: "0.5rem", position: "relative" }}>
+          <input
+            type="text"
+            placeholder="Buscar evento..."
+            value={eventSearchQuery}
+            onChange={(e) => {
+              setEventSearchQuery(e.target.value);
+              setShowEventSearchResults(true);
+            }}
+            onFocus={() => {
+              if (eventSearchQuery.trim()) {
+                setShowEventSearchResults(true);
+              }
+            }}
+            onBlur={(e) => {
+              setTimeout(() => {
+                const relatedTarget = e.relatedTarget || document.activeElement;
+                if (!relatedTarget || !relatedTarget.closest(".event-search-results-dropdown")) {
+                  setShowEventSearchResults(false);
+                }
+              }, 200);
+            }}
+            style={{
+              width: "100%",
+              padding: "0.5rem",
+              fontSize: "1rem",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+            }}
+          />
+          {showEventSearchResults && eventSearchQuery.trim() && topEventSearchResults.length > 0 && (
+            <div
+              className="event-search-results-dropdown"
+              onMouseDown={(e) => e.preventDefault()}
+              style={{
+                position: "absolute",
+                top: "100%",
+                left: 0,
+                right: 0,
+                backgroundColor: "#fff",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                marginTop: "0.25rem",
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+                zIndex: 1000,
+                maxHeight: "300px",
+                overflowY: "auto",
+              }}
+            >
+              {topEventSearchResults.map((event) => (
+                <div
+                  key={event.id}
+                  onClick={() => {
+                    handleEventSelection(event.id);
+                    setEventSearchQuery("");
+                    setShowEventSearchResults(false);
+                  }}
+                  style={{
+                    padding: "0.75rem 1rem",
+                    cursor: "pointer",
+                    borderBottom: "1px solid #eee",
+                    transition: "background-color 0.2s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "#f5f5f5";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "transparent";
+                  }}
+                >
+                  <div style={{ fontWeight: "500", color: "#333" }}>{event.name}</div>
+                  {event.subtitle && (
+                    <div style={{ fontSize: "0.85rem", color: "#666", marginTop: "0.25rem" }}>
+                      {event.subtitle}
+                    </div>
+                  )}
+                </div>
+              ))}
+              {filteredEvents.length > 4 && (
+                <div
+                  style={{
+                    padding: "0.5rem 1rem",
+                    fontSize: "0.85rem",
+                    color: "#666",
+                    borderTop: "1px solid #eee",
+                    backgroundColor: "#f9f9f9",
+                  }}
+                >
+                  +{filteredEvents.length - 4} más resultados. Usa el campo de búsqueda para filtrar.
+                </div>
+              )}
+            </div>
+          )}
+          {showEventSearchResults && eventSearchQuery.trim() && topEventSearchResults.length === 0 && (
+            <div
+              className="event-search-results-dropdown"
+              onMouseDown={(e) => e.preventDefault()}
+              style={{
+                position: "absolute",
+                top: "100%",
+                left: 0,
+                right: 0,
+                backgroundColor: "#fff",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                marginTop: "0.25rem",
+                padding: "0.75rem 1rem",
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+                zIndex: 1000,
+                color: "#666",
+              }}
+            >
+              No se encontraron eventos
+            </div>
+          )}
+        </div>
         <select
           value={selectedEvent || ""}
           onChange={(e) => handleEventSelection(e.target.value)}
         >
-          <option value="">Crear nuevo evento</option>
-          {events.map((event) => (
+          <option value="">Crear nuevo evento (orden alfabético)</option>
+          {sortedEvents.map((event) => (
             <option key={event.id} value={event.id}>
               {event.name}
             </option>
