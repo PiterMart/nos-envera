@@ -323,7 +323,16 @@ export default function PerformanceDetail({ params }) {
                         <ul style={{ listStyle: "none", padding: 0, margin: "0.5rem 0 0 0", display: "flex", flexDirection: "column", gap: "0.35rem", textAlign: "left" }}>
                           {performance.artists.map((artist, index) => (
                             <li key={`artist-${index}`} style={{ color: "#444", textAlign: "left" }}>
-                              {artist.name}
+                              {artist.memberId ? (
+                                <Link
+                                  href={`/comunidad/${artist.memberId}`}
+                                  style={{ color: "#444", textDecoration: "none", borderBottom: "1px solid #444" }}
+                                >
+                                  {artist.name}
+                                </Link>
+                              ) : (
+                                artist.name
+                              )}
                             </li>
                           ))}
                         </ul>
@@ -336,7 +345,16 @@ export default function PerformanceDetail({ params }) {
                         <ul style={{ listStyle: "none", padding: 0, margin: "0.5rem 0 0 0", display: "flex", flexDirection: "column", gap: "0.35rem", textAlign: "left" }}>
                           {performance.directors.map((director, index) => (
                             <li key={`director-${index}`} style={{ color: "#444", textAlign: "left" }}>
-                              {director.name}
+                              {director.memberId ? (
+                                <Link
+                                  href={`/comunidad/${director.memberId}`}
+                                  style={{ color: "#444", textDecoration: "none", borderBottom: "1px solid #444" }}
+                                >
+                                  {director.name}
+                                </Link>
+                              ) : (
+                                director.name
+                              )}
                             </li>
                           ))}
                         </ul>

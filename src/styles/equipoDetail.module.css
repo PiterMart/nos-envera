@@ -96,6 +96,10 @@
   flex: 1;
 }
 
+.infoColumnMaxWidth {
+  max-width: 65vw;
+}
+
 .metaList {
   display: grid;
   gap: 0.5rem;
@@ -163,6 +167,10 @@
   .infoColumn {
     max-width: 100%;
     width: 100%;
+  }
+
+  .infoColumnMaxWidth {
+    max-width: 100%;
   }
 }
 

@@ -9,17 +9,20 @@ export default function Nav() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const currentPath = usePathname();
 
+    // Same routes as Footer.js
     const pages = [
         { name: 'NOS', path: '/' },
-        { name: 'PERFOS', path: '/perfos' },
-        { name: 'HIGHLIGHTS', path: '/highlights' },
+        { name: 'AGENDA', path: '/agenda' },
         { name: 'COMUNIDAD', path: '/comunidad' },
         { name: 'EQUIPO', path: '/equipo' },
-        { name: 'FORMACIÓN', path: '/formacion' },
-        { name: 'RESIDENCIAS', path: '/residencias' },
-        { name: 'ARTÍCULOS', path: '/articulos' },
+        { name: 'HIGHLIGHTS', path: '/highlights' },
         { name: 'CONTACTO', path: '/contacto' },
     ];
+    // Links no longer used (kept for reference):
+    // { name: 'PERFOS', path: '/perfos' },
+    // { name: 'FORMACIÓN', path: '/formacion' },
+    // { name: 'RESIDENCIAS', path: '/residencias' },
+    // { name: 'ARTÍCULOS', path: '/articulos' },
 
     // Scroll to footer when hash is present in URL (e.g., after navigation)
     useEffect(() => {
