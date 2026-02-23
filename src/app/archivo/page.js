@@ -86,20 +86,8 @@ const extractYear = (dates = []) => {
   return Number.isNaN(parsed.getTime()) ? null : parsed.getFullYear();
 };
 
-const eventHasDateInCurrentMonth = (dates = []) => {
-  const now = new Date();
-  const currentYear = now.getFullYear();
-  const currentMonth = now.getMonth();
-  if (!dates.length) return false;
-  return dates.some((entry) => {
-    const date = entry?.date;
-    if (!date || !(date instanceof Date) || Number.isNaN(date.getTime())) return false;
-    return date.getFullYear() === currentYear && date.getMonth() === currentMonth;
-  });
-};
 
-
-export default function Agenda() {
+export default function Archivo() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -137,12 +125,9 @@ export default function Agenda() {
               imageUrl,
               year,
               eventTypes,
-              dates,
             };
           })
-          .filter(Boolean)
-          .filter((event) => eventHasDateInCurrentMonth(event.dates))
-          .map(({ dates: _dates, ...event }) => event);
+          .filter(Boolean);
 
         setEvents(processed);
       } catch (fetchError) {
@@ -262,7 +247,7 @@ export default function Agenda() {
         <div className={styles.homepage_container} style={{ paddingTop: "2rem" }}>
           <div className={styles.contentMaxWidth} style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
             <header className={styles.pageHeader}>
-              <h1>AGENDA</h1>
+              <h1>ARCHIVO</h1>
             </header>
 
             <div className={styles.agendaFilterSliderWrap}>
@@ -307,12 +292,12 @@ export default function Agenda() {
               <div style={{ textAlign: "center", padding: "3rem", color: "#666" }}>
                 <p>
                   {activeFilter === "all"
-                    ? "No hay eventos este mes."
+                    ? "No hay eventos registrados todavía."
                     : activeFilter === "perfos"
-                    ? "No hay perfos este mes."
+                    ? "No hay perfos registradas todavía."
                     : activeFilter === "formacion"
-                    ? "No hay formaciones este mes."
-                    : "No hay residencias este mes."}
+                    ? "No hay formaciones registradas todavía."
+                    : "No hay residencias registradas todavía."}
                 </p>
               </div>
             ) : (

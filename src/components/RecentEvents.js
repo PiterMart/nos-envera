@@ -163,7 +163,7 @@ export default function RecentEvents() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.tejesDiv}>TEJES</div>
+      <div className={styles.tejesDiv}>AGENDA</div>
       {events.map((event, index) => {
         const { date, time } = getFirstDateAndTime(event);
         const formattedDate = date ? formatDate(date) : null;

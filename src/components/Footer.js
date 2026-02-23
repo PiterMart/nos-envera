@@ -11,10 +11,14 @@ export default function Footer() {
   const pages = [
     { name: 'NOS', path: '/' },
     { name: 'AGENDA', path: '/agenda' },
+    { name: 'SOMOS', path: '/equipo' },
     { name: 'COMUNIDAD', path: '/comunidad' },
-    { name: 'EQUIPO', path: '/equipo' },
-    { name: 'HIGHLIGHTS', path: '/highlights' },
+    { name: 'PERFORMANCES', path: '/performances' },
+    { name: 'FORMACIONES', path: '/formaciones' },
+    { name: 'RESIDENCIAS', path: '/residencias' },
+    { name: 'ARCHIVO', path: '/archivo' },
     { name: 'CONTACTO', path: '/contacto' },
+    { name: 'HIGHLIGHTS', path: '/highlights' },
   ];
 
   const isCurrent = (path) => {

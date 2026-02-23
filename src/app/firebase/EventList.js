@@ -32,12 +32,48 @@ const getPrimaryType = (eventDoc) => {
   return types.length > 0 ? types[0] : DEFAULT_TYPE_LABEL;
 };
 
+/** Normalize a Firestore date (Timestamp/Date/string) to a Date for comparison. */
+const toDate = (value) => {
+  if (!value) return null;
+  const d = value && typeof value.toDate === "function"
+    ? value.toDate()
+    : value instanceof Date
+      ? value
+      : new Date(value);
+  return d instanceof Date && !isNaN(d.getTime()) ? d : null;
+};
+
+/** Earliest date in the event's dates array (for sorting). Returns timestamp or Infinity if none. */
+const getEventEarliestTime = (eventDoc) => {
+  const dates = eventDoc.dates;
+  if (!Array.isArray(dates) || dates.length === 0) return Infinity;
+  let min = Infinity;
+  dates.forEach((entry) => {
+    const d = toDate(entry?.date);
+    if (d) min = Math.min(min, d.getTime());
+  });
+  return min;
+};
+
+/** Years present in an event's dates (for year filter). */
+const getEventYears = (eventDoc) => {
+  const dates = eventDoc.dates;
+  if (!Array.isArray(dates)) return [];
+  const years = new Set();
+  dates.forEach((entry) => {
+    const d = toDate(entry?.date);
+    if (d) years.add(d.getFullYear());
+  });
+  return Array.from(years);
+};
+
 export default function EventList() {
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [sortMode, setSortMode] = useState("type-asc");
+  const [sortMode, setSortMode] = useState("date-desc");
   const [typeFilter, setTypeFilter] = useState("all");
+  const [yearFilter, setYearFilter] = useState("all");
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -76,28 +112,55 @@ export default function EventList() {
     return Array.from(typeSet).sort((a, b) => a.localeCompare(b));
   }, [events]);
 
-  const filteredEvents = useMemo(() => {
-    if (typeFilter === "all") {
-      return events;
-    }
-    return events.filter((eventDoc) => {
-      const types = getEventTypes(eventDoc);
-      const normalizedFilter = typeFilter === DEFAULT_TYPE_LABEL ? "" : typeFilter;
-      if (normalizedFilter === "") {
-        return types.length === 0;
-      }
-      return types.includes(normalizedFilter);
+  const availableYears = useMemo(() => {
+    const set = new Set();
+    events.forEach((eventDoc) => {
+      getEventYears(eventDoc).forEach((y) => set.add(y));
     });
-  }, [events, typeFilter]);
+    return Array.from(set).sort((a, b) => b - a);
+  }, [events]);
+
+  const filteredEvents = useMemo(() => {
+    let result = events;
+
+    if (typeFilter !== "all") {
+      result = result.filter((eventDoc) => {
+        const types = getEventTypes(eventDoc);
+        const normalizedFilter = typeFilter === DEFAULT_TYPE_LABEL ? "" : typeFilter;
+        if (normalizedFilter === "") {
+          return types.length === 0;
+        }
+        return types.includes(normalizedFilter);
+      });
+    }
+
+    if (yearFilter !== "all" && yearFilter) {
+      const yearNum = parseInt(yearFilter, 10);
+      result = result.filter((eventDoc) => {
+        const years = getEventYears(eventDoc);
+        return years.includes(yearNum);
+      });
+    }
+
+    return result;
+  }, [events, typeFilter, yearFilter]);
 
   const sortedEvents = useMemo(() => {
     const comparator = (a, b) => {
+      const timeA = getEventEarliestTime(a);
+      const timeB = getEventEarliestTime(b);
       const typeComparison =
         getPrimaryType(a).localeCompare(getPrimaryType(b), undefined, { sensitivity: "base" });
       const nameA = String(a.name || a.title || a.slug || "").toLowerCase();
       const nameB = String(b.name || b.title || b.slug || "").toLowerCase();
       const nameComparison = nameA.localeCompare(nameB);
 
+      if (sortMode === "date-asc") {
+        return timeA - timeB || nameComparison;
+      }
+      if (sortMode === "date-desc") {
+        return timeB - timeA || nameComparison;
+      }
       if (sortMode === "type-asc") {
         return typeComparison || nameComparison;
       }
@@ -149,12 +212,29 @@ export default function EventList() {
             </select>
           </div>
           <div>
+            <p className={styles.subtitle} style={{ marginBottom: "0.25rem" }}>Año</p>
+            <select
+              value={yearFilter}
+              onChange={(e) => setYearFilter(e.target.value)}
+              className={styles.input}
+            >
+              <option value="all">Todos los años</option>
+              {availableYears.map((year) => (
+                <option key={year} value={String(year)}>
+                  {year}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
             <p className={styles.subtitle} style={{ marginBottom: "0.25rem" }}>Ordenar por</p>
             <select
               value={sortMode}
               onChange={(e) => setSortMode(e.target.value)}
               className={styles.input}
             >
+              <option value="date-desc">Más recientes primero</option>
+              <option value="date-asc">Más antiguos primero</option>
               <option value="type-asc">Tipo (A → Z)</option>
               <option value="type-desc">Tipo (Z → A)</option>
               <option value="name">Nombre (A → Z)</option>

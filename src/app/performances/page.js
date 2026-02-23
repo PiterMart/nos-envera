@@ -133,7 +133,7 @@ export default function Perfos() {
         <div className={styles.homepage_container} style={{ paddingTop: "2rem" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "2rem", width: "100%", margin: "auto", maxWidth: "1200px" }}>
             <header className={styles.pageHeader}>
-              <h1>PERFOS</h1>
+              <h1>PERFORMANCES</h1>
             </header>
 
             {loading ? (
