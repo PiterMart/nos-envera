@@ -18,7 +18,6 @@ export default function Footer() {
     { name: 'RESIDENCIAS', path: '/residencias' },
     { name: 'ARCHIVO', path: '/archivo' },
     { name: 'CONTACTO', path: '/contacto' },
-    { name: 'HIGHLIGHTS', path: '/highlights' },
   ];
 
   const isCurrent = (path) => {
@@ -65,3 +64,4 @@ export default function Footer() {
     </footer>
   );
 }
+

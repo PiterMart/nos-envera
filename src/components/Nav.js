@@ -20,7 +20,6 @@ export default function Nav() {
         { name: 'RESIDENCIAS', path: '/residencias' },
         { name: 'ARCHIVO', path: '/archivo' },
         { name: 'CONTACTO', path: '/contacto' },
-        { name: 'HIGHLIGHTS', path: '/highlights' },
     ];
     // Links no longer used (kept for reference):
     // { name: 'PERFOS', path: '/perfos' },
@@ -101,3 +100,4 @@ export default function Nav() {
         </>
     );
 }
+

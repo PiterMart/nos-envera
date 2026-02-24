@@ -36,7 +36,7 @@ export default function Comunidad() {
   const [memberLayouts, setMemberLayouts] = useState({});
   const [dragging, setDragging] = useState(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  const [isOrdered, setIsOrdered] = useState(false);
+  const [isOrdered, setIsOrdered] = useState(true); // always ordered list
   const [listFade, setListFade] = useState(1);
   const [justDragged, setJustDragged] = useState(false);
   const fadeTimeoutRef = useRef(null);
@@ -342,6 +342,7 @@ export default function Comunidad() {
 
             {!isLoading && !error && (
               <>
+                {/* Layout toggle button commented out - list is always shown in order
                 <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
                   <button
                     type="button"
@@ -365,6 +366,7 @@ export default function Comunidad() {
                     {isOrdered ? "Desordenar" : "Ordenar"}
                   </button>
                 </div>
+                */}
                 <div
                   style={{
                     opacity: listFade,

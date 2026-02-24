@@ -6,7 +6,6 @@ import Grid from "../../components/grid";
 import { collection, getDocs } from "firebase/firestore";
 
 const TRAINING_TYPES = ["Formación", "Formacion"];
-const FALLBACK_IMAGE = "https://via.placeholder.com/600x800.png?text=Training";
 
 const normalizeEventTypes = (rawTypes) => {
   if (Array.isArray(rawTypes)) {
@@ -92,7 +91,7 @@ export default function Formacion() {
               ? eventDoc.dates.map(parseDateEntry).filter(Boolean)
               : [];
 
-            const imageUrl = eventDoc.banner || eventDoc.flyer || eventDoc.gallery?.[0]?.url || FALLBACK_IMAGE;
+            const imageUrl = eventDoc.banner || eventDoc.flyer || eventDoc.gallery?.[0]?.url || null;
             const slug = eventDoc.slug || eventDoc.id;
             const title = eventDoc.name || eventDoc.title || "Formación";
             const year = extractYear(dates) ?? "—";

@@ -6,7 +6,6 @@ import Grid from "../../components/grid";
 import { collection, getDocs } from "firebase/firestore";
 
 const RESIDENCY_TYPE = "Residencia";
-const FALLBACK_IMAGE = "https://via.placeholder.com/600x800.png?text=Residency";
 
 const normalizeEventTypes = (rawTypes) => {
   if (Array.isArray(rawTypes)) {
@@ -88,7 +87,7 @@ export default function Residencias() {
               ? eventDoc.dates.map(parseDateEntry).filter(Boolean)
               : [];
 
-            const imageUrl = eventDoc.banner || eventDoc.flyer || eventDoc.gallery?.[0]?.url || FALLBACK_IMAGE;
+            const imageUrl = eventDoc.banner || eventDoc.flyer || eventDoc.gallery?.[0]?.url || null;
             const slug = eventDoc.slug || eventDoc.id;
             const title = eventDoc.name || eventDoc.title || "Residencia";
             const year = extractYear(dates) ?? "—";

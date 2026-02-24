@@ -1,4 +1,5 @@
 'use client';
+import Image from "next/image";
 import styles from "../../styles/page.module.css";
 import FooterStyles from "../../styles/Footer.module.css";
 
@@ -16,6 +17,9 @@ export default function Contacto() {
           <header className={styles.pageHeader}>
             <h1>CONTACTO</h1>
           </header>
+
+          <Image src="/nv1.jpg" alt="Section image" width={1000} height={1000} className={styles.fullWidthImage} />
+          <Image src="/nv2.jpg" alt="Section image" width={1000} height={1000} className={styles.fullWidthImage} />
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem', width: '100%', maxWidth: '1200px', margin: 'auto', marginTop: '2rem' }}>
             {/* Contact Information */}

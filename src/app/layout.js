@@ -1,5 +1,5 @@
 import "../styles/globals.css";
-import Nav from "../components/Nav";
+import Nav from "../components/nav";
 import Footer from "../components/Footer";
 import LoadingProvider from "../components/LoadingProvider";
 import PageTransitionProvider from "../components/PageTransitionProvider";
