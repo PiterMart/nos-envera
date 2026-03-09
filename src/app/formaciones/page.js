@@ -3,68 +3,14 @@ import styles from "../../styles/page.module.css";
 import React, { useEffect, useMemo, useState } from "react";
 import { firestore } from "../firebase/firebaseConfig";
 import Grid from "../../components/grid";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 
-const TRAINING_TYPES = ["Formación", "Formacion"];
-
-const normalizeEventTypes = (rawTypes) => {
-  if (Array.isArray(rawTypes)) {
-    return rawTypes.map((type) => String(type).trim()).filter(Boolean);
-  }
-  if (typeof rawTypes === "string" && rawTypes.trim()) {
-    return rawTypes.split(",").map((type) => type.trim()).filter(Boolean);
-  }
-  return [];
-};
-
-const eventContainsTraining = (eventTypes) =>
-  eventTypes.some((type) => 
-    TRAINING_TYPES.some((trainingType) => 
-      type.toLowerCase() === trainingType.toLowerCase()
-    )
-  );
-
-const parseDateEntry = (entry) => {
-  if (!entry) return null;
-  let dateValue = entry.date;
-  let parsedDate = null;
-
-  if (dateValue?.toDate) {
-    parsedDate = dateValue.toDate();
-  } else if (typeof dateValue === "string" || typeof dateValue === "number") {
-    const attempt = new Date(dateValue);
-    if (!Number.isNaN(attempt.getTime())) {
-      parsedDate = attempt;
-    }
-  } else if (dateValue instanceof Date) {
-    parsedDate = dateValue;
-  }
-
-  if (parsedDate && Number.isNaN(parsedDate.getTime())) {
-    parsedDate = null;
-  }
-
-  const time = typeof entry.time === "string" ? entry.time.trim() : "";
-
-  if (!parsedDate && !time) {
-    return null;
-  }
-
-  return { date: parsedDate, time };
-};
-
-const extractYear = (dates = []) => {
-  const entry = dates.find((item) => item?.date) || null;
-  if (!entry) return null;
-  if (entry.date?.toDate) {
-    return entry.date.toDate().getFullYear();
-  }
-  if (entry.date instanceof Date) {
-    return entry.date.getFullYear();
-  }
-  const parsed = new Date(entry.date);
-  return Number.isNaN(parsed.getTime()) ? null : parsed.getFullYear();
-};
+import {
+  TRAINING_TYPES,
+  parseDateEntry,
+  extractYear,
+  sortByYearDesc,
+} from "../../lib/eventUtils";
 
 export default function Formacion() {
   const [events, setEvents] = useState([]);
@@ -77,16 +23,15 @@ export default function Formacion() {
         setLoading(true);
         setError(null);
 
-        const snapshot = await getDocs(collection(firestore, "events"));
+        const q = query(
+          collection(firestore, "events"),
+          where("event_type", "array-contains", TRAINING_TYPES[0])
+        );
+        const snapshot = await getDocs(q);
         const documents = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
         const filtered = documents
           .map((eventDoc) => {
-            const eventTypes = normalizeEventTypes(eventDoc.event_type || eventDoc.eventType || eventDoc.type);
-            if (!eventContainsTraining(eventTypes)) {
-              return null;
-            }
-
             const dates = Array.isArray(eventDoc.dates)
               ? eventDoc.dates.map(parseDateEntry).filter(Boolean)
               : [];
@@ -119,11 +64,7 @@ export default function Formacion() {
   }, []);
 
   const cards = useMemo(() => {
-    return events.sort((a, b) => {
-      if (a.year === "—" && b.year !== "—") return 1;
-      if (a.year !== "—" && b.year === "—") return -1;
-      return String(b.year).localeCompare(String(a.year));
-    });
+    return [...events].sort(sortByYearDesc);
   }, [events]);
 
   return (
@@ -134,6 +75,7 @@ export default function Formacion() {
             <header className={styles.pageHeader}>
               <h1>FORMACIÓN</h1>
             </header>
+            <p className={styles.pageSubtext}>En su área de formación, Nos en Vera es sede de seminarios, talleres, workshops, laboratorios y prácticas colectivas abiertas, diseñadas para ampliar el acceso a experiencias artísticas innovadoras y fortalecer redes de intercambio.</p>
 
             {loading ? (
               <div style={{ textAlign: "center", padding: "3rem", color: "#666" }}>Cargando formaciones...</div>
@@ -144,7 +86,7 @@ export default function Formacion() {
                 <p>No hay formaciones registradas todavía.</p>
               </div>
             ) : (
-              <Grid cards={cards} />
+              <Grid cards={cards} tight />
             )}
           </div>
         </div>

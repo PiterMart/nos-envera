@@ -1,110 +1,16 @@
-"use client";
+ "use client";
 import { useEffect, useState, useMemo } from "react";
-import Link from "next/link";
+import { TransitionLink } from "./TransitionLink";
 import { firestore } from "../app/firebase/firebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
 import styles from "../styles/RecentEvents.module.css";
 
-const formatDate = (value) => {
-  if (!value) return null;
-
-  let date;
-  if (value?.toDate) {
-    date = value.toDate();
-  } else {
-    date = new Date(value);
-  }
-
-  if (!(date instanceof Date) || isNaN(date.getTime())) {
-    return null;
-  }
-
-  return new Intl.DateTimeFormat("es-ES", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  }).format(date);
-};
-
-const parseDateEntry = (entry) => {
-  if (!entry) return null;
-  let dateValue = entry.date;
-  let parsedDate = null;
-
-  if (dateValue?.toDate) {
-    parsedDate = dateValue.toDate();
-  } else if (typeof dateValue === "string" || typeof dateValue === "number") {
-    const attempt = new Date(dateValue);
-    if (!Number.isNaN(attempt.getTime())) {
-      parsedDate = attempt;
-    }
-  } else if (dateValue instanceof Date) {
-    parsedDate = dateValue;
-  }
-
-  if (parsedDate && Number.isNaN(parsedDate.getTime())) {
-    parsedDate = null;
-  }
-
-  const time = typeof entry.time === "string" ? entry.time.trim() : "";
-
-  return { date: parsedDate, time };
-};
-
-const getEarliestDate = (eventDoc) => {
-  if (!Array.isArray(eventDoc.dates) || eventDoc.dates.length === 0) {
-    return null;
-  }
-
-  const validDates = eventDoc.dates
-    .map((entry) => parseDateEntry(entry)?.date)
-    .filter((date) => date !== null);
-
-  if (validDates.length === 0) {
-    return null;
-  }
-
-  return new Date(Math.min(...validDates.map((d) => d.getTime())));
-};
-
-const getFirstDateAndTime = (eventDoc) => {
-  if (!Array.isArray(eventDoc.dates) || eventDoc.dates.length === 0) {
-    return { date: null, time: null };
-  }
-
-  const firstEntry = eventDoc.dates.find((entry) => {
-    const parsed = parseDateEntry(entry);
-    return parsed && parsed.date !== null;
-  });
-
-  if (!firstEntry) {
-    return { date: null, time: null };
-  }
-
-  const parsed = parseDateEntry(firstEntry);
-  return {
-    date: parsed?.date || null,
-    time: parsed?.time || null,
-  };
-};
-
-const getDirectors = (eventDoc) => {
-  if (!Array.isArray(eventDoc.directors) || eventDoc.directors.length === 0) {
-    return [];
-  }
-
-  return eventDoc.directors
-    .map((director) => {
-      if (typeof director === "string") {
-        return director.trim();
-      }
-      if (director && typeof director === "object") {
-        return String(director.name || director.fullName || director.displayName || "").trim();
-      }
-      return null;
-    })
-    .filter(Boolean);
-};
+import {
+  formatDate,
+  getEarliestDate,
+  getFirstDateAndTime,
+  getDirectorNames,
+} from "../lib/eventUtils";
 
 export default function RecentEvents() {
   const [events, setEvents] = useState([]);
@@ -163,19 +69,21 @@ export default function RecentEvents() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.tejesDiv}>AGENDA</div>
+      <TransitionLink href="/agenda" className={styles.tejesDiv}>
+        AGENDA
+      </TransitionLink>
       {events.map((event, index) => {
         const { date, time } = getFirstDateAndTime(event);
         const formattedDate = date ? formatDate(date) : null;
         const eventName = event.name || event.title || "Evento sin nombre";
-        const directors = getDirectors(event);
+        const directors = getDirectorNames(event.directors);
         const directorsText = directors.length > 0 ? directors.join(", ") : null;
 
         const eventSlug = event.slug || event.id;
         const eventHref = `/agenda/${eventSlug}`;
 
         return (
-          <Link key={event.id} href={eventHref} className={styles.eventItem}>
+          <TransitionLink key={event.id} href={eventHref} className={styles.eventItem}>
             {directorsText && (
               <span className={styles.director}>
                 {`${directorsText} · `}
@@ -193,7 +101,7 @@ export default function RecentEvents() {
                   : ""}
               </span>
             )}
-          </Link>
+          </TransitionLink>
         );
       })}
     </div>

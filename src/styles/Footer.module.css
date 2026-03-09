@@ -136,9 +136,7 @@
 .mapContainer {
   width: 100%;
   margin-top: 1rem;
-  border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .mapContainer iframe {
@@ -235,5 +233,10 @@
 
   .footerCopyright p {
     font-size: 0.8rem;
+  }
+
+  .footerContact {
+    grid-template-columns: 1fr;
+    gap: 2rem;
   }
 }

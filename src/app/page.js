@@ -5,14 +5,13 @@ import React, { useEffect, useState, useRef } from "react";
 import Lightbox from "../components/Lightbox";
 import Link from "next/link";
 import Hero from "../components/Hero";
-import Section1 from "../components/Section1";
 import Section3 from "../components/Section3";
 
 export default function Home() {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [lightboxImage, setLightboxImage] = useState({ src: '', alt: '' });
   const [draggedImage, setDraggedImage] = useState(null);
-  const [dragStartPos, setDragStartPos] = useState({ x: 0, y: 0 });
+  const dragStartPos = useRef({ x: 0, y: 0 });
   const [imagePositions, setImagePositions] = useState({});
   const [visibleSubtitles, setVisibleSubtitles] = useState(new Set());
   const [visibleImages, setVisibleImages] = useState(new Set());
@@ -34,7 +33,7 @@ export default function Home() {
     const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
     const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
     
-    setDragStartPos({ x: clientX, y: clientY });
+    dragStartPos.current = { x: clientX, y: clientY };
     setDraggedImage(imageId);
   };
 
@@ -46,8 +45,8 @@ export default function Home() {
     const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
     const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
     
-    const deltaX = clientX - dragStartPos.x;
-    const deltaY = clientY - dragStartPos.y;
+    const deltaX = clientX - dragStartPos.current.x;
+    const deltaY = clientY - dragStartPos.current.y;
     
     setImagePositions(prev => ({
       ...prev,
@@ -57,8 +56,7 @@ export default function Home() {
       }
     }));
     
-    // Update start position for next frame
-    setDragStartPos({ x: clientX, y: clientY });
+    dragStartPos.current = { x: clientX, y: clientY };
   };
 
   // Handle mouse/touch up events
@@ -85,7 +83,7 @@ export default function Home() {
       document.removeEventListener('mouseup', handleGlobalMouseUp);
       document.removeEventListener('touchend', handleGlobalTouchEnd);
     };
-  }, [draggedImage, dragStartPos]);
+  }, [draggedImage]);
 
   // Intersection Observer for subtitle and image animations
   useEffect(() => {
@@ -127,10 +125,7 @@ export default function Home() {
     <div className={styles.page}>
       <Hero />
       <div style={{ height: '100vh', width: '100%' }} aria-hidden="true" />
-      <Section1 />
       <Section3 />
-      <Image src="/nv1.jpg" alt="Section image" width={1000} height={1000} className={styles.fullWidthImage} />
-      <Image src="/nv2.jpg" alt="Section image" width={1000} height={1000} className={styles.fullWidthImage} />
       <main className={styles.main}>
       </main>
 

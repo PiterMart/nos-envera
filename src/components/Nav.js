@@ -1,31 +1,14 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { TransitionLink } from './TransitionLink';
 import styles from '../styles/nav.module.css';
+import { NAV_PAGES } from '../constants/navigation';
 
 export default function Nav() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const currentPath = usePathname();
-
-    // Same routes as Footer.js
-    const pages = [
-        { name: 'NOS', path: '/' },
-        { name: 'AGENDA', path: '/agenda' },
-        { name: 'SOMOS', path: '/equipo' },
-        { name: 'COMUNIDAD', path: '/comunidad' },
-        { name: 'PERFORMANCES', path: '/performances' },
-        { name: 'FORMACIONES', path: '/formaciones' },
-        { name: 'RESIDENCIAS', path: '/residencias' },
-        { name: 'ARCHIVO', path: '/archivo' },
-        { name: 'CONTACTO', path: '/contacto' },
-    ];
-    // Links no longer used (kept for reference):
-    // { name: 'PERFOS', path: '/perfos' },
-    // { name: 'FORMACIÓN', path: '/formacion' },
-    // { name: 'RESIDENCIAS', path: '/residencias' },
-    // { name: 'ARTÍCULOS', path: '/articulos' },
 
     // Scroll to footer when hash is present in URL (e.g., after navigation)
     useEffect(() => {
@@ -67,15 +50,15 @@ export default function Nav() {
             <div className={`${styles.nav} ${isMenuOpen ? styles.nav_active : ''}`}>
                 <div className={`${styles.nav_list} ${isMenuOpen ? styles.nav_list_active : ''}`} id="navMenu">
                     <ul>
-                        {pages.map((page, index) => (
+                        {NAV_PAGES.map((page, index) => (
                             <li key={index}>
-                                <Link
+                                <TransitionLink
                                     href={page.path}
                                     className={isCurrent(page.path) ? styles.page_current : ''}
                                     onClick={(e) => handleNavigation(page, e)}
                                 >
                                     {page.name}
-                                </Link>
+                                </TransitionLink>
                             </li>
                         ))}
                     </ul>

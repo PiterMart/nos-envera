@@ -20,16 +20,16 @@ export default function Artist({ params }) {
   const [artist, setArtist] = useState(null);
   const [artworks, setArtworks] = useState([]); 
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [imageLoaded, setImageLoaded] = useState(false);
   const artistSlug = use(params).artist;
 
   useEffect(() => {
-    // Scroll to top when component mounts
     window.scrollTo(0, 0);
     
     const fetchArtistData = async () => {
-      console.log("Fetching artist with slug:", artistSlug);
       try {
+        setError(null);
 
         const artistQuery = query(
           collection(firestore, "artists"),
@@ -49,21 +49,18 @@ export default function Artist({ params }) {
 
           setArtist(formattedArtist);
 
-
           if (artistData.artworks && artistData.artworks.length > 0) {
             const artworkDetails = await fetchArtworksByIds(artistData.artworks);
             setArtworks(artworkDetails);
           }
-          
-          // Set loading to false after all data is loaded
-          setIsLoading(false);
         } else {
-          console.error("No artist found with this slug.");
-          // Keep loading state active instead of showing error
+          setError("Artist not found.");
         }
-      } catch (error) {
-        console.error("Error fetching artist:", error);
-        // Keep loading state active instead of showing error
+      } catch (err) {
+        console.error("Error fetching artist:", err);
+        setError("Could not load artist data.");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -94,7 +91,7 @@ export default function Artist({ params }) {
           <div className={styles.leftMargin2}>
             <Image
               src="/maiden 2.PNG"
-              alt="Left margin decoration"
+              alt=""
               width={200}
               height={800}
               className={styles.marginImage2}
@@ -130,6 +127,26 @@ export default function Artist({ params }) {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </main>
+        <footer className={styles.footer}></footer>
+      </div>
+    );
+  }
+
+  if (error || !artist) {
+    return (
+      <div className={styles.page}>
+        <main className={styles.main}>
+          <div className={styles.page_container}>
+            <div style={{ textAlign: "center", padding: "5rem 2rem" }}>
+              <p style={{ fontSize: "1.1rem", color: "#666" }}>
+                {error || "Artist not found."}
+              </p>
+              <Link href="/artists" style={{ display: "inline-block", marginTop: "1.5rem", color: "#222", borderBottom: "1px solid #222", textDecoration: "none" }}>
+                ← Back to artists
+              </Link>
             </div>
           </div>
         </main>
@@ -201,17 +218,21 @@ export default function Artist({ params }) {
                 {/* <div>
                   <p style={{ fontSize: '1.5rem', lineHeight: "1.75rem", textAlign: 'left'}}>{artist.bio[0]}</p>
                 </div> */}
-                                  <p className={styles.title} style={{marginBottom: '-1rem', marginTop: '1rem', fontSize: '2rem', textAlign: 'center'}}>BIO</p>
-                <div
-                  className={styles.artist_page_contents_bio}
-                  id="bio"
-                >
-                  {artist.bio.map((paragraph, index) => (
-                    <div key={index}>
-                      <p>{paragraph}</p>
+                                  {Array.isArray(artist.bio) && artist.bio.length > 0 && (
+                  <>
+                    <p className={styles.title} style={{marginBottom: '-1rem', marginTop: '1rem', fontSize: '2rem', textAlign: 'center'}}>BIO</p>
+                    <div
+                      className={styles.artist_page_contents_bio}
+                      id="bio"
+                    >
+                      {artist.bio.map((paragraph, index) => (
+                        <div key={index}>
+                          <p>{paragraph}</p>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </>
+                )}
               </div>
             </div>
             {artworks && artworks.length > 0 && (

@@ -2,7 +2,7 @@
 import styles from "../../styles/page.module.css";
 import detailStyles from "../../styles/equipoDetail.module.css";
 import React, { useEffect, useState, useRef, useMemo } from "react";
-import Link from "next/link";
+import { TransitionLink } from "../../components/TransitionLink";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { firestore } from "../firebase/firebaseConfig";
 
@@ -40,12 +40,13 @@ export default function Comunidad() {
   const [listFade, setListFade] = useState(1);
   const [justDragged, setJustDragged] = useState(false);
   const fadeTimeoutRef = useRef(null);
-  const [width, setWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1024);
+  const [width, setWidth] = useState(1024);
   const containerRef = useRef(null);
   const dragStartRef = useRef({ x: 0, y: 0, id: null });
   const hasDraggedRef = useRef(false);
 
   useEffect(() => {
+    setWidth(window.innerWidth);
     const onResize = () => setWidth(window.innerWidth);
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
@@ -318,9 +319,10 @@ export default function Comunidad() {
         <header className={styles.pageHeader}>
           <h1>COMUNIDAD</h1>
         </header>
+        <p className={styles.pageSubtext}>Nos en Vera es, también, la red de artistas, investigadorxs y colaboradorxs que mantienen activo nuestro espacio. Esta sección reúne sus biografías como un archivo vivo de la comunidad que lo hace posible.</p>
         <div
           className={styles.homepage_container}
-          style={{ paddingTop: "2rem" }}
+          style={{ paddingTop: "0" }}
         >
           <div
             style={{
@@ -374,65 +376,94 @@ export default function Comunidad() {
                   }}
                 >
                 {isOrdered ? (
-                  <ul
-                    style={{
-                      listStyle: "none",
-                      padding: 0,
-                      margin: 0,
-                      width: "100%",
-                      display: "grid",
-                      gridTemplateColumns:
-                        width < BREAKPOINT_SM
-                          ? "repeat(2, 1fr)"
-                          : "repeat(auto-fill, minmax(220px, 1fr))",
-                      gap: "0.5rem 1rem",
-                      textAlign: "left",
-                    }}
-                  >
-                    {memberNames.map(({ id, name, slug, team }) => {
-                      const basePath = team === true ? "/equipo" : "/comunidad";
-                      const href = slug ? `${basePath}/${slug}` : `${basePath}/${id}`;
-                      return (
-                        <li
-                          key={id}
-                          style={{
-                            padding: "0.25rem 0",
-                          }}
-                        >
-                          <Link
-                            href={href}
-                            className={styles.memberLink}
-                            style={{
-                              fontSize: width < BREAKPOINT_SM ? "1rem" : "1.2rem",
-                              fontWeight: 700,
-                              fontFamily:
-                                "'Avenir Next Medium', 'Avenir Next', 'AvenirNext-Medium', 'AvenirNext', sans-serif",
-                              color: "#000",
-                              textDecoration: "none",
-                              display: "block",
-                              textAlign: "left",
-                            }}
-                          >
-                            {name}
-                          </Link>
-                        </li>
-                      );
-                    })}
-                    {memberNames.length === 0 && (
-                      <li
-                        style={{
-                          border: "1px solid #e0e0e0",
-                          borderRadius: "8px",
-                          padding: "1rem",
-                          backgroundColor: "#fafafa",
-                          textAlign: "center",
-                          color: "#666",
-                        }}
-                      >
+                  <div style={{
+                    columnCount: width < BREAKPOINT_SM ? 2 : 4,
+                    columnGap: "2rem",
+                    width: "100%",
+                  }}>
+                    {memberNames.length === 0 ? (
+                      <p style={{
+                        border: "1px solid #e0e0e0",
+                        borderRadius: "8px",
+                        padding: "1rem",
+                        backgroundColor: "#fafafa",
+                        textAlign: "center",
+                        color: "#666",
+                      }}>
                         No hay miembros registrados todavía.
-                      </li>
+                      </p>
+                    ) : (
+                      Object.entries(
+                        memberNames.reduce((groups, member) => {
+                          const letter = (member.name?.[0] || "#").toUpperCase();
+                          if (!groups[letter]) groups[letter] = [];
+                          groups[letter].push(member);
+                          return groups;
+                        }, {})
+                      )
+                        .sort(([a], [b]) => a.localeCompare(b))
+                        .map(([letter, members]) => (
+                          <div key={letter} style={{
+                            breakInside: "avoid",
+                            marginBottom: "1rem",
+                          }}>
+                            <div style={{
+                              fontFamily: "var(--font-family-base)",
+                              fontSize: "3.75rem",
+                              fontWeight: 600,
+                              letterSpacing: "0.5px",
+                              textAlign: "left",
+                              margin: 0,
+                              marginBottom: "0.5rem",
+                              paddingBottom: "0.25rem",
+                              borderBottom: "2px solid black",
+                              width: "100%",
+                            }}>
+                              {letter}
+                            </div>
+                            <ul style={{
+                              listStyle: "none",
+                              padding: 0,
+                              margin: 0,
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: "0.25rem",
+                              textAlign: "left",
+                            }}>
+                              {members.map(({ id, name, slug, team }) => {
+                                const basePath = team === true ? "/somos" : "/comunidad";
+                                const href = slug ? `${basePath}/${slug}` : `${basePath}/${id}`;
+                                return (
+                                  <li
+                                    key={id}
+                                    style={{
+                                      padding: "0.25rem 0",
+                                    }}
+                                  >
+                                    <TransitionLink
+                                      href={href}
+                                      className={styles.memberLink}
+                                      style={{
+                                        fontSize: width < BREAKPOINT_SM ? "1rem" : "1.2rem",
+                                        fontWeight: 700,
+                                        fontFamily:
+                                          "'Avenir Next Medium', 'Avenir Next', 'AvenirNext-Medium', 'AvenirNext', sans-serif",
+                                        color: "#000",
+                                        textDecoration: "none",
+                                        display: "block",
+                                        textAlign: "left",
+                                      }}
+                                    >
+                                      {name}
+                                    </TransitionLink>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          </div>
+                        ))
                     )}
-                  </ul>
+                  </div>
                 ) : (
                   <ul
                     ref={containerRef}
@@ -449,7 +480,7 @@ export default function Comunidad() {
                     {memberNames.map(({ id, name, slug, team }) => {
                       const layout = memberLayouts[id];
                       const isDragging = dragging === id;
-                      const basePath = team === true ? "/equipo" : "/comunidad";
+                      const basePath = team === true ? "/somos" : "/comunidad";
                       const href = slug ? `${basePath}/${slug}` : `${basePath}/${id}`;
 
                       return (
@@ -475,7 +506,7 @@ export default function Comunidad() {
                             WebkitTouchCallout: "none",
                           }}
                         >
-                          <Link
+                          <TransitionLink
                             href={href}
                             className={styles.memberLink}
                             draggable="false"
@@ -511,7 +542,7 @@ export default function Comunidad() {
                             }}
                           >
                             {name}
-                          </Link>
+                          </TransitionLink>
                         </li>
                       );
                     })}

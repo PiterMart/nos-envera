@@ -20,7 +20,7 @@ export default function Section1() {
         </div>
         <div className={styles.content}>
           <header className={pageStyles.pageHeader}>
-            <h1>SOBRE NOS ENVERA</h1>
+            <h1>NOS ENVERA</h1>
           </header>
           <p className={styles.paragraph}>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor

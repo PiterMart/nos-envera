@@ -4,21 +4,10 @@ import { TransitionLink } from './TransitionLink';
 import { usePathname } from "next/navigation";
 import styles from "../styles/Footer.module.css";
 import RecentEvents from './RecentEvents';
+import { NAV_PAGES } from '../constants/navigation';
 
 export default function Footer() {
   const currentPath = usePathname();
-
-  const pages = [
-    { name: 'NOS', path: '/' },
-    { name: 'AGENDA', path: '/agenda' },
-    { name: 'SOMOS', path: '/equipo' },
-    { name: 'COMUNIDAD', path: '/comunidad' },
-    { name: 'PERFORMANCES', path: '/performances' },
-    { name: 'FORMACIONES', path: '/formaciones' },
-    { name: 'RESIDENCIAS', path: '/residencias' },
-    { name: 'ARCHIVO', path: '/archivo' },
-    { name: 'CONTACTO', path: '/contacto' },
-  ];
 
   const isCurrent = (path) => {
     return currentPath === path;
@@ -41,7 +30,7 @@ export default function Footer() {
         <div className={styles.footerNavSocial}>
           <div className={styles.footerNav}>
             <ul>
-              {pages.map((page, index) => (
+              {NAV_PAGES.map((page, index) => (
                 <li key={index}>
                   <TransitionLink
                     href={page.path}
@@ -54,6 +43,23 @@ export default function Footer() {
               ))}
             </ul>
           </div>
+        </div>
+        <div className={styles.footerSocial}>
+          <a
+            href={socialInfo.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.socialLink}
+            aria-label="Instagram"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+              <circle cx="12" cy="12" r="5" />
+              <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" />
+            </svg>
+            @nos.envera
+          </a>
         </div>
 
         {/* Copyright */}

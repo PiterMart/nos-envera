@@ -3,7 +3,8 @@
   flex-direction: column;
   gap: 1.5rem;
   width: 100%;
-  margin: 0 auto 6rem auto;
+  max-width: 100%;
+  margin: 0;
   box-sizing: border-box;
 }
 
@@ -43,37 +44,21 @@
 }
 
 .carouselViewport {
-  overflow-x: auto;
-  overflow-y: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.4) transparent;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-}
-
-.carouselViewport::-webkit-scrollbar {
-  height: 6px;
-}
-
-.carouselViewport::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.carouselViewport::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.35);
+  width: 100%;
 }
 
 .carouselTrack {
   display: flex;
+  flex-wrap: wrap;
   gap: 2rem;
   padding: 1rem 0;
   margin: 0;
   list-style: none;
+  justify-content: center;
 }
 
 .carouselSlide {
-  scroll-snap-align: start;
-  flex: 0 0 clamp(220px, 24vw, 320px);
+  flex: 0 0 clamp(200px, 22vw, 300px);
 }
 
 .card {
@@ -160,26 +145,19 @@
   }
 
   .carouselSection {
+    width: 100%;
   }
 
   .carouselControls {
-    justify-content: center;
     display: none;
   }
 
-  .carouselViewport {
-    overflow: visible;
-    scroll-snap-type: none;
-  }
-
   .carouselTrack {
-    flex-direction: column;
     gap: 1.5rem;
   }
 
   .carouselSlide {
-    flex: none;
-    width: 100%;
+    flex: 0 0 calc(50% - 0.75rem);
   }
 
   .card {

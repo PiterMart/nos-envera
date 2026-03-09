@@ -5,86 +5,22 @@ import { firestore } from "../firebase/firebaseConfig";
 import Grid from "../../components/grid";
 import { collection, getDocs } from "firebase/firestore";
 
+import {
+  FALLBACK_IMAGE,
+  normalizeEventTypes,
+  eventContainsPerformance,
+  eventContainsTraining,
+  eventContainsResidency,
+  parseDateEntry,
+  extractYear,
+} from "../../lib/eventUtils";
+
 const FILTER_OPTIONS = [
   { value: "all", label: "TODOS" },
   { value: "perfos", label: "PERFOS" },
   { value: "formacion", label: "FORMACIÓN" },
   { value: "residencias", label: "RESIDENCIAS" },
 ];
-
-const PERFORMANCE_TYPES = ["Presentación", "Presentacion", "presentación", "presentacion", "performance"];
-const TRAINING_TYPES = ["Formación", "Formacion"];
-const RESIDENCY_TYPE = "Residencia";
-const FALLBACK_IMAGE = "https://via.placeholder.com/600x800.png?text=Event";
-
-const normalizeEventTypes = (rawTypes) => {
-  if (Array.isArray(rawTypes)) {
-    return rawTypes.map((type) => String(type).trim()).filter(Boolean);
-  }
-  if (typeof rawTypes === "string" && rawTypes.trim()) {
-    return rawTypes.split(",").map((type) => type.trim()).filter(Boolean);
-  }
-  return [];
-};
-
-const eventContainsPerformance = (eventTypes) =>
-  eventTypes.some((type) => 
-    PERFORMANCE_TYPES.some((performanceType) => 
-      type.toLowerCase() === performanceType.toLowerCase()
-    )
-  );
-
-const eventContainsTraining = (eventTypes) =>
-  eventTypes.some((type) => 
-    TRAINING_TYPES.some((trainingType) => 
-      type.toLowerCase() === trainingType.toLowerCase()
-    )
-  );
-
-const eventContainsResidency = (eventTypes) =>
-  eventTypes.some((type) => type.toLowerCase() === RESIDENCY_TYPE.toLowerCase());
-
-const parseDateEntry = (entry) => {
-  if (!entry) return null;
-  let dateValue = entry.date;
-  let parsedDate = null;
-
-  if (dateValue?.toDate) {
-    parsedDate = dateValue.toDate();
-  } else if (typeof dateValue === "string" || typeof dateValue === "number") {
-    const attempt = new Date(dateValue);
-    if (!Number.isNaN(attempt.getTime())) {
-      parsedDate = attempt;
-    }
-  } else if (dateValue instanceof Date) {
-    parsedDate = dateValue;
-  }
-
-  if (parsedDate && Number.isNaN(parsedDate.getTime())) {
-    parsedDate = null;
-  }
-
-  const time = typeof entry.time === "string" ? entry.time.trim() : "";
-
-  if (!parsedDate && !time) {
-    return null;
-  }
-
-  return { date: parsedDate, time };
-};
-
-const extractYear = (dates = []) => {
-  const entry = dates.find((item) => item?.date) || null;
-  if (!entry) return null;
-  if (entry.date?.toDate) {
-    return entry.date.toDate().getFullYear();
-  }
-  if (entry.date instanceof Date) {
-    return entry.date.getFullYear();
-  }
-  const parsed = new Date(entry.date);
-  return Number.isNaN(parsed.getTime()) ? null : parsed.getFullYear();
-};
 
 
 export default function Archivo() {
@@ -93,6 +29,8 @@ export default function Archivo() {
   const [error, setError] = useState(null);
   const [activeFilter, setActiveFilter] = useState("all");
   const [centeredItemWidth, setCenteredItemWidth] = useState(null);
+  const [frameLeft, setFrameLeft] = useState(0);
+  const [isDesktop, setIsDesktop] = useState(false);
   const sliderRef = useRef(null);
   const itemRefs = useRef([]);
 
@@ -241,6 +179,34 @@ export default function Archivo() {
     return () => cancelAnimationFrame(raf);
   }, [updateActiveFromScroll]);
 
+  useEffect(() => {
+    const check = () => setIsDesktop(window.innerWidth >= 769);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  useEffect(() => {
+    if (!isDesktop) return;
+    const idx = FILTER_OPTIONS.findIndex((o) => o.value === activeFilter);
+    const el = itemRefs.current[idx];
+    const wrap = sliderRef.current?.parentElement;
+    if (el && wrap) {
+      const wrapRect = wrap.getBoundingClientRect();
+      const elRect = el.getBoundingClientRect();
+      setFrameLeft(elRect.left - wrapRect.left);
+      setCenteredItemWidth(elRect.width);
+    }
+  }, [activeFilter, isDesktop]);
+
+  const handleFilterClick = useCallback((index) => {
+    if (isDesktop) {
+      setActiveFilter(FILTER_OPTIONS[index].value);
+    } else {
+      scrollToIndex(index);
+    }
+  }, [isDesktop, scrollToIndex]);
+
   return (
     <div className={styles.page}>
       <div className={styles.page_container}>
@@ -249,6 +215,7 @@ export default function Archivo() {
             <header className={styles.pageHeader}>
               <h1>ARCHIVO</h1>
             </header>
+            <p className={styles.pageSubtext}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida. Duis ac tellus et risus vulputate vehicula. Donec lobortis risus a elit. Etiam tempor. Ut ullamcorper, ligula ut dictum pharetra, nisi nunc fringilla magna, in commodo elit erat nec turpis. Ut pharetra augue nec augue. Nam elit magna, hendrerit sit amet, tincidunt ac, viverra sed, nulla. Donec porta diam eu massa. Quisque diam lorem, interdum vitae, dapibus ac, scelerisque.</p>
 
             <div className={styles.agendaFilterSliderWrap}>
               <div
@@ -269,7 +236,7 @@ export default function Archivo() {
                       <button
                         type="button"
                         className={styles.navButton}
-                        onClick={() => scrollToIndex(index)}
+                        onClick={() => handleFilterClick(index)}
                       >
                         {opt.label}
                       </button>
@@ -279,7 +246,10 @@ export default function Archivo() {
               </div>
               <div
                 className={styles.agendaFilterFrame}
-                style={{ width: centeredItemWidth != null ? centeredItemWidth : undefined }}
+                style={{
+                  width: centeredItemWidth != null ? centeredItemWidth : undefined,
+                  ...(isDesktop ? { left: frameLeft, transform: "none" } : {}),
+                }}
                 aria-hidden
               />
             </div>
@@ -301,7 +271,7 @@ export default function Archivo() {
                 </p>
               </div>
             ) : (
-              <Grid cards={cards} hideImages={true} />
+              <Grid cards={cards} hideImages={true} basePath="/archivo" />
             )}
           </div>
         </div>

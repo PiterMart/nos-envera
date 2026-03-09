@@ -1,19 +1,16 @@
-"use client";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
+ "use client";
+import { useEffect, useMemo, useState } from "react";
+import { TransitionLink } from "../../components/TransitionLink";
 import { getDocs, collection, where, query } from "firebase/firestore";
 import pageStyles from "../../styles/page.module.css";
 import teamStyles from "../../styles/equipo.module.css";
 import { firestore } from "../firebase/firebaseConfig";
+import Section1 from "../../components/Section1";
 
 export default function Equipo() {
   const [teamMembers, setTeamMembers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [canScrollPrev, setCanScrollPrev] = useState(false);
-  const [canScrollNext, setCanScrollNext] = useState(false);
-
-  const carouselRef = useRef(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -56,67 +53,15 @@ export default function Equipo() {
 
   const visibleMembers = useMemo(() => teamMembers.filter((member) => Boolean(member.name)), [teamMembers]);
 
-  const updateScrollControls = useCallback(() => {
-    const container = carouselRef.current;
-    if (!container) {
-      setCanScrollPrev(false);
-      setCanScrollNext(false);
-      return;
-    }
-
-    const { scrollLeft, scrollWidth, clientWidth } = container;
-    setCanScrollPrev(scrollLeft > 0);
-    setCanScrollNext(scrollLeft + clientWidth < scrollWidth - 1);
-  }, []);
-
-  useEffect(() => {
-    updateScrollControls();
-  }, [visibleMembers, updateScrollControls]);
-
-  const scrollCarousel = useCallback(
-    (direction) => {
-      const container = carouselRef.current;
-      if (!container) {
-        return;
-      }
-
-      const scrollAmount = container.offsetWidth * 0.85;
-      container.scrollBy({
-        left: direction * scrollAmount,
-        behavior: "smooth",
-      });
-
-      if (typeof window !== "undefined" && typeof window.requestAnimationFrame === "function") {
-        window.requestAnimationFrame(updateScrollControls);
-      } else {
-        updateScrollControls();
-      }
-    },
-    [updateScrollControls]
-  );
-
-  const handleCarouselScroll = useCallback(() => {
-    if (typeof window !== "undefined" && typeof window.requestAnimationFrame === "function") {
-      window.requestAnimationFrame(updateScrollControls);
-    } else {
-      updateScrollControls();
-    }
-  }, [updateScrollControls]);
-
-  const handleCardKeyDown = useCallback((event) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      event.currentTarget.click();
-    }
-  }, []);
-
   return (
     <div className={pageStyles.page}>
+      <Section1 />
       <main className={pageStyles.main}>
-        <div className={pageStyles.page_container}>
+        <div className={pageStyles.page_container} style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <header className={pageStyles.pageHeader}>
-            <h1>EQUIPO NOS ENVERA</h1>
+            <h1>NUESTRO EQUIPO</h1>
           </header>
+          <p className={pageStyles.pageSubtext}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida. Duis ac tellus et risus vulputate vehicula. Donec lobortis risus a elit. Etiam tempor. Ut ullamcorper, ligula ut dictum pharetra, nisi nunc fringilla magna, in commodo elit erat nec turpis. Ut pharetra augue nec augue. Nam elit magna, hendrerit sit amet, tincidunt ac, viverra sed, nulla. Donec porta diam eu massa. Quisque diam lorem, interdum vitae, dapibus ac, scelerisque.</p>
           {isLoading && (
             <div className={pageStyles.loading_container}>
               <div className={pageStyles.loading_spinner} />
@@ -132,39 +77,17 @@ export default function Equipo() {
                 <p className={teamStyles.emptyState}>No hay miembros del equipo registrados todavía.</p>
               ) : (
                 <>
-                  {/* <div className={teamStyles.carouselControls}>
-                    <button
-                      type="button"
-                      className={teamStyles.carouselButton}
-                      onClick={() => scrollCarousel(-1)}
-                      aria-label="Ver miembros anteriores"
-                      disabled={!canScrollPrev}
-                    >
-                      ←
-                    </button>
-                    <button
-                      type="button"
-                      className={teamStyles.carouselButton}
-                      onClick={() => scrollCarousel(1)}
-                      aria-label="Ver más miembros"
-                      disabled={!canScrollNext}
-                    >
-                      →
-                    </button>
-                  </div> */}
-
-                  <div className={teamStyles.carouselViewport} ref={carouselRef} onScroll={handleCarouselScroll}>
+                  <div className={teamStyles.carouselViewport}>
                     <ul className={teamStyles.carouselTrack}>
                       {visibleMembers.map((member) => {
-                        const href = member.slug ? `/equipo/${member.slug}` : `/equipo/${member.id}`;
+                        const href = member.slug ? `/somos/${member.slug}` : `/somos/${member.id}`;
                         const roles = Array.isArray(member.roles) ? member.roles.filter(Boolean) : [];
 
                         return (
                           <li key={member.id} className={teamStyles.carouselSlide}>
-                            <Link
+                            <TransitionLink
                               href={href}
                               className={teamStyles.card}
-                              onKeyDown={handleCardKeyDown}
                             >
                               <div className={teamStyles.imageWrapper}>
                                 {member.profilePicture ? (
@@ -181,7 +104,7 @@ export default function Equipo() {
                                   <p className={teamStyles.cardRoles}>{roles.join(" · ")}</p>
                                 )}
                               </div>
-                            </Link>
+                            </TransitionLink>
                           </li>
                         );
                       })}

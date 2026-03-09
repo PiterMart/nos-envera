@@ -3,17 +3,16 @@ import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import ExhibitionLayout from "./layouts/ExhibitionLayout";
 import ArtworkLayout from "./layouts/ArtworkLayout";
-import exhibitionSimple from "./layouts/ExhibitionLayoutSimplified";
+import ExhibitionSimple from "./layouts/ExhibitionLayoutSimplified";
 import FairLayout from "./layouts/FairLayoutSimplified";
 import styles from "../../styles/embla.module.css";
 import PictureLayout from "./layouts/PictureLayout";
-
 
 const layouts = {
   exhibition: ExhibitionLayout,
   artwork: ArtworkLayout,
   picture: PictureLayout,
-  exhibitionSimple: exhibitionSimple,
+  exhibitionSimple: ExhibitionSimple,
   fair: FairLayout,
 };
 
@@ -21,20 +20,9 @@ const EmblaCarousel = ({ slides, options = {}, type }) => {
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
       loop: true,
-      speed: 5,
-      draggable: true,
+      dragFree: false,
       align: "center",
-      containScroll: "trimSnaps", 
-      breakpoints: {
-        768: {
-          // When the screen width is 768px or less, display 1 slide at a time
-          perView: 1,
-        },
-        1024: {
-          // When the screen width is 1024px or more, show 3 slides at a time
-          perView: 3,
-        },
-      },
+      containScroll: "trimSnaps",
       ...options,
     },
     [Autoplay({ playOnInit: true, delay: 7000 })]

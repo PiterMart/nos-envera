@@ -6,43 +6,25 @@ import { doc, getDoc, getDocs, collection, query, where } from "firebase/firesto
 import pageStyles from "../../../styles/page.module.css";
 import detailStyles from "../../../styles/equipoDetail.module.css";
 import { firestore } from "../../firebase/firebaseConfig";
+import Grid from "../../../components/grid";
 
-const formatDate = (value) => {
-  if (!value) {
-    return null;
-  }
-
-  try {
-    const date = typeof value.toDate === "function" ? value.toDate() : new Date(value);
-    if (Number.isNaN(date.getTime())) {
-      return null;
-    }
-    return new Intl.DateTimeFormat("es", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    }).format(date);
-  } catch (error) {
-    console.error("Error formatting date", error);
-    return null;
-  }
-};
-
-const normalizeArray = (value) => {
-  if (Array.isArray(value)) {
-    return value;
-  }
-  if (typeof value === "string" && value.trim()) {
-    return [value.trim()];
-  }
-  return [];
-};
+import {
+  FALLBACK_IMAGE,
+  normalizeEventTypes,
+  parseDateEntry,
+  extractYear,
+  normalizeArray,
+  sortByYearDesc,
+} from "../../../lib/eventUtils";
 
 export default function TeamMemberPage({ params }) {
   const { memberId } = use(params);
   const [member, setMember] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [memberEvents, setMemberEvents] = useState([]);
+  const [eventsLoading, setEventsLoading] = useState(false);
+  const [eventsError, setEventsError] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -110,7 +92,86 @@ export default function TeamMemberPage({ params }) {
   const roles = useMemo(() => normalizeArray(member?.roles), [member]);
   const bioParagraphs = useMemo(() => normalizeArray(member?.bio), [member]);
   const manifestoParagraphs = useMemo(() => normalizeArray(member?.manifesto), [member]);
-  const formattedBirthDate = useMemo(() => formatDate(member?.birthDate), [member]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchMemberEvents = async () => {
+      if (!member || !member.id) {
+        if (isMounted) {
+          setMemberEvents([]);
+          setEventsLoading(false);
+        }
+        return;
+      }
+
+      try {
+        setEventsLoading(true);
+        setEventsError(null);
+
+        const snapshot = await getDocs(collection(firestore, "events"));
+        const documents = snapshot.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
+
+        const eventsForMember = documents
+          .map((eventDoc) => {
+            const artists = Array.isArray(eventDoc.artists) ? eventDoc.artists : [];
+            const directors = Array.isArray(eventDoc.directors) ? eventDoc.directors : [];
+
+            const participates = [...artists, ...directors].some((person) => {
+              if (!person || typeof person !== "object") return false;
+              return person.memberId === member.id;
+            });
+
+            if (!participates) return null;
+
+            const eventTypes = normalizeEventTypes(eventDoc.event_type || eventDoc.eventType || eventDoc.type);
+            const dates = Array.isArray(eventDoc.dates)
+              ? eventDoc.dates.map(parseDateEntry).filter(Boolean)
+              : [];
+            const imageUrl = eventDoc.banner || eventDoc.flyer || eventDoc.gallery?.[0]?.url || FALLBACK_IMAGE;
+            const slug = eventDoc.slug || eventDoc.id;
+            const title = eventDoc.name || eventDoc.title || "Evento";
+            const year = extractYear(dates) ?? "—";
+
+            return {
+              id: eventDoc.id,
+              title,
+              slug,
+              imageUrl,
+              year,
+              eventTypes,
+            };
+          })
+          .filter(Boolean)
+          .sort(sortByYearDesc);
+
+        if (isMounted) {
+          setMemberEvents(eventsForMember);
+        }
+      } catch (fetchError) {
+        console.error("Error fetching events for member:", fetchError);
+        if (isMounted) {
+          setEventsError("No pudimos cargar las actividades de este miembro.");
+        }
+      } finally {
+        if (isMounted) {
+          setEventsLoading(false);
+        }
+      }
+    };
+
+    setMemberEvents([]);
+    setEventsError(null);
+    setEventsLoading(false);
+
+    if (member) {
+      fetchMemberEvents();
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [member]);
 
   return (
     <div className={pageStyles.page}>
@@ -118,7 +179,7 @@ export default function TeamMemberPage({ params }) {
         <div className={pageStyles.page_container}>
           <div className={pageStyles.contentMaxWidth}>
           <div className={detailStyles.backRow}>
-            <TransitionLink href="/equipo" direction="back" className={detailStyles.backLink}>
+            <TransitionLink href="/somos" direction="back" className={detailStyles.backLink}>
               <span aria-hidden>←</span>
               <span>Volver a equipo</span>
             </TransitionLink>
@@ -148,32 +209,15 @@ export default function TeamMemberPage({ params }) {
 
                 <div className={detailStyles.identityCard}>
                   <h1 className={detailStyles.name}>{member.name}</h1>
+                  {member.origin && <p className={detailStyles.origin}>{member.origin}</p>}
                   {roles.length > 0 && <p className={detailStyles.roles}>{roles.join(" · ")}</p>}
                 </div>
               </div>
 
               <div className={detailStyles.infoColumn}>
-                <div className={detailStyles.metaList}>
-                  {member.origin && (
-                    <p className={detailStyles.metaItem}>
-                      <strong>Origen:</strong> {member.origin}
-                    </p>
-                  )}
-                  {formattedBirthDate && (
-                    <p className={detailStyles.metaItem}>
-                      <strong>Nacimiento:</strong> {formattedBirthDate}
-                    </p>
-                  )}
-                  {member.team && (
-                    <p className={detailStyles.metaItem}>
-                      <strong>Equipo interno</strong>
-                    </p>
-                  )}
-                </div>
-
                 {bioParagraphs.length > 0 && (
                   <div className={detailStyles.section}>
-                    <h2 className={detailStyles.sectionTitle}>Biografía</h2>
+                    {/* <h2 className={detailStyles.sectionTitle}>Biografía</h2> */}
                     <div className={detailStyles.paragraphs}>
                       {bioParagraphs.map((paragraph, index) => (
                         <p key={index}>{paragraph}</p>
@@ -195,7 +239,7 @@ export default function TeamMemberPage({ params }) {
 
                 {(member.web || member.cvUrl) && (
                   <div className={detailStyles.section}>
-                    <h2 className={detailStyles.sectionTitle}>Enlaces</h2>
+                    {/* <h2 className={detailStyles.sectionTitle}>Enlaces</h2> */}
                     <div className={detailStyles.links}>
                       {member.web && (
                         <a href={member.web} target="_blank" rel="noopener noreferrer" className={detailStyles.link}>
@@ -210,6 +254,19 @@ export default function TeamMemberPage({ params }) {
                     </div>
                   </div>
                 )}
+
+                <div className={detailStyles.section}>
+                  {/* <h2 className={detailStyles.sectionTitle}>Actividad</h2> */}
+                  {eventsLoading ? (
+                    <p className={pageStyles.loading_container}>Cargando actividades…</p>
+                  ) : eventsError ? (
+                    <p className={pageStyles.error}>{eventsError}</p>
+                  ) : memberEvents.length === 0 ? (
+                    <p className={detailStyles.paragraphs}>Todavía no hay actividades registradas para este miembro.</p>
+                  ) : (
+                    <Grid cards={memberEvents} hideImages={true} />
+                  )}
+                </div>
               </div>
             </section>
           )}

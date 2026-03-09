@@ -1,6 +1,7 @@
  "use client";
  
- import { TransitionLink } from "../../../components/TransitionLink";
+import { TransitionLink } from "../../../components/TransitionLink";
+import { useRouter } from "next/navigation";
  import { use, useEffect, useMemo, useState } from "react";
  import { doc, getDoc, getDocs, collection, query, where } from "firebase/firestore";
  import pageStyles from "../../../styles/page.module.css";
@@ -8,92 +9,18 @@
  import { firestore } from "../../firebase/firebaseConfig";
  import Grid from "../../../components/grid";
  
- const FALLBACK_IMAGE = "https://via.placeholder.com/600x800.png?text=Event";
- 
- const normalizeEventTypes = (rawTypes) => {
-   if (Array.isArray(rawTypes)) {
-     return rawTypes.map((type) => String(type).trim()).filter(Boolean);
-   }
-   if (typeof rawTypes === "string" && rawTypes.trim()) {
-     return rawTypes.split(",").map((type) => type.trim()).filter(Boolean);
-   }
-   return [];
- };
- 
- const parseDateEntry = (entry) => {
-   if (!entry) return null;
-   let dateValue = entry.date;
-   let parsedDate = null;
- 
-   if (dateValue?.toDate) {
-     parsedDate = dateValue.toDate();
-   } else if (typeof dateValue === "string" || typeof dateValue === "number") {
-     const attempt = new Date(dateValue);
-     if (!Number.isNaN(attempt.getTime())) {
-       parsedDate = attempt;
-     }
-   } else if (dateValue instanceof Date) {
-     parsedDate = dateValue;
-   }
- 
-   if (parsedDate && Number.isNaN(parsedDate.getTime())) {
-     parsedDate = null;
-   }
- 
-   const time = typeof entry.time === "string" ? entry.time.trim() : "";
- 
-   if (!parsedDate && !time) {
-     return null;
-   }
- 
-   return { date: parsedDate, time };
- };
- 
- const extractYear = (dates = []) => {
-   const entry = dates.find((item) => item?.date) || null;
-   if (!entry) return null;
-   if (entry.date?.toDate) {
-     return entry.date.toDate().getFullYear();
-   }
-   if (entry.date instanceof Date) {
-     return entry.date.getFullYear();
-   }
-   const parsed = new Date(entry.date);
-   return Number.isNaN(parsed.getTime()) ? null : parsed.getFullYear();
- };
-
-const formatDate = (value) => {
-  if (!value) {
-    return null;
-  }
-
-  try {
-    const date = typeof value.toDate === "function" ? value.toDate() : new Date(value);
-    if (Number.isNaN(date.getTime())) {
-      return null;
-    }
-    return new Intl.DateTimeFormat("es", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    }).format(date);
-  } catch (error) {
-    console.error("Error formatting date", error);
-    return null;
-  }
-};
-
-const normalizeArray = (value) => {
-  if (Array.isArray(value)) {
-    return value;
-  }
-  if (typeof value === "string" && value.trim()) {
-    return [value.trim()];
-  }
-  return [];
-};
+import {
+  FALLBACK_IMAGE,
+  normalizeEventTypes,
+  parseDateEntry,
+  extractYear,
+  formatDate,
+  normalizeArray,
+  sortByYearDesc,
+} from "../../../lib/eventUtils";
 
 export default function ComunidadMemberPage({ params }) {
+  const router = useRouter();
   const { memberId } = use(params);
   const [member, setMember] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -143,9 +70,13 @@ export default function ComunidadMemberPage({ params }) {
           throw new Error("Miembro no encontrado.");
         }
 
-        // Check if member is part of the team - comunidad members should not be in the team
+        // If this member belongs to the internal team, redirect to the team detail page
         if (memberData.team === true) {
-          throw new Error("Este miembro forma parte del equipo interno.");
+          const targetId = memberData.slug || memberData.id;
+          if (isMounted && targetId) {
+            router.replace(`/somos/${targetId}`);
+          }
+          return;
         }
 
         if (isMounted) {
@@ -220,11 +151,7 @@ export default function ComunidadMemberPage({ params }) {
             };
           })
           .filter(Boolean)
-          .sort((a, b) => {
-            if (a.year === "—" && b.year !== "—") return 1;
-            if (a.year !== "—" && b.year === "—") return -1;
-            return String(b.year).localeCompare(String(a.year));
-          });
+          .sort(sortByYearDesc);
  
         if (isMounted) {
           setMemberEvents(eventsForMember);
@@ -257,19 +184,11 @@ export default function ComunidadMemberPage({ params }) {
   const roles = useMemo(() => normalizeArray(member?.roles), [member]);
   const bioParagraphs = useMemo(() => normalizeArray(member?.bio), [member]);
   const manifestoParagraphs = useMemo(() => normalizeArray(member?.manifesto), [member]);
-  const formattedBirthDate = useMemo(() => formatDate(member?.birthDate), [member]);
 
   return (
     <div className={pageStyles.page}>
       <main className={pageStyles.main}>
         <div className={pageStyles.page_container}>
-          <div className={detailStyles.backRow}>
-            <TransitionLink href="/comunidad" direction="back" className={detailStyles.backLink}>
-              <span aria-hidden>←</span>
-              <span>Volver a comunidad</span>
-            </TransitionLink>
-          </div>
-
           {isLoading && (
             <div className={pageStyles.loading_container}>
               <div className={pageStyles.loading_spinner} />
@@ -290,27 +209,15 @@ export default function ComunidadMemberPage({ params }) {
 
                 <div className={detailStyles.identityCard}>
                   <h1 className={detailStyles.name}>{member.name}</h1>
+                  {member.origin && <p className={detailStyles.origin}>{member.origin}</p>}
                   {roles.length > 0 && <p className={detailStyles.roles}>{roles.join(" · ")}</p>}
                 </div>
               </div>
 
               <div className={`${detailStyles.infoColumn} ${detailStyles.infoColumnMaxWidth}`}>
-                <div className={detailStyles.metaList}>
-                  {member.origin && (
-                    <p className={detailStyles.metaItem}>
-                      <strong>Origen:</strong> {member.origin}
-                    </p>
-                  )}
-                  {formattedBirthDate && (
-                    <p className={detailStyles.metaItem}>
-                      <strong>Nacimiento:</strong> {formattedBirthDate}
-                    </p>
-                  )}
-                </div>
-
                 {bioParagraphs.length > 0 && (
                   <div className={detailStyles.section}>
-                    <h2 className={detailStyles.sectionTitle}>Biografía</h2>
+                    {/* <h2 className={detailStyles.sectionTitle}>Biografía</h2> */}
                     <div className={detailStyles.paragraphs}>
                       {bioParagraphs.map((paragraph, index) => (
                         <p key={index}>{paragraph}</p>
@@ -332,7 +239,7 @@ export default function ComunidadMemberPage({ params }) {
  
                 {(member.web || member.cvUrl) && (
                   <div className={detailStyles.section}>
-                    <h2 className={detailStyles.sectionTitle}>Enlaces</h2>
+                    {/* <h2 className={detailStyles.sectionTitle}>Enlaces</h2> */}
                     <div className={detailStyles.links}>
                       {member.web && (
                         <a href={member.web} target="_blank" rel="noopener noreferrer" className={detailStyles.link}>
@@ -349,7 +256,7 @@ export default function ComunidadMemberPage({ params }) {
                 )}
  
                 <div className={detailStyles.section}>
-                  <h2 className={detailStyles.sectionTitle}>Actividad</h2>
+                  {/* <h2 className={detailStyles.sectionTitle}>Actividad</h2> */}
                   {eventsLoading ? (
                     <p className={pageStyles.loading_container}>Cargando actividades…</p>
                   ) : eventsError ? (
@@ -360,6 +267,26 @@ export default function ComunidadMemberPage({ params }) {
                     <Grid cards={memberEvents} hideImages={true} />
                   )}
                 </div>
+
+                <TransitionLink
+                  href="/comunidad"
+                  direction="back"
+                  style={{
+                    textDecoration: "none",
+                    fontSize: "0.9rem",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                    color: "#222",
+                    borderBottom: "1px solid #222",
+                    marginTop: "2rem",
+                    alignSelf: "flex-end",
+                    textAlign: "right",
+                    display: "inline-block",
+                    marginLeft: "auto",
+                  }}
+                >
+                  ← Volver a la comunidad
+                </TransitionLink>
               </div>
             </section>
           )}

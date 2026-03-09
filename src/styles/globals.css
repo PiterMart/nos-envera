@@ -264,11 +264,6 @@ a {
   font-style: italic;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-}
 
 /* Page transitions: wipe left-to-right (back) or right-to-left (forward) */
 @keyframes page-transition-old-slide-out-left {
