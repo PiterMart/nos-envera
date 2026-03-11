@@ -1,18 +1,18 @@
 .footer {
   width: 100%;
-  margin-top: auto;
+  margin-top: 5rem;
   margin-left: 0;
-  padding-top: 3rem;
+  padding-top: 5rem;
   padding-bottom: 2rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-top: 1px solid black;
   background-color: white;
   position: relative;
   z-index: 2;
 }
 
 .footerContent {
-  max-width: auto;
-  margin: 0;
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 2rem 1rem;
   display: flex;
   flex-direction: column;
@@ -133,10 +133,150 @@
   font-weight: var(--font-weight-medium);
 }
 
+.footerMainRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 3rem;
+  align-items: start;
+  width: 100%;
+}
+
+.footerCol {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.newsletterBlock {
+  margin-top: 0.5rem;
+}
+
+.newsletterForm {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.newsletterInput {
+  flex: 1 1 180px;
+  padding: 0.5rem 0.75rem;
+}
+
+.newsletterInputFull {
+  flex: 1 1 250px;
+  padding: 0.75rem 1rem;
+}
+
+.newsletterInput,
+.newsletterInputFull {
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  font-family: var(--font-paragraph);
+  font-style: italic;
+  outline: none;
+  transition: border-color 0.3s ease;
+  min-width: 0;
+}
+
+.newsletterInput:focus,
+.newsletterInputFull:focus {
+  border-color: #000;
+}
+
+.newsletterButton {
+  padding: 0.5rem 1.25rem;
+  font-size: 1rem;
+}
+
+.newsletterButtonFull {
+  padding: 0.75rem 2rem;
+}
+
+.newsletterButton,
+.newsletterButtonFull {
+  font-family: var(--font-paragraph);
+  font-style: italic;
+  font-weight: 600;
+  background: #000;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  white-space: nowrap;
+}
+
+.newsletterButton:hover,
+.newsletterButtonFull:hover {
+  background: #333;
+  transform: translateY(-1px);
+}
+
+.newsletterMessage {
+  font-family: var(--font-paragraph);
+  font-style: italic;
+  font-size: 0.85rem;
+  margin-top: 0.35rem;
+}
+
+.newsletterMessageError {
+  color: #cc0000;
+}
+
+.newsletterMessageSuccess {
+  color: #28a745;
+}
+
+.newsletterTitle {
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-heavy);
+  font-size: 0.9rem;
+  letter-spacing: var(--letter-spacing-tight);
+  margin: 0 0 0.5rem 0;
+  text-transform: uppercase;
+}
+
+.footerNavList {
+  list-style: none;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.footerNavList li {
+  font-family: var(--font-paragraph);
+  font-style: italic;
+  font-weight: var(--font-weight-medium);
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+}
+
+.footerNavList li::marker {
+  content: none;
+}
+
+.footerNavList li a {
+  text-decoration: none;
+  color: var(--foreground);
+  transition: color 0.3s ease-in;
+}
+
+.footerNavList li a:hover {
+  color: #007bff;
+}
+
+.footerNavList li a.page_current {
+  color: #007bff;
+}
+
 .mapContainer {
   width: 100%;
-  margin-top: 1rem;
+  max-width: 100%;
   overflow: hidden;
+  margin-top: 0.25rem;
 }
 
 .mapContainer iframe {
@@ -233,6 +373,19 @@
 
   .footerCopyright p {
     font-size: 0.8rem;
+  }
+
+  .footerMainRow {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .mapContainer {
+    max-width: 100%;
+  }
+
+  .mapContainer iframe {
+    height: 220px;
   }
 
   .footerContact {

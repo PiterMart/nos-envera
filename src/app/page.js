@@ -125,7 +125,7 @@ export default function Home() {
     <div className={styles.page}>
       <Hero />
       <div style={{ height: '100vh', width: '100%' }} aria-hidden="true" />
-      <Section3 />
+      {/* <Section3 /> */}
       <main className={styles.main}>
       </main>
 

@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import styles from "../../styles/page.module.css";
 import detailStyles from "../../styles/equipoDetail.module.css";
 import React, { useEffect, useState, useRef, useMemo } from "react";
@@ -320,6 +321,16 @@ export default function Comunidad() {
           <h1>COMUNIDAD</h1>
         </header>
         <p className={styles.pageSubtext}>Nos en Vera es, también, la red de artistas, investigadorxs y colaboradorxs que mantienen activo nuestro espacio. Esta sección reúne sus biografías como un archivo vivo de la comunidad que lo hace posible.</p>
+        <div style={{ width: "100%", marginTop: "0.75rem", marginBottom: "2rem" }}>
+          <Image
+            src="/23 PRACTICAS DE SINCRONIZ - perfo.jpg"
+            alt="23 Prácticas de sincronización"
+            width={1200}
+            height={800}
+            style={{ width: "100%", height: "auto", display: "block" }}
+            sizes="(max-width: 768px) 100vw, 1200px"
+          />
+        </div>
         <div
           className={styles.homepage_container}
           style={{ paddingTop: "0" }}
@@ -427,7 +438,7 @@ export default function Comunidad() {
                               margin: 0,
                               display: "flex",
                               flexDirection: "column",
-                              gap: "0.25rem",
+                              gap: "0rem",
                               textAlign: "left",
                             }}>
                               {members.map(({ id, name, slug, team }) => {
@@ -437,7 +448,7 @@ export default function Comunidad() {
                                   <li
                                     key={id}
                                     style={{
-                                      padding: "0.25rem 0",
+                                      padding: "0",
                                     }}
                                   >
                                     <TransitionLink
@@ -446,8 +457,8 @@ export default function Comunidad() {
                                       style={{
                                         fontSize: width < BREAKPOINT_SM ? "1rem" : "1.2rem",
                                         fontWeight: 700,
-                                        fontFamily:
-                                          "'Avenir Next Medium', 'Avenir Next', 'AvenirNext-Medium', 'AvenirNext', sans-serif",
+                                        fontFamily: "var(--font-paragraph)",
+                                        fontStyle: "italic",
                                         color: "#000",
                                         textDecoration: "none",
                                         display: "block",
@@ -530,8 +541,8 @@ export default function Comunidad() {
                             style={{
                               fontSize: width < BREAKPOINT_SM ? "1rem" : "1.2rem",
                               fontWeight: 700,
-                              fontFamily:
-                                "'Avenir Next Medium', 'Avenir Next', 'AvenirNext-Medium', 'AvenirNext', sans-serif",
+                              fontFamily: "var(--font-paragraph)",
+                              fontStyle: "italic",
                               color: "#000",
                               textDecoration: "none",
                               whiteSpace: "nowrap",

@@ -189,6 +189,7 @@ export default function ComunidadMemberPage({ params }) {
     <div className={pageStyles.page}>
       <main className={pageStyles.main}>
         <div className={pageStyles.page_container}>
+          <div className={pageStyles.contentMaxWidth}>
           {isLoading && (
             <div className={pageStyles.loading_container}>
               <div className={pageStyles.loading_spinner} />
@@ -264,7 +265,7 @@ export default function ComunidadMemberPage({ params }) {
                   ) : memberEvents.length === 0 ? (
                     <p className={detailStyles.paragraphs}>Todavía no hay actividades registradas para este miembro.</p>
                   ) : (
-                    <Grid cards={memberEvents} hideImages={true} />
+                    <Grid cards={memberEvents} hideImages={true} basePath="/archivo" />
                   )}
                 </div>
 
@@ -290,6 +291,7 @@ export default function ComunidadMemberPage({ params }) {
               </div>
             </section>
           )}
+          </div>
         </div>
       </main>
       <footer className={pageStyles.footer}></footer>

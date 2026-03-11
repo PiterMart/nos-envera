@@ -80,7 +80,7 @@ export default function RecentEvents() {
         const directorsText = directors.length > 0 ? directors.join(", ") : null;
 
         const eventSlug = event.slug || event.id;
-        const eventHref = `/agenda/${eventSlug}`;
+        const eventHref = `/archivo/${eventSlug}`;
 
         return (
           <TransitionLink key={event.id} href={eventHref} className={styles.eventItem}>

@@ -1,5 +1,6 @@
 import "../styles/globals.css";
 import Nav from "../components/Nav";
+import RecentEvents from "../components/RecentEvents";
 import Footer from "../components/Footer";
 import LoadingProvider from "../components/LoadingProvider";
 import PageTransitionProvider from "../components/PageTransitionProvider";
@@ -34,6 +35,7 @@ export default function RootLayout({ children }) {
                 {children}
               </PageTransitionWrapper>
               <div>
+                <RecentEvents />
                 <Footer />
               </div>
             </main>

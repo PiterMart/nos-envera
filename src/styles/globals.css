@@ -38,10 +38,32 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Overused Grotesk";
+  src: url("/fonts/OverusedGrotesk/OverusedGrotesk-Italic.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Overused Grotesk";
+  src: url("/fonts/OverusedGrotesk/OverusedGrotesk-LightItalic.otf") format("opentype");
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #000000;
   --font-family-base: "Avenir Next Cyr", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-paragraph: "Overused Grotesk", Georgia, "Times New Roman", serif;
+  --font-paragraph-light: "Overused Grotesk", Georgia, "Times New Roman", serif;
+  --paragraph-font-size: 1.25rem;
+  --paragraph-line-height: 1.25rem;
+  --subtext-font-size: 1.55rem;
+  --subtext-line-height: 1.55rem;
   --font-weight-ultralight: 200;
   --font-weight-medium: 500;
   --font-weight-demibold: 600;
@@ -76,10 +98,20 @@ section {
   flex-direction: column;
   gap: 1.75rem;
 }
-p{
-  line-height: 1.5rem;
+p {
+  font-family: var(--font-paragraph);
+  font-style: italic;
+  font-size: var(--paragraph-font-size);
+  line-height: var(--paragraph-line-height);
   text-align: justify;
 }
+
+@media (max-width: 768px) {
+  p {
+    padding: 0.25rem;
+  }
+}
+
 /* Firefox (uncomment to work in Firefox, although other properties will not work!)  */
 /** {
   scrollbar-width: thin;

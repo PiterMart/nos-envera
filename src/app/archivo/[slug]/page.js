@@ -316,25 +316,49 @@ export default function PerformanceDetail({ params }) {
                   </section>
                 ) : null}
 
-                <TransitionLink
-                  href="/agenda"
-                  direction="back"
+                <div
                   style={{
-                    textDecoration: "none",
-                    fontSize: "0.9rem",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.5px",
-                    color: "#222",
-                    borderBottom: "1px solid #222",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.75rem",
                     marginTop: "2rem",
                     alignSelf: "flex-end",
-                    textAlign: "right",
-                    display: "inline-block",
-                    marginLeft: "auto",
+                    alignItems: "flex-end",
                   }}
                 >
-                  ← Volver al archivo
-                </TransitionLink>
+                  <TransitionLink
+                    href="/archivo"
+                    direction="back"
+                    style={{
+                      textDecoration: "none",
+                      fontSize: "0.9rem",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                      color: "#222",
+                      borderBottom: "1px solid #222",
+                      textAlign: "right",
+                      display: "inline-block",
+                    }}
+                  >
+                    ← Volver al archivo
+                  </TransitionLink>
+                  <TransitionLink
+                    href="/agenda"
+                    direction="back"
+                    style={{
+                      textDecoration: "none",
+                      fontSize: "0.9rem",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                      color: "#222",
+                      borderBottom: "1px solid #222",
+                      textAlign: "right",
+                      display: "inline-block",
+                    }}
+                  >
+                    ← Ver agenda
+                  </TransitionLink>
+                </div>
               </>
             )}
           </div>

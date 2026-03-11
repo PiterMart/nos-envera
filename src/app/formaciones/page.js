@@ -86,7 +86,7 @@ export default function Formacion() {
                 <p>No hay formaciones registradas todavía.</p>
               </div>
             ) : (
-              <Grid cards={cards} tight />
+              <Grid cards={cards} tight hoverOverlay basePath="/archivo" />
             )}
           </div>
         </div>

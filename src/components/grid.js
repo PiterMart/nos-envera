@@ -115,12 +115,19 @@ const archivoArticleStyles = {
 const CURSOR_IMAGE_WIDTH = 280;
 const CURSOR_IMAGE_HEIGHT = 360;
 
-export default function Grid({ cards, hideImages = false, tight = false, basePath = "/agenda" }) {
+export default function Grid({ cards, hideImages = false, tight = false, hoverOverlay = false, basePath = "/archivo" }) {
   const groups = groupByYear(cards);
   const [cursorImageUrl, setCursorImageUrl] = useState(null);
   const cursorRef = useRef(null);
   const rafRef = useRef(null);
   const posRef = useRef({ x: 0, y: 0 });
+  const [hoveredCardId, setHoveredCardId] = useState(null);
+  const [revealedCardId, setRevealedCardId] = useState(null);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    setIsTouchDevice("ontouchstart" in window || window.matchMedia("(pointer: coarse)").matches);
+  }, []);
 
   const dynamicGridStyles = {
     ...(hideImages ? gridStyles : tight ? gridStylesTight : gridStyles),
@@ -206,35 +213,136 @@ export default function Grid({ cards, hideImages = false, tight = false, basePat
           <div key={year} style={{ width: "100%" }}>
             <h2 style={{ ...yearHeadingBase, marginTop: idx === 0 ? 0 : "1.5rem" }}>{year}</h2>
             <div style={dynamicGridStyles}>
-              {groupCards.map((card) => (
-                <TransitionLink
-                  href={`${basePath}/${card.slug}`}
-                  key={card.id}
-                  style={hideImages ? archivoLinkStyles : linkStyles}
-                  onMouseEnter={hideImages && card.imageUrl ? () => showCursorImage(card.imageUrl) : undefined}
-                  onMouseLeave={hideImages ? hideCursorImage : undefined}
-                >
-                  <article style={hideImages ? archivoArticleStyles : tight ? articleStylesTight : articleStyles}>
-                    {!hideImages && card.imageUrl ? (
-                      <div style={tight ? imageWrapperStylesTight : imageWrapperStyles}>
-                        <Image
-                          src={card.imageUrl}
-                          alt={card.title}
-                          fill
-                          sizes="(max-width: 600px) 100vw, (max-width: 1000px) 50vw, 300px"
-                          style={{ objectFit: "cover" }}
-                        />
-                      </div>
-                    ) : !hideImages && tight ? (
-                      <div style={imagePlaceholderStyles} aria-hidden />
-                    ) : null}
-                    <h3 style={{ fontSize: "1.1rem", fontWeight: 400, letterSpacing: "0.5px", margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                      <span style={{ color: "black", fontSize: "0.6em", lineHeight: 1 }}>{CARD_DOT}</span>
-                      {card.title}
-                    </h3>
-                  </article>
-                </TransitionLink>
-              ))}
+              {groupCards.map((card) => {
+                const showOverlay = hoverOverlay && (hoveredCardId === card.id || revealedCardId === card.id);
+                const handleClick = (e) => {
+                  if (!hoverOverlay || !isTouchDevice) return;
+                  if (revealedCardId === card.id) {
+                    return;
+                  }
+                  e.preventDefault();
+                  setRevealedCardId(card.id);
+                };
+                return (
+                  <TransitionLink
+                    href={`${basePath}/${card.slug}`}
+                    key={card.id}
+                    style={hideImages ? archivoLinkStyles : linkStyles}
+                    onMouseEnter={
+                      hideImages && card.imageUrl
+                        ? () => showCursorImage(card.imageUrl)
+                        : hoverOverlay
+                          ? () => setHoveredCardId(card.id)
+                          : undefined
+                    }
+                    onMouseLeave={
+                      hideImages
+                        ? hideCursorImage
+                        : hoverOverlay
+                          ? () => setHoveredCardId(null)
+                          : undefined
+                    }
+                    onClick={handleClick}
+                  >
+                    <article style={hideImages ? archivoArticleStyles : tight ? articleStylesTight : articleStyles}>
+                      {!hideImages && card.imageUrl ? (
+                        <div style={tight ? imageWrapperStylesTight : imageWrapperStyles}>
+                          <Image
+                            src={card.imageUrl}
+                            alt={card.title}
+                            fill
+                            sizes="(max-width: 600px) 100vw, (max-width: 1000px) 50vw, 300px"
+                            style={{ objectFit: "cover" }}
+                          />
+                          {hoverOverlay && (
+                            <div
+                              role="presentation"
+                              aria-hidden
+                              style={{
+                                position: "absolute",
+                                inset: 0,
+                                backgroundColor: "black",
+                                opacity: showOverlay ? 0.9 : 0,
+                                transition: "opacity 0.3s ease",
+                                display: "flex",
+                                alignItems: "flex-start",
+                                justifyContent: "flex-start",
+                                pointerEvents: "none",
+                                padding: "1rem",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  fontFamily: "var(--font-paragraph)",
+                                  fontStyle: "italic",
+                                  color: "white",
+                                  fontSize: "0.9rem",
+                                  fontWeight: 500,
+                                  letterSpacing: "0.5px",
+                                  textAlign: "left",
+                                  lineHeight: 1.3,
+                                  width: "100%",
+                                  overflowWrap: "break-word",
+                                  wordBreak: "break-word",
+                                }}
+                              >
+                                {card.title}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      ) : !hideImages && tight ? (
+                        <div style={{ ...imagePlaceholderStyles, position: "relative" }} aria-hidden>
+                          <div style={{ position: "absolute", inset: 0, borderRadius: "10px", backgroundColor: "#e8e8e8" }} />
+                          {hoverOverlay && (
+                            <div
+                              role="presentation"
+                              aria-hidden
+                              style={{
+                                position: "absolute",
+                                inset: 0,
+                                backgroundColor: "black",
+                                opacity: showOverlay ? 0.9 : 0,
+                                transition: "opacity 0.3s ease",
+                                display: "flex",
+                                alignItems: "flex-start",
+                                justifyContent: "flex-start",
+                                pointerEvents: "none",
+                                padding: "1rem",
+                                borderRadius: "10px",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  fontFamily: "var(--font-paragraph)",
+                                  fontStyle: "italic",
+                                  color: "white",
+                                  fontSize: "0.9rem",
+                                  fontWeight: 500,
+                                  letterSpacing: "0.5px",
+                                  textAlign: "left",
+                                  lineHeight: 1.3,
+                                  width: "100%",
+                                  overflowWrap: "break-word",
+                                  wordBreak: "break-word",
+                                }}
+                              >
+                                {card.title}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      ) : null}
+                      {!hoverOverlay && (
+                        <h3 style={{ fontFamily: "var(--font-paragraph)", fontStyle: "italic", fontSize: "1.1rem", fontWeight: 400, letterSpacing: "0.5px", margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                          <span style={{ color: "black", fontSize: "0.6em", lineHeight: 1 }}>{CARD_DOT}</span>
+                          {card.title}
+                        </h3>
+                      )}
+                    </article>
+                  </TransitionLink>
+                );
+              })}
             </div>
           </div>
         ))}

@@ -75,7 +75,7 @@ export default function Residencias() {
             <header className={styles.pageHeader}>
               <h1>RESIDENCIAS</h1>
             </header>
-            <p className={styles.pageSubtext}>A través de un enfoque que privilegia la investigación y el proceso artístico, Nos en Vera ofrece residencias de creación, en las que las premisas son definidas por los propios artistas en función de sus intereses e inquietudes. Incentivamos a lxs artistas residentes a hacer aperturas públicas de sus procesos creativos. Esta instancia funciona como un laboratorio, donde se materializan y exploran nuevas formas de producción artística, promoviendo la afectación mutua en el diálogo entre lxs artistas residentes y la comunidad.</p>
+            <p className={styles.pageSubtext}>Con un enfoque que privilegia la investigación y el proceso artístico, Nos en Vera ofrece residencias de creación en las que cada artista define sus propias premisas de trabajo. Incentivamos a lxs artistas residentes a realizar aperturas públicas de sus procesos creativos. Estas instancias habilitan espacios de prueba y experimentación, en diálogo con la comunidad y con quienes se acercan al espacio.</p>
 
             {loading ? (
               <div style={{ textAlign: "center", padding: "3rem", color: "#666" }}>Cargando residencias...</div>
@@ -86,7 +86,7 @@ export default function Residencias() {
                 <p>No hay residencias registradas todavía.</p>
               </div>
             ) : (
-              <Grid cards={cards} tight />
+              <Grid cards={cards} tight hoverOverlay basePath="/archivo" />
             )}
           </div>
         </div>

@@ -73,7 +73,7 @@ export default function Perfos() {
         <div className={styles.homepage_container} style={{ paddingTop: "2rem" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "2rem", width: "100%", margin: "auto", maxWidth: "1200px" }}>
             <header className={styles.pageHeader}>
-              <h1>PERFORMANCES</h1>
+              <h1>PERFOS</h1>
             </header>
             <p className={styles.pageSubtext}>Las exhibiciones y performance son instancias abiertas al público, que permiten el despliegue de obras de artistas contemporánexs, en compromiso con una escena viva, en diálogo con la comunidad y fortalecen la circulación de nuevas prácticas.</p>
 
@@ -86,7 +86,7 @@ export default function Perfos() {
                 <p>No hay perfos registradas todavía.</p>
               </div>
             ) : (
-              <Grid cards={cards} tight />
+              <Grid cards={cards} tight hoverOverlay basePath="/archivo" />
             )}
           </div>
         </div>

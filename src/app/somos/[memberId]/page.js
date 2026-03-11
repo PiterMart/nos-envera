@@ -178,13 +178,6 @@ export default function TeamMemberPage({ params }) {
       <main className={pageStyles.main}>
         <div className={pageStyles.page_container}>
           <div className={pageStyles.contentMaxWidth}>
-          <div className={detailStyles.backRow}>
-            <TransitionLink href="/somos" direction="back" className={detailStyles.backLink}>
-              <span aria-hidden>←</span>
-              <span>Volver a equipo</span>
-            </TransitionLink>
-          </div>
-
           {isLoading && (
             <div className={pageStyles.loading_container}>
               <div className={pageStyles.loading_spinner} />
@@ -264,12 +257,18 @@ export default function TeamMemberPage({ params }) {
                   ) : memberEvents.length === 0 ? (
                     <p className={detailStyles.paragraphs}>Todavía no hay actividades registradas para este miembro.</p>
                   ) : (
-                    <Grid cards={memberEvents} hideImages={true} />
+                    <Grid cards={memberEvents} hideImages={true} basePath="/archivo" />
                   )}
                 </div>
               </div>
             </section>
           )}
+          <div className={detailStyles.backRowBottom}>
+            <TransitionLink href="/somos" direction="back" className={detailStyles.backLink}>
+              <span aria-hidden>←</span>
+              <span>Volver a equipo</span>
+            </TransitionLink>
+          </div>
           </div>
         </div>
       </main>

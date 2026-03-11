@@ -36,6 +36,15 @@ export default function Nav() {
         setIsMenuOpen(false);
     };
 
+    const scrollToFooter = (e) => {
+        e.preventDefault();
+        setIsMenuOpen(false);
+        const footer = document.getElementById('footer');
+        if (footer) {
+            footer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
+
     const toggleMenu = () => {
         setIsMenuOpen((prev) => !prev);
     };
@@ -52,13 +61,23 @@ export default function Nav() {
                     <ul>
                         {NAV_PAGES.map((page, index) => (
                             <li key={index}>
-                                <TransitionLink
-                                    href={page.path}
-                                    className={isCurrent(page.path) ? styles.page_current : ''}
-                                    onClick={(e) => handleNavigation(page, e)}
-                                >
-                                    {page.name}
-                                </TransitionLink>
+                                {page.path === '/contacto' ? (
+                                    <a
+                                        href="#footer"
+                                        onClick={scrollToFooter}
+                                        style={{ cursor: 'pointer' }}
+                                    >
+                                        {page.name}
+                                    </a>
+                                ) : (
+                                    <TransitionLink
+                                        href={page.path}
+                                        className={isCurrent(page.path) ? styles.page_current : ''}
+                                        onClick={(e) => handleNavigation(page, e)}
+                                    >
+                                        {page.name}
+                                    </TransitionLink>
+                                )}
                             </li>
                         ))}
                     </ul>

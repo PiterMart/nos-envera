@@ -1,16 +1,26 @@
  "use client";
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import { TransitionLink } from "../../components/TransitionLink";
 import { getDocs, collection, where, query } from "firebase/firestore";
 import pageStyles from "../../styles/page.module.css";
 import teamStyles from "../../styles/equipo.module.css";
 import { firestore } from "../firebase/firebaseConfig";
 import Section1 from "../../components/Section1";
+import Lightbox from "../../components/Lightbox";
+
+const ESPACIO_IMAGES = [
+  "/espacio/NosEnvera-Fabrica1.jpg",
+  "/espacio/NosEnvera-Fabrica2.jpg",
+  "/espacio/NosEnvera-Fabrica3.jpg",
+];
 
 export default function Equipo() {
   const [teamMembers, setTeamMembers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   useEffect(() => {
     let isMounted = true;
@@ -56,18 +66,65 @@ export default function Equipo() {
   return (
     <div className={pageStyles.page}>
       <Section1 />
+      <section className={teamStyles.espacioGallery}>
+        <div className={teamStyles.espacioGrid}>
+          <div
+            className={`${teamStyles.espacioImageWrapper} ${teamStyles.espacioImageFullWidth}`}
+            role="button"
+            tabIndex={0}
+            onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }}
+            onKeyDown={(e) => e.key === "Enter" && (setLightboxIndex(0), setLightboxOpen(true))}
+            aria-label="Abrir imagen 1 en galería"
+          >
+            <Image
+              src={ESPACIO_IMAGES[0]}
+              alt="Nos en Vera espacio 1"
+              width={1200}
+              height={600}
+              className={teamStyles.espacioImage}
+              sizes="100vw"
+            />
+          </div>
+          {ESPACIO_IMAGES.slice(1).map((src, i) => (
+            <div
+              key={src}
+              className={teamStyles.espacioImageWrapper}
+              role="button"
+              tabIndex={0}
+              onClick={() => { setLightboxIndex(i + 1); setLightboxOpen(true); }}
+              onKeyDown={(e) => e.key === "Enter" && (setLightboxIndex(i + 1), setLightboxOpen(true))}
+              aria-label={`Abrir imagen ${i + 2} en galería`}
+            >
+              <Image
+                src={src}
+                alt={`Nos en Vera espacio ${i + 2}`}
+                width={600}
+                height={400}
+                className={teamStyles.espacioImage}
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            </div>
+          ))}
+        </div>
+        <Lightbox
+          isOpen={lightboxOpen}
+          onClose={() => setLightboxOpen(false)}
+          slides={ESPACIO_IMAGES.map((src, i) => ({ src, alt: `Nos en Vera espacio ${i + 1}` }))}
+          index={lightboxIndex}
+        />
+      </section>
       <main className={pageStyles.main}>
         <div className={pageStyles.page_container} style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <header className={pageStyles.pageHeader}>
-            <h1>NUESTRO EQUIPO</h1>
+            <h1>EQUIPO NV</h1>
           </header>
-          <p className={pageStyles.pageSubtext}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida. Duis ac tellus et risus vulputate vehicula. Donec lobortis risus a elit. Etiam tempor. Ut ullamcorper, ligula ut dictum pharetra, nisi nunc fringilla magna, in commodo elit erat nec turpis. Ut pharetra augue nec augue. Nam elit magna, hendrerit sit amet, tincidunt ac, viverra sed, nulla. Donec porta diam eu massa. Quisque diam lorem, interdum vitae, dapibus ac, scelerisque.</p>
+          {/* <p className={pageStyles.pageSubtext}>Lorem ipsum dolor sit amet, consectetur adipiscin dolor sit amet, consectetur adipiscin.</p> */}
           {isLoading && (
             <div className={pageStyles.loading_container}>
               <div className={pageStyles.loading_spinner} />
               <p>Cargando miembros del equipo…</p>
             </div>
-          )}
+          )}  
 
           {!isLoading && error && <p className={pageStyles.error}>{error}</p>}
 

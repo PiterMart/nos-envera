@@ -18,33 +18,24 @@ export default function Section1() {
             priority
           />
         </div>
-        <div className={styles.content}>
-          <header className={pageStyles.pageHeader}>
-            <h1>NOS ENVERA</h1>
-          </header>
-          <p className={styles.paragraph}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-            irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
-            deserunt mollit anim id est laborum.
-          </p>
-          <p className={styles.paragraph}>
-            Curabitur pretium tincidunt lacus. Nulla facilisi. Ut convallis, sem sit amet interdum
-            consectetuer, odio augue aliquam leo, nec dapibus tortor nibh sed augue. Integer eu magna
-            sit amet metus fermentum posuere. Morbi sit amet nulla sed dolor elementum imperdiet.
-            Quisque fermentum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur
-            ridiculus mus. Pellentesque adipiscing eros ut libero.
-          </p>
-          <p className={styles.paragraph}>
-            Phasellus accumsan cursus velit. Vestibulum ante ipsum primis in faucibus orci luctus
-            et ultrices posuere cubilia Curae; Sed aliquam, nisi quis porttitor congue, elit erat
-            euismod orci, ac placerat dolor lectus quis orci. Suspendisse potenti. Nunc feugiat mi
-            a tellus consequat imperdiet. Vestibulum sapien proin quam etiam ultrices. Suspendisse
-            in justo eu magna luctus suscipit.
-          </p>
-        </div>
+        <header className={pageStyles.pageHeader} style={{ overflow: 'hidden', marginBottom: '1.5rem' }}>
+          <h1>NOS ENVERA</h1>
+        </header>
+        <p className={styles.paragraph}>
+          Fundado en 2023 en el barrio de Villa Crespo, Ciudad Autónoma de Buenos Aires, Nos en Vera es un espacio de investigación en artes y prácticas performativas, dedicado a la producción, exhibición y el desarrollo artístico. Concebido como una plataforma para la experimentación y el cruce de lenguajes, busca generar nuevas relaciones dentro del universo de las artes escénicas, fomentando el intercambio y la colaboración entre artistas de diversas disciplinas.
+        </p>
+        <p className={styles.paragraph}>
+          Nos en Vera se consolidó como un punto de encuentro entre la comunidad local, artistas nacionales e internacionales, promoviendo la visibilización de creadorxs tanto emergentes como de trayectoria. A través de un enfoque que privilegia la investigación y el proceso artístico, ofrece residencias de creación, donde las premisas son definidas por los propios artistas en función de sus intereses e inquietudes.
+        </p>
+        <p className={styles.paragraph}>
+          Además, en su área de formación, Nos en Vera es sede de seminarios, talleres, laboratorios y prácticas colectivas abiertas, diseñados para ampliar el acceso a experiencias artísticas innovadoras y fortalecer redes de intercambio. Nuestra sala de prácticas funciona como un laboratorio, donde se materializan y exploran nuevas formas de producción artística, promoviendo la afectación mutua en el diálogo entre cuerpos y territorios.
+        </p>
+        <p className={styles.paragraph}>
+          Comprometidxs con el desarrollo de estrategias innovadoras que respondan a los desafíos de nuestro tiempo, impulsamos programas de residencias y eventos públicos, generando espacios de encuentro que potencien el diálogo, la reflexión y la experimentación dentro de la escena independiente local e internacional.
+        </p>
+        <p className={styles.paragraph}>
+          Nos en Vera es, ante todo, un espacio de convergencia y creación colectiva en el campo de la performance.
+        </p>
       </div>
     </section>
   );
