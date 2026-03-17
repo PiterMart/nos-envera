@@ -42,6 +42,7 @@
   max-height: 75vh;
   overflow: hidden;
   width: 100%;
+  border-radius: var(--border-radius);
 }
 
 /* Image styling for the slide */

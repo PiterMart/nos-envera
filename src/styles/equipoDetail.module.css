@@ -55,6 +55,7 @@
   background-color: #f2f2f2;
   overflow: hidden;
   border: none;
+  border-radius: var(--border-radius);
 }
 
 .image {

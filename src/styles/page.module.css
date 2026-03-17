@@ -236,7 +236,6 @@
 }
 
 .page {
-  --content-max-width: 1200px;
   --gray-rgb: 0, 0, 0;
   --gray-alpha-200: rgba(var(--gray-rgb), 0.08);
   --gray-alpha-100: rgba(var(--gray-rgb), 0.05);
@@ -262,7 +261,6 @@
 /* Single place to change content width for agenda, agenda slug, equipo member, etc. */
 .contentMaxWidth {
   width: 100%;
-  max-width: var(--content-max-width);
   margin-left: auto;
   margin-right: auto;
   box-sizing: border-box;
@@ -356,7 +354,24 @@
   border-bottom: 3px solid #000;
 }
 
-.pageHeader h1 {
+/* Animated page header: no static border, uses .animatedUnderline instead */
+.animatedPageHeader {
+  position: relative;
+  border-bottom: none;
+}
+
+.animatedUnderline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #000;
+  transform-origin: left;
+}
+
+.pageHeader h1,
+.pageHeader h2 {
   font-family: var(--font-family-base);
   font-size: clamp(3rem, 8vw, 6rem);
   line-height: 1;
@@ -481,7 +496,7 @@
   height: 100%;
   min-width: 5rem;
   border: 2px solid black;
-  border-radius: 0.5rem;
+  border-radius: var(--border-radius);
   pointer-events: none;
   box-sizing: border-box;
   transition: width 0.35s ease-out;
@@ -670,7 +685,7 @@
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   margin-bottom: 1rem;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
 }
 
 .subtitle_skeleton {
@@ -680,7 +695,7 @@
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   margin-bottom: 0.5rem;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   width: 60%;
 }
 
@@ -690,7 +705,7 @@
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   margin-bottom: 2rem;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
 }
 
 .artworks_skeleton {
@@ -702,7 +717,7 @@
   background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   margin-top: 1rem;
 }
 
@@ -712,7 +727,7 @@
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   margin-bottom: 1rem;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
 }
 
 @keyframes shimmer {
@@ -913,6 +928,7 @@
   background-color: rgba(255, 255, 255, 0);
   overflow: hidden; 
   margin: auto;
+  border-radius: var(--border-radius);
 }
 
 .artist_page_image_container img {
@@ -936,7 +952,7 @@
   display: flex;
   flex-direction: column;
   gap: 5rem;
-  width: 90vw;
+  width: 100%;
   margin: auto;
 }
 
@@ -945,7 +961,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  max-width: 1000px;
+  width: 100%;
   margin: 0 auto;
 }
 
@@ -955,7 +971,7 @@
   color: inherit;
   background: #f9f9f9;
   border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   padding: 1.5rem;
   transition: all 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -1087,7 +1103,7 @@
   width: 100px;
   height: 100px;
   object-fit: cover;
-  border-radius: 5px;
+  border-radius: var(--border-radius);
 }
 .artworkPreviewImage{
   width: 100%;

@@ -19,7 +19,7 @@ export default function Section1() {
           />
         </div>
         <header className={pageStyles.pageHeader} style={{ overflow: 'hidden', marginBottom: '1.5rem' }}>
-          <h1>NOS ENVERA</h1>
+          <h1>NOS EN VERA</h1>
         </header>
         <p className={styles.paragraph}>
           Fundado en 2023 en el barrio de Villa Crespo, Ciudad Autónoma de Buenos Aires, Nos en Vera es un espacio de investigación en artes y prácticas performativas, dedicado a la producción, exhibición y el desarrollo artístico. Concebido como una plataforma para la experimentación y el cruce de lenguajes, busca generar nuevas relaciones dentro del universo de las artes escénicas, fomentando el intercambio y la colaboración entre artistas de diversas disciplinas.

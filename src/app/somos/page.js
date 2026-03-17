@@ -9,6 +9,18 @@ import { firestore } from "../firebase/firebaseConfig";
 import Section1 from "../../components/Section1";
 import Lightbox from "../../components/Lightbox";
 
+const MEMBER_ORDER = [
+  "Dominique Melhem",
+  "Laura Rod",
+  "Jan Valente",
+  "Javier Olivera",
+  "Ángel Odessky",
+  "Olivia Milberg",
+  "Ana Belén Rodríguez",
+  "Nicolás Dodi",
+  "Rodolfo Opazo",
+];
+
 const ESPACIO_IMAGES = [
   "/espacio/NosEnvera-Fabrica1.jpg",
   "/espacio/NosEnvera-Fabrica2.jpg",
@@ -37,7 +49,13 @@ export default function Equipo() {
             id: memberDoc.id,
             ...memberDoc.data(),
           }))
-          .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+          .sort((a, b) => {
+          const aIdx = MEMBER_ORDER.indexOf(a.name || "");
+          const bIdx = MEMBER_ORDER.indexOf(b.name || "");
+          const aOrder = aIdx === -1 ? MEMBER_ORDER.length : aIdx;
+          const bOrder = bIdx === -1 ? MEMBER_ORDER.length : bIdx;
+          return aOrder - bOrder;
+        });
 
         if (isMounted) {
           setTeamMembers(membersData);
@@ -114,10 +132,10 @@ export default function Equipo() {
         />
       </section>
       <main className={pageStyles.main}>
-        <div className={pageStyles.page_container} style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <header className={pageStyles.pageHeader}>
+        <div className={pageStyles.page_container}>
+          {/* <header className={pageStyles.pageHeader}>
             <h1>EQUIPO NV</h1>
-          </header>
+          </header> */}
           {/* <p className={pageStyles.pageSubtext}>Lorem ipsum dolor sit amet, consectetur adipiscin dolor sit amet, consectetur adipiscin.</p> */}
           {isLoading && (
             <div className={pageStyles.loading_container}>

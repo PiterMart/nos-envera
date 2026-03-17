@@ -18,7 +18,7 @@ export default function Historia() {
             />
           </div>
           <div className={styles.artists_page}>
-            <div style={{display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', margin: "auto", maxWidth: '800px', marginTop: '5rem'}}>
+            <div style={{display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', margin: "auto", marginTop: '5rem'}}>
               <header className={styles.pageHeaderSmall}>
                 <h1>Historia</h1>
               </header>

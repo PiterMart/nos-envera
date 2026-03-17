@@ -35,7 +35,7 @@ export default function RootLayout({ children }) {
                 {children}
               </PageTransitionWrapper>
               <div>
-                <RecentEvents />
+                {/* <RecentEvents /> */}
                 <Footer />
               </div>
             </main>

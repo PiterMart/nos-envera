@@ -40,13 +40,13 @@ export async function POST(request) {
           New Artwork Acquisition Inquiry
         </h2>
         
-        <div style="background-color: #f9f9f9; padding: 20px; margin: 20px 0; border-radius: 5px;">
+        <div style="background-color: #f9f9f9; padding: 20px; margin: 20px 0; border-radius: 10px;">
           <h3 style="color: #000; margin-top: 0;">Artwork Details</h3>
           <p><strong>Title:</strong> ${artworkTitle}</p>
           <p><strong>Artist:</strong> ${artistName}</p>
         </div>
 
-        <div style="background-color: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 5px;">
+        <div style="background-color: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
           <h3 style="color: #000; margin-top: 0;">Buyer Information</h3>
           <p><strong>Full Name:</strong> ${fullName}</p>
           <p><strong>Email:</strong> ${email}</p>
@@ -55,14 +55,14 @@ export async function POST(request) {
           ${message ? `
             <div style="margin-top: 15px;">
               <strong>Message:</strong>
-              <div style="background-color: #f5f5f5; padding: 10px; margin-top: 5px; border-radius: 3px;">
+              <div style="background-color: #f5f5f5; padding: 10px; margin-top: 5px; border-radius: 10px;">
                 ${message.replace(/\n/g, '<br>')}
               </div>
             </div>
           ` : ''}
         </div>
 
-        <div style="margin-top: 20px; padding: 15px; background-color: #e8f4f8; border-radius: 5px;">
+        <div style="margin-top: 20px; padding: 15px; background-color: #e8f4f8; border-radius: 10px;">
           <p style="margin: 0; color: #666; font-size: 14px;">
             This inquiry was submitted through the ARTWINGS website acquisition form.
           </p>

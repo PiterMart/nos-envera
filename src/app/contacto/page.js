@@ -14,7 +14,7 @@ export default function Contacto() {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        <div className={styles.page_container} style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        <div className={styles.page_container}>
           <header className={styles.pageHeader}>
             <h1>CONTACTO</h1>
           </header>

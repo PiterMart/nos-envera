@@ -3,6 +3,7 @@ import styles from "../../styles/page.module.css";
 import React, { useEffect, useMemo, useState } from "react";
 import { firestore } from "../firebase/firebaseConfig";
 import Grid from "../../components/grid";
+import AnimatedPageSection from "../../components/AnimatedPageSection";
 import { collection, getDocs } from "firebase/firestore";
 
 import {
@@ -83,10 +84,11 @@ export default function Agenda() {
       <div className={styles.page_container}>
         <div className={styles.homepage_container} style={{ paddingTop: "2rem" }}>
           <div className={styles.contentMaxWidth} style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-            <header className={styles.pageHeader}>
-              <h1>AGENDA</h1>
-            </header>
-            <p className={styles.pageSubtext}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            <AnimatedPageSection
+              title="AGENDA"
+              subtext="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+              loaded={!loading}
+            />
 
             {loading ? (
               <div style={{ textAlign: "center", padding: "3rem", color: "#666" }}>Cargando eventos...</div>
@@ -97,7 +99,7 @@ export default function Agenda() {
                 <p>No hay eventos este mes.</p>
               </div>
             ) : (
-              <Grid cards={cards} hideImages={true} basePath="/archivo" />
+              <Grid cards={cards} hideImages={true} basePath="/archivo" loaded={!loading} />
             )}
           </div>
         </div>

@@ -3,6 +3,7 @@ import styles from "../../styles/page.module.css";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { firestore } from "../firebase/firebaseConfig";
 import Grid from "../../components/grid";
+import AnimatedPageSection from "../../components/AnimatedPageSection";
 import { collection, getDocs } from "firebase/firestore";
 
 import {
@@ -212,10 +213,11 @@ export default function Archivo() {
       <div className={styles.page_container}>
         <div className={styles.homepage_container} style={{ paddingTop: "2rem" }}>
           <div className={styles.contentMaxWidth} style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-            <header className={styles.pageHeader}>
-              <h1>ARCHIVO</h1>
-            </header>
-            <p className={styles.pageSubtext}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua..</p>
+            <AnimatedPageSection
+              title="ARCHIVO"
+              subtext="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.."
+              loaded={!loading}
+            />
 
             <div className={styles.agendaFilterSliderWrap}>
               <div
@@ -271,7 +273,7 @@ export default function Archivo() {
                 </p>
               </div>
             ) : (
-              <Grid cards={cards} hideImages={true} basePath="/archivo" />
+              <Grid key={activeFilter} cards={cards} hideImages={true} basePath="/archivo" loaded={!loading} />
             )}
           </div>
         </div>

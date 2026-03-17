@@ -11,6 +11,9 @@ import {
   FALLBACK_IMAGE_WIDE as FALLBACK_IMAGE,
   formatDate,
   normalizeEventDoc,
+  eventContainsPerformance,
+  eventContainsTraining,
+  eventContainsResidency,
 } from "../../../lib/eventUtils";
 
 export default function PerformanceDetail({ params }) {
@@ -135,6 +138,7 @@ export default function PerformanceDetail({ params }) {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
+                      borderRadius: "var(--border-radius)",
                     }}
                   >
                     <img
@@ -305,7 +309,7 @@ export default function PerformanceDetail({ params }) {
                           <img
                             src={item.url}
                             alt={item.description || `${performance.name || "Performance"} imagen ${index + 1}`}
-                            style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", backgroundColor: "#f0f0f0" }}
+                            style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", backgroundColor: "#f0f0f0", borderRadius: "var(--border-radius)" }}
                           />
                           {item.description ? (
                             <figcaption style={{ fontSize: "0.85rem", color: "#666" }}>{item.description}</figcaption>
@@ -326,6 +330,64 @@ export default function PerformanceDetail({ params }) {
                     alignItems: "flex-end",
                   }}
                 >
+                  {performance.eventTypes?.length ? (
+                    <>
+                      {eventContainsPerformance(performance.eventTypes) && (
+                        <TransitionLink
+                          href="/performances"
+                          direction="back"
+                          style={{
+                            textDecoration: "none",
+                            fontSize: "0.9rem",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.5px",
+                            color: "#222",
+                            borderBottom: "1px solid #222",
+                            textAlign: "right",
+                            display: "inline-block",
+                          }}
+                        >
+                          ← Perfos
+                        </TransitionLink>
+                      )}
+                      {eventContainsTraining(performance.eventTypes) && (
+                        <TransitionLink
+                          href="/formaciones"
+                          direction="back"
+                          style={{
+                            textDecoration: "none",
+                            fontSize: "0.9rem",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.5px",
+                            color: "#222",
+                            borderBottom: "1px solid #222",
+                            textAlign: "right",
+                            display: "inline-block",
+                          }}
+                        >
+                          ← Formación
+                        </TransitionLink>
+                      )}
+                      {eventContainsResidency(performance.eventTypes) && (
+                        <TransitionLink
+                          href="/residencias"
+                          direction="back"
+                          style={{
+                            textDecoration: "none",
+                            fontSize: "0.9rem",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.5px",
+                            color: "#222",
+                            borderBottom: "1px solid #222",
+                            textAlign: "right",
+                            display: "inline-block",
+                          }}
+                        >
+                          ← Residencias
+                        </TransitionLink>
+                      )}
+                    </>
+                  ) : null}
                   <TransitionLink
                     href="/archivo"
                     direction="back"
@@ -340,7 +402,7 @@ export default function PerformanceDetail({ params }) {
                       display: "inline-block",
                     }}
                   >
-                    ← Volver al archivo
+                    ← archivo
                   </TransitionLink>
                   <TransitionLink
                     href="/agenda"
@@ -356,7 +418,7 @@ export default function PerformanceDetail({ params }) {
                       display: "inline-block",
                     }}
                   >
-                    ← Ver agenda
+                    ← agenda
                   </TransitionLink>
                 </div>
               </>

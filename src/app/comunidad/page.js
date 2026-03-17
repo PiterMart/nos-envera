@@ -4,6 +4,7 @@ import styles from "../../styles/page.module.css";
 import detailStyles from "../../styles/equipoDetail.module.css";
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import { TransitionLink } from "../../components/TransitionLink";
+import AnimatedPageSection from "../../components/AnimatedPageSection";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { firestore } from "../firebase/firebaseConfig";
 
@@ -316,11 +317,12 @@ export default function Comunidad() {
           zIndex: 0,
         }}
       /> */}
-      <div className={styles.page_container} style={{ position: "relative", zIndex: 2, maxWidth: "1200px", margin: "0 auto" }}>
-        <header className={styles.pageHeader}>
-          <h1>COMUNIDAD</h1>
-        </header>
-        <p className={styles.pageSubtext}>Nos en Vera es, también, la red de artistas, investigadorxs y colaboradorxs que mantienen activo nuestro espacio. Esta sección reúne sus biografías como un archivo vivo de la comunidad que lo hace posible.</p>
+      <div className={styles.page_container} style={{ position: "relative", zIndex: 2 }}>
+        <AnimatedPageSection
+          title="COMUNIDAD"
+          subtext="Esta sección reúne las biografías de artistas, investigadorxs y colaboradorxs que mantienen activo Nos en Vera, como un archivo vivo de la comunidad que lo hace posible."
+          loaded={!isLoading}
+        />
         <div style={{ width: "100%", marginTop: "0.75rem", marginBottom: "2rem" }}>
           <Image
             src="/23 PRACTICAS DE SINCRONIZ - perfo.jpg"
@@ -365,7 +367,7 @@ export default function Comunidad() {
                     style={{
                       background: "none",
                       border: "2px solid black",
-                      borderRadius: "0.5rem",
+                      borderRadius: "var(--border-radius)",
                       cursor: listFade < 1 ? "not-allowed" : "pointer",
                       font: "inherit",
                       padding: "0.5rem 1rem",
@@ -395,7 +397,7 @@ export default function Comunidad() {
                     {memberNames.length === 0 ? (
                       <p style={{
                         border: "1px solid #e0e0e0",
-                        borderRadius: "8px",
+                        borderRadius: "var(--border-radius)",
                         padding: "1rem",
                         backgroundColor: "#fafafa",
                         textAlign: "center",
@@ -561,7 +563,7 @@ export default function Comunidad() {
                         <li
                         style={{
                           border: "1px solid #e0e0e0",
-                          borderRadius: "8px",
+                          borderRadius: "var(--border-radius)",
                           padding: "1rem",
                           backgroundColor: "#fafafa",
                           textAlign: "center",

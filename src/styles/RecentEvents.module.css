@@ -1,7 +1,7 @@
 .container {
   display: flex;
   flex-direction: column;
-  max-width: 90vw;
+  width: 100%;
   margin: 0 auto;
   font-family: var(--font-paragraph);
   font-style: italic;
@@ -43,7 +43,7 @@
   font-family: var(--font-family-base);
   font-weight: var(--font-weight-heavy, 800);
   border: 2px solid black;
-  border-radius: 9999px;
+  border-radius: var(--border-radius);
   padding: 0.25rem 1rem;
   display: inline-block;
   width: fit-content;

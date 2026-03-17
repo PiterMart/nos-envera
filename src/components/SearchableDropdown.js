@@ -99,7 +99,7 @@ export default function SearchableDropdown({
           padding: "0.5rem",
           fontSize: "1rem",
           border: "1px solid #ccc",
-          borderRadius: "4px",
+          borderRadius: "var(--border-radius)",
         }}
       />
 
@@ -114,7 +114,7 @@ export default function SearchableDropdown({
             right: 0,
             backgroundColor: "#fff",
             border: "1px solid #ccc",
-            borderRadius: "4px",
+            borderRadius: "var(--border-radius)",
             marginTop: "0.25rem",
             boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
             zIndex: 1000,
@@ -183,7 +183,7 @@ export default function SearchableDropdown({
             right: 0,
             backgroundColor: "#fff",
             border: "1px solid #ccc",
-            borderRadius: "4px",
+            borderRadius: "var(--border-radius)",
             marginTop: "0.25rem",
             padding: "0.75rem 1rem",
             boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",

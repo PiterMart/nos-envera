@@ -226,7 +226,7 @@ export default function ActivityLogsPage() {
                 width: "100%", 
                 borderCollapse: "collapse",
                 backgroundColor: "#fff",
-                borderRadius: "8px",
+                borderRadius: "var(--border-radius)",
                 overflow: "hidden",
                 boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
               }}>
@@ -267,7 +267,7 @@ export default function ActivityLogsPage() {
                         <td style={{ padding: "1rem", fontSize: "0.9rem" }}>
                           <span style={{
                             padding: "0.25rem 0.5rem",
-                            borderRadius: "4px",
+                            borderRadius: "var(--border-radius)",
                             fontSize: "0.85rem",
                             fontWeight: "500",
                             backgroundColor: 

@@ -1018,7 +1018,7 @@ const uploadImages = async (eventId) => {
               padding: "0.5rem",
               fontSize: "1rem",
               border: "1px solid #ccc",
-              borderRadius: "4px",
+              borderRadius: "var(--border-radius)",
             }}
           >
             <option value="all">Todos los años</option>

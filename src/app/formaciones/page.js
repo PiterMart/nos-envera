@@ -3,6 +3,7 @@ import styles from "../../styles/page.module.css";
 import React, { useEffect, useMemo, useState } from "react";
 import { firestore } from "../firebase/firebaseConfig";
 import Grid from "../../components/grid";
+import AnimatedPageSection from "../../components/AnimatedPageSection";
 import { collection, getDocs, query, where } from "firebase/firestore";
 
 import {
@@ -71,11 +72,12 @@ export default function Formacion() {
     <div className={styles.page}>
       <div className={styles.page_container}>
         <div className={styles.homepage_container} style={{ paddingTop: "2rem" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: "2rem", width: "100%", margin: "auto", maxWidth: "1200px" }}>
-            <header className={styles.pageHeader}>
-              <h1>FORMACIÓN</h1>
-            </header>
-            <p className={styles.pageSubtext}>En su área de formación, Nos en Vera es sede de seminarios, talleres, workshops, laboratorios y prácticas colectivas abiertas, diseñadas para ampliar el acceso a experiencias artísticas innovadoras y fortalecer redes de intercambio.</p>
+          <div style={{ display: "flex", flexDirection: "column", gap: "2rem", width: "100%", margin: "auto" }}>
+            <AnimatedPageSection
+              title="FORMACIÓN"
+              subtext="En su área de formación, Nos en Vera es sede de seminarios, talleres, workshops, laboratorios y prácticas colectivas abiertas, diseñadas para ampliar el acceso a experiencias artísticas innovadoras y fortalecer redes de intercambio."
+              loaded={!loading}
+            />
 
             {loading ? (
               <div style={{ textAlign: "center", padding: "3rem", color: "#666" }}>Cargando formaciones...</div>
@@ -86,7 +88,7 @@ export default function Formacion() {
                 <p>No hay formaciones registradas todavía.</p>
               </div>
             ) : (
-              <Grid cards={cards} tight hoverOverlay basePath="/archivo" />
+              <Grid cards={cards} tight hoverOverlay basePath="/archivo" yearHeadingClassName={styles.pageHeader} loaded={!loading} />
             )}
           </div>
         </div>

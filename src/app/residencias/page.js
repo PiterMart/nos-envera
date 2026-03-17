@@ -3,6 +3,7 @@ import styles from "../../styles/page.module.css";
 import React, { useEffect, useMemo, useState } from "react";
 import { firestore } from "../firebase/firebaseConfig";
 import Grid from "../../components/grid";
+import AnimatedPageSection from "../../components/AnimatedPageSection";
 import { collection, getDocs, query, where } from "firebase/firestore";
 
 import {
@@ -71,11 +72,12 @@ export default function Residencias() {
     <div className={styles.page}>
       <div className={styles.page_container}>
         <div className={styles.homepage_container} style={{ paddingTop: "2rem" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: "2rem", width: "100%", margin: "auto", maxWidth: "1200px" }}>
-            <header className={styles.pageHeader}>
-              <h1>RESIDENCIAS</h1>
-            </header>
-            <p className={styles.pageSubtext}>Con un enfoque que privilegia la investigación y el proceso artístico, Nos en Vera ofrece residencias de creación en las que cada artista define sus propias premisas de trabajo. Incentivamos a lxs artistas residentes a realizar aperturas públicas de sus procesos creativos. Estas instancias habilitan espacios de prueba y experimentación, en diálogo con la comunidad y con quienes se acercan al espacio.</p>
+          <div style={{ display: "flex", flexDirection: "column", gap: "2rem", width: "100%", margin: "auto" }}>
+            <AnimatedPageSection
+              title="RESIDENCIAS"
+              subtext="Con un enfoque que privilegia la investigación y el proceso artístico, Nos en Vera ofrece residencias de creación en las que cada artista define sus propias premisas de trabajo. Incentivamos a lxs artistas residentes a realizar aperturas públicas de sus procesos creativos. Estas instancias habilitan espacios de prueba y experimentación, en diálogo con la comunidad y con quienes se acercan al espacio."
+              loaded={!loading}
+            />
 
             {loading ? (
               <div style={{ textAlign: "center", padding: "3rem", color: "#666" }}>Cargando residencias...</div>
@@ -86,7 +88,7 @@ export default function Residencias() {
                 <p>No hay residencias registradas todavía.</p>
               </div>
             ) : (
-              <Grid cards={cards} tight hoverOverlay basePath="/archivo" />
+              <Grid cards={cards} tight hoverOverlay basePath="/archivo" yearHeadingClassName={styles.pageHeader} loaded={!loading} />
             )}
           </div>
         </div>

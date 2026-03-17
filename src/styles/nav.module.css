@@ -20,7 +20,7 @@
 }
 
 .nav_active {
-  background-color: var(--background);
+  background-color: transparent;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -88,7 +88,7 @@
   text-decoration: none;
   display: block;
   transition: color 0.3s ease-in;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   padding-left: 0.75rem;
   padding-right: 0.5rem;
   pointer-events: auto;

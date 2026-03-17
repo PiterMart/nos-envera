@@ -142,7 +142,6 @@ export default function ArticlesPage() {
               gap: "1rem",
               width: "100%",
               margin: "auto",
-              maxWidth: "800px",
             }}
           >
             <header

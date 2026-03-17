@@ -1,8 +1,16 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { TransitionLink } from "./TransitionLink";
+import AnimatedUnderline from "./AnimatedUnderline";
+
+/** Masonry grid via CSS columns - adapts to each image's aspect ratio */
+const masonryGridStyles = (gap) => ({
+  columnCount: 4,
+  columnGap: gap,
+  marginTop: "1rem",
+});
 
 const gridStyles = {
   display: "grid",
@@ -25,6 +33,11 @@ const linkStyles = {
   color: "inherit",
 };
 
+const masonryLinkStyles = {
+  ...linkStyles,
+  maxWidth: "none",
+};
+
 const articleStyles = {
   width: "100%",
   display: "flex",
@@ -38,42 +51,68 @@ const articleStylesTight = {
   gap: "0.35rem",
 };
 
-const imageWrapperStyles = {
+const imageWrapperBase = {
   width: "100%",
   overflow: "hidden",
-  borderRadius: "10px",
+  borderRadius: "var(--border-radius)",
   backgroundColor: "#f0f0f0",
   lineHeight: 0,
   position: "relative",
+};
+
+const imageWrapperStyles = {
+  ...imageWrapperBase,
   aspectRatio: "3/4",
 };
 
 const imageWrapperStylesTight = {
-  ...imageWrapperStyles,
+  ...imageWrapperBase,
+  aspectRatio: "3/4",
   flexShrink: 0,
 };
 
 const imagePlaceholderStyles = {
   width: "100%",
   aspectRatio: "3/4",
-  borderRadius: "10px",
+  borderRadius: "var(--border-radius)",
   backgroundColor: "#e8e8e8",
   flexShrink: 0,
 };
 
+const MASONRY_BREAKPOINTS = { sm: 640, md: 900, lg: 1200 };
+
+const masonryItemStyles = (gap) => ({
+  breakInside: "avoid",
+  marginBottom: gap,
+});
+
+function getColumnCount(width) {
+  if (width < MASONRY_BREAKPOINTS.sm) return 2;  /* mobile: 2 cards per line, bigger */
+  if (width < MASONRY_BREAKPOINTS.md) return 3;
+  if (width < MASONRY_BREAKPOINTS.lg) return 4;
+  return 5;
+}
 
 const yearHeadingBase = {
   fontFamily: "var(--font-family-base)",
   margin: 0,
-  marginBottom: "0.5rem",
+  marginBottom: "-1vh",
   fontSize: "3.75rem",
   fontWeight: 600,
   letterSpacing: "0.5px",
   textAlign: "left",
-  width: "100%",
-  paddingBottom: "0.25rem",
-  borderBottom: "2px solid black",
 };
+
+const yearHeadingWrapperStyle = {
+  display: "flex",
+  alignItems: "flex-end",
+  gap: "0.5rem",
+  width: "100%",
+  marginBottom: "0.5rem",
+  paddingBottom: "1rem",
+};
+
+const FADE_TRANSITION = "opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1)";
 
 const YEAR_PLACEHOLDER = "\u2014";
 const CARD_DOT = "\u2022";
@@ -115,8 +154,86 @@ const archivoArticleStyles = {
 const CURSOR_IMAGE_WIDTH = 280;
 const CURSOR_IMAGE_HEIGHT = 360;
 
-export default function Grid({ cards, hideImages = false, tight = false, hoverOverlay = false, basePath = "/archivo" }) {
-  const groups = groupByYear(cards);
+const AdaptiveImage = React.memo(function AdaptiveImage({ src, alt, tight, priority = false }) {
+  const [dimensions, setDimensions] = useState(null);
+
+  const handleLoad = useCallback((e) => {
+    const img = e.target?.tagName === "IMG" ? e.target : e.target?.querySelector?.("img");
+    if (img?.naturalWidth && img?.naturalHeight) {
+      setDimensions({ w: img.naturalWidth, h: img.naturalHeight });
+    }
+  }, []);
+
+  const aspectRatio = dimensions ? `${dimensions.w} / ${dimensions.h}` : "1 / 1";
+  const wrapperStyle = {
+    ...(tight ? imageWrapperStylesTight : imageWrapperBase),
+    aspectRatio,
+  };
+
+  return (
+    <div style={wrapperStyle}>
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        sizes="(max-width: 500px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+        style={{ objectFit: "contain" }}
+        onLoad={handleLoad}
+        priority={priority}
+      />
+    </div>
+  );
+});
+
+const imageWithTitleWrapperStyles = {
+  position: "relative",
+  width: "100%",
+};
+
+const titleSlideBaseStyles = {
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  right: 0,
+  overflow: "hidden",
+  transition: "max-height 0.85s cubic-bezier(0.16, 1, 0.3, 1)",
+  borderRadius: "var(--border-radius)",
+  borderTopLeftRadius: 0,
+  borderTopRightRadius: 0,
+};
+
+const titleSlideInnerStyles = {
+  fontFamily: "var(--font-grid-card)",
+  fontStyle: "italic",
+  fontSize: "0.9rem",
+  fontWeight: 500,
+  letterSpacing: "0.5px",
+  lineHeight: 1.3,
+  textAlign: "left",
+  overflowWrap: "break-word",
+  wordBreak: "break-word",
+  padding: "1.5rem 1rem 0.75rem",
+  backgroundColor: "black",
+  color: "white",
+  transition: "opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1)",
+};
+
+const ABOVE_THE_FOLD_COUNT = 8; /* priority-load first N images */
+
+export default function Grid({ cards, hideImages = false, tight = false, hoverOverlay = false, basePath = "/archivo", yearHeadingClassName, loaded = true }) {
+  const groups = useMemo(() => groupByYear(cards), [cards]);
+  const [hasAnimated, setHasAnimated] = useState(false);
+
+  /* Trigger animation on mount; parent's loaded can be true before Grid mounts */
+  useEffect(() => {
+    const id = requestAnimationFrame(() => {
+      requestAnimationFrame(() => setHasAnimated(true));
+    });
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  const animating = loaded && hasAnimated;
+
   const [cursorImageUrl, setCursorImageUrl] = useState(null);
   const cursorRef = useRef(null);
   const rafRef = useRef(null);
@@ -124,16 +241,35 @@ export default function Grid({ cards, hideImages = false, tight = false, hoverOv
   const [hoveredCardId, setHoveredCardId] = useState(null);
   const [revealedCardId, setRevealedCardId] = useState(null);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [columnCount, setColumnCount] = useState(4);
+  const sectionRef = useRef(null);
 
   useEffect(() => {
     setIsTouchDevice("ontouchstart" in window || window.matchMedia("(pointer: coarse)").matches);
   }, []);
 
-  const dynamicGridStyles = {
-    ...(hideImages ? gridStyles : tight ? gridStylesTight : gridStyles),
-    gap: hideImages ? "0" : tight ? gridStylesTight.gap : gridStyles.gap,
-    ...(hideImages ? { gridTemplateColumns: "1fr", justifyItems: "stretch", alignItems: "stretch" } : {}),
-  };
+  useEffect(() => {
+    if (hideImages) return;
+    const el = sectionRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver((entries) => {
+      const { width } = entries[0]?.contentRect ?? {};
+      if (typeof width === "number") setColumnCount(getColumnCount(width));
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [hideImages]);
+
+  const baseGap = hideImages ? "0" : tight ? "0.5rem" : "2rem";
+  const gap = !hideImages && columnCount === 2 && !tight ? "1rem" : baseGap; /* smaller gap on mobile = bigger cards */
+  const useMasonry = !hideImages;
+
+  const dynamicGridStyles = useMasonry
+    ? { ...masonryGridStyles(gap), columnCount }
+    : {
+        ...(hideImages ? { ...gridStyles, gridTemplateColumns: "1fr", justifyItems: "stretch", alignItems: "stretch" } : tight ? gridStylesTight : gridStyles),
+        gap,
+      };
 
   // Preload all card images so hover swap is instant
   useEffect(() => {
@@ -189,7 +325,7 @@ export default function Grid({ cards, hideImages = false, tight = false, hoverOv
             opacity: cursorImageUrl ? 1 : 0,
             visibility: cursorImageUrl ? "visible" : "hidden",
             transition: "opacity 0.12s ease-out",
-            borderRadius: "8px",
+            borderRadius: "var(--border-radius)",
             overflow: "hidden",
             boxShadow: "0 12px 40px rgba(0,0,0,0.2)",
           }}
@@ -203,17 +339,83 @@ export default function Grid({ cards, hideImages = false, tight = false, hoverOv
               sizes={`${CURSOR_IMAGE_WIDTH}px`}
               style={{ objectFit: "cover" }}
               draggable={false}
-              unoptimized
             />
           )}
         </div>
       )}
-      <section style={{ display: "flex", flexDirection: "column", gap: "0.5rem", width: "100%" }}>
+      <section
+        ref={sectionRef}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.5rem",
+          width: "100%",
+        }}
+      >
         {groups.map(([year, groupCards], idx) => (
           <div key={year} style={{ width: "100%" }}>
-            <h2 style={{ ...yearHeadingBase, marginTop: idx === 0 ? 0 : "1.5rem" }}>{year}</h2>
+            {yearHeadingClassName ? (
+              <header
+                className={yearHeadingClassName}
+                style={{
+                  marginTop: idx === 0 ? 0 : "1.5rem",
+                  marginBottom: 0,
+                  paddingBottom: "1rem",
+                  borderBottom: "none",
+                  display: "flex",
+                  alignItems: "flex-end",
+                  gap: "0.5rem",
+                  width: "100%",
+                }}
+              >
+                <h2
+                  style={{
+                    margin: 0,
+                    marginBottom: "-1vh",
+                    opacity: animating ? 1 : 0,
+                    transition: FADE_TRANSITION,
+                    transitionDelay: animating ? `${idx * 0.08}s` : "0s",
+                  }}
+                >
+                  {year}
+                </h2>
+                <AnimatedUnderline
+                  loaded={animating}
+                  transitionDelay={animating ? `${idx * 0.08}s` : undefined}
+                  style={{
+                    flex: 1,
+                    minWidth: 0,
+                    borderTop: "2px solid black",
+                  }}
+                />
+              </header>
+            ) : (
+              <div style={{ ...yearHeadingWrapperStyle, marginTop: idx === 0 ? 0 : "1.5rem" }}>
+                <h2
+                  style={{
+                    ...yearHeadingBase,
+                    opacity: animating ? 1 : 0,
+                    transition: FADE_TRANSITION,
+                    transitionDelay: animating ? `${idx * 0.08}s` : "0s",
+                  }}
+                >
+                  {year}
+                </h2>
+                <AnimatedUnderline
+                  loaded={animating}
+                  transitionDelay={animating ? `${idx * 0.08}s` : undefined}
+                  style={{
+                    flex: 1,
+                    minWidth: 0,
+                    borderTop: "2px solid black",
+                  }}
+                />
+              </div>
+            )}
             <div style={dynamicGridStyles}>
-              {groupCards.map((card) => {
+              {groupCards.map((card, cardIdx) => {
+                const flatIndex = groups.slice(0, idx).reduce((sum, [, g]) => sum + g.length, 0) + cardIdx;
+                const isPriority = flatIndex < ABOVE_THE_FOLD_COUNT;
                 const showOverlay = hoverOverlay && (hoveredCardId === card.id || revealedCardId === card.id);
                 const handleClick = (e) => {
                   if (!hoverOverlay || !isTouchDevice) return;
@@ -223,124 +425,99 @@ export default function Grid({ cards, hideImages = false, tight = false, hoverOv
                   e.preventDefault();
                   setRevealedCardId(card.id);
                 };
-                return (
-                  <TransitionLink
-                    href={`${basePath}/${card.slug}`}
-                    key={card.id}
-                    style={hideImages ? archivoLinkStyles : linkStyles}
-                    onMouseEnter={
-                      hideImages && card.imageUrl
-                        ? () => showCursorImage(card.imageUrl)
-                        : hoverOverlay
-                          ? () => setHoveredCardId(card.id)
-                          : undefined
-                    }
-                    onMouseLeave={
-                      hideImages
-                        ? hideCursorImage
-                        : hoverOverlay
-                          ? () => setHoveredCardId(null)
-                          : undefined
-                    }
-                    onClick={handleClick}
-                  >
-                    <article style={hideImages ? archivoArticleStyles : tight ? articleStylesTight : articleStyles}>
-                      {!hideImages && card.imageUrl ? (
-                        <div style={tight ? imageWrapperStylesTight : imageWrapperStyles}>
-                          <Image
-                            src={card.imageUrl}
-                            alt={card.title}
-                            fill
-                            sizes="(max-width: 600px) 100vw, (max-width: 1000px) 50vw, 300px"
-                            style={{ objectFit: "cover" }}
-                          />
-                          {hoverOverlay && (
-                            <div
-                              role="presentation"
-                              aria-hidden
-                              style={{
-                                position: "absolute",
-                                inset: 0,
-                                backgroundColor: "black",
-                                opacity: showOverlay ? 0.9 : 0,
-                                transition: "opacity 0.3s ease",
-                                display: "flex",
-                                alignItems: "flex-start",
-                                justifyContent: "flex-start",
-                                pointerEvents: "none",
-                                padding: "1rem",
-                              }}
-                            >
-                              <span
+                const linkStyle = hideImages ? archivoLinkStyles : useMasonry ? masonryLinkStyles : linkStyles;
+                const articleStyle = hideImages ? archivoArticleStyles : tight ? articleStylesTight : articleStyles;
+                const cardDelay = animating ? `${0.06 + flatIndex * 0.03}s` : "0s";
+                const content = (
+                    <TransitionLink
+                      href={`${basePath}/${card.slug}`}
+                      style={linkStyle}
+                      onMouseEnter={
+                        hideImages && card.imageUrl
+                          ? () => showCursorImage(card.imageUrl)
+                          : hoverOverlay
+                            ? () => setHoveredCardId(card.id)
+                            : undefined
+                      }
+                      onMouseLeave={
+                        hideImages
+                          ? hideCursorImage
+                          : hoverOverlay
+                            ? () => setHoveredCardId(null)
+                            : undefined
+                      }
+                      onClick={handleClick}
+                    >
+                      <article style={articleStyle}>
+                        {!hideImages && card.imageUrl ? (
+                          <div style={imageWithTitleWrapperStyles}>
+                            <AdaptiveImage src={card.imageUrl} alt={card.title} tight={tight} priority={isPriority} />
+                            {hoverOverlay && (
+                              <div
                                 style={{
-                                  fontFamily: "var(--font-paragraph)",
-                                  fontStyle: "italic",
-                                  color: "white",
-                                  fontSize: "0.9rem",
-                                  fontWeight: 500,
-                                  letterSpacing: "0.5px",
-                                  textAlign: "left",
-                                  lineHeight: 1.3,
-                                  width: "100%",
-                                  overflowWrap: "break-word",
-                                  wordBreak: "break-word",
+                                  ...titleSlideBaseStyles,
+                                  maxHeight: showOverlay ? "6rem" : 0,
                                 }}
                               >
-                                {card.title}
-                              </span>
+                                <div
+                                  style={{
+                                    ...titleSlideInnerStyles,
+                                    opacity: showOverlay ? 1 : 0,
+                                    transform: showOverlay ? "translateY(0)" : "translateY(0.5rem)",
+                                  }}
+                                >
+                                  {card.title}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ) : !hideImages && tight ? (
+                          <div style={imageWithTitleWrapperStyles}>
+                            <div style={{ ...imagePlaceholderStyles, position: "relative" }} aria-hidden>
+                              <div style={{ position: "absolute", inset: 0, borderRadius: "var(--border-radius)", backgroundColor: "#e8e8e8" }} />
                             </div>
-                          )}
-                        </div>
-                      ) : !hideImages && tight ? (
-                        <div style={{ ...imagePlaceholderStyles, position: "relative" }} aria-hidden>
-                          <div style={{ position: "absolute", inset: 0, borderRadius: "10px", backgroundColor: "#e8e8e8" }} />
-                          {hoverOverlay && (
-                            <div
-                              role="presentation"
-                              aria-hidden
-                              style={{
-                                position: "absolute",
-                                inset: 0,
-                                backgroundColor: "black",
-                                opacity: showOverlay ? 0.9 : 0,
-                                transition: "opacity 0.3s ease",
-                                display: "flex",
-                                alignItems: "flex-start",
-                                justifyContent: "flex-start",
-                                pointerEvents: "none",
-                                padding: "1rem",
-                                borderRadius: "10px",
-                              }}
-                            >
-                              <span
+                            {hoverOverlay && (
+                              <div
                                 style={{
-                                  fontFamily: "var(--font-paragraph)",
-                                  fontStyle: "italic",
-                                  color: "white",
-                                  fontSize: "0.9rem",
-                                  fontWeight: 500,
-                                  letterSpacing: "0.5px",
-                                  textAlign: "left",
-                                  lineHeight: 1.3,
-                                  width: "100%",
-                                  overflowWrap: "break-word",
-                                  wordBreak: "break-word",
+                                  ...titleSlideBaseStyles,
+                                  maxHeight: showOverlay ? "6rem" : 0,
                                 }}
                               >
-                                {card.title}
-                              </span>
-                            </div>
-                          )}
-                        </div>
+                                <div
+                                  style={{
+                                    ...titleSlideInnerStyles,
+                                    opacity: showOverlay ? 1 : 0,
+                                    transform: showOverlay ? "translateY(0)" : "translateY(0.5rem)",
+                                  }}
+                                >
+                                  {card.title}
+                                </div>
+                              </div>
+                            )}
+                          </div>
                       ) : null}
                       {!hoverOverlay && (
-                        <h3 style={{ fontFamily: "var(--font-paragraph)", fontStyle: "italic", fontSize: "1.1rem", fontWeight: 400, letterSpacing: "0.5px", margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                        <h3 style={{ fontFamily: "var(--font-grid-card)", fontStyle: "italic", fontSize: "1.1rem", fontWeight: 400, letterSpacing: "0.5px", margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
                           <span style={{ color: "black", fontSize: "0.6em", lineHeight: 1 }}>{CARD_DOT}</span>
                           {card.title}
                         </h3>
                       )}
                     </article>
                   </TransitionLink>
+                );
+                const cardWrapperStyle = {
+                  opacity: animating ? 1 : 0,
+                  transition: FADE_TRANSITION,
+                  transitionDelay: cardDelay,
+                };
+                return useMasonry ? (
+                  <div key={card.id} style={{ ...masonryItemStyles(gap), ...cardWrapperStyle }}>
+                    {content}
+                  </div>
+                ) : (
+                  <div key={card.id} style={cardWrapperStyle}>
+                    {content}
+                  </div>
                 );
               })}
             </div>

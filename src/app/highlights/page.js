@@ -94,7 +94,6 @@ export default function Highlights() {
                 gap: "2rem",
                 width: "100%",
                 margin: "auto",
-                maxWidth: "1000px",
                 marginTop: "5rem",
               }}
             >
@@ -148,6 +147,7 @@ export default function Highlights() {
                             overflow: "hidden",
                             backgroundColor: "#f0f0f0",
                             position: "relative",
+                            borderRadius: "var(--border-radius)",
                           }}
                         >
                           <Image
