@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from "../firebase/firebaseConfig";
+import { auth } from "../firebase/firebaseAuth";
 import { logLogin, logLogout } from "../firebase/activityLogger";
 import styles from "../../styles/uploader.module.css";
 import ComunidadUploader from "../firebase/ComunidadUploader";

@@ -1,8 +1,6 @@
 "use client";
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
-import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY, 
@@ -16,7 +14,14 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
-const storage = getStorage(app);
-const auth = getAuth(app);
 
-export { app, firestore, storage, auth };
+// ─── IMPORTANT ───────────────────────────────────────────────────────────────
+// Auth and Storage have been moved to separate files to reduce bundle size.
+// Pages that only need Firestore (the vast majority) no longer download the
+// Auth SDK (85 KiB) or Storage SDK (26 KiB).
+//
+// Import auth from:    "./firebaseAuth"
+// Import storage from: "./firebaseStorage"
+// ─────────────────────────────────────────────────────────────────────────────
+
+export { app, firestore };

@@ -1,7 +1,7 @@
 "use client";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
 import { firestore } from "./firebaseConfig";
-import { auth } from "./firebaseConfig";
+import { auth } from "./firebaseAuth";
 
 /**
  * Activity Logger Utility

@@ -66,19 +66,19 @@ export default function ArticlesPage() {
               rawDate && typeof rawDate.toDate === "function"
                 ? rawDate.toDate()
                 : rawDate
-                ? new Date(rawDate)
-                : null;
+                  ? new Date(rawDate)
+                  : null;
 
             const links = Array.isArray(data.links)
               ? data.links
-                  .map((entry) => ({
-                    title: (entry?.title || "").trim(),
-                    url: (entry?.url || "").trim(),
-                  }))
-                  .filter((entry) => entry.url)
+                .map((entry) => ({
+                  title: (entry?.title || "").trim(),
+                  url: (entry?.url || "").trim(),
+                }))
+                .filter((entry) => entry.url)
               : typeof data.link === "string" && data.link.trim()
-              ? [{ title: "", url: data.link.trim() }]
-              : [];
+                ? [{ title: "", url: data.link.trim() }]
+                : [];
 
             return {
               id: docSnap.id,
@@ -145,11 +145,10 @@ export default function ArticlesPage() {
             }}
           >
             <header
-              className={`${styles.pageHeader} ${
-                visibleSubtitles.has("subtitle1")
+              className={`${styles.pageHeader} ${visibleSubtitles.has("subtitle1")
                   ? styles.sectionSubtitleVisible
                   : ""
-              }`}
+                }`}
               data-subtitle-id="subtitle1"
             >
               <h1>ARTÍCULOS</h1>
@@ -214,11 +213,10 @@ export default function ArticlesPage() {
                           }}
                         >
                           <span
-                            className={`${styles.sectionSubtitle} ${
-                              visibleSubtitles.has(`subtitle-${articleItem.id}`)
+                            className={`${styles.sectionSubtitle} ${visibleSubtitles.has(`subtitle-${articleItem.id}`)
                                 ? styles.sectionSubtitleVisible
                                 : ""
-                            }`}
+                              }`}
                             data-subtitle-id={`subtitle-${articleItem.id}`}
                             style={{
                               display: "block",

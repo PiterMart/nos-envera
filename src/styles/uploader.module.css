@@ -1,9 +1,6 @@
 /* UPLOADER COMPONENTS STYLES */
 
-/* Font Imports */
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
+/* Google Fonts (Inter, Roboto, Source Code Pro) now loaded via <link> in layout.js */
 
 /* Page Layout */
 .page {

@@ -1,10 +1,27 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import styles from '../styles/Section1.module.css';
 import pageStyles from '../styles/page.module.css';
+import AnimatedPageHeader from './AnimatedPageHeader';
 
 export default function Section1() {
+  const [loaded, setLoaded] = useState(false);
+  const headerRef = useRef(null);
+
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const ob = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) setLoaded(true);
+      },
+      { threshold: 0.2 }
+    );
+    ob.observe(el);
+    return () => ob.disconnect();
+  }, []);
+
   return (
     <section className={styles.section}>
       <div className={styles.container}>
@@ -18,11 +35,11 @@ export default function Section1() {
             priority
           />
         </div>
-        <header className={pageStyles.pageHeader} style={{ overflow: 'hidden', marginBottom: '1.5rem' }}>
-          <h1>NOS EN VERA</h1>
-        </header>
+        <div ref={headerRef} style={{ marginBottom: '1.5rem', overflow: 'hidden' }}>
+          <AnimatedPageHeader loaded={loaded}>NOS EN VERA</AnimatedPageHeader>
+        </div>
         <p className={styles.paragraph}>
-          Fundado en 2023 en el barrio de Villa Crespo, Ciudad Autónoma de Buenos Aires, Nos en Vera es un espacio de investigación en artes y prácticas performativas, dedicado a la producción, exhibición y el desarrollo artístico. Concebido como una plataforma para la experimentación y el cruce de lenguajes, busca generar nuevas relaciones dentro del universo de las artes escénicas, fomentando el intercambio y la colaboración entre artistas de diversas disciplinas.
+          Fundado en 2023 en el barrio de Villa Crespo, Ciudad Autónoma de Buenos Aires, Nos en Vera es un espacio de investigación en artes y prácticas performativas, dedicado a la producción, exhibición y el desarrollo artístico. Una plataforma para la experimentación y el cruce de lenguajes, que busca generar nuevas relaciones dentro del universo de las artes escénicas, fomentando el intercambio y la colaboración entre artistas de diversas disciplinas.
         </p>
         <p className={styles.paragraph}>
           Nos en Vera se consolidó como un punto de encuentro entre la comunidad local, artistas nacionales e internacionales, promoviendo la visibilización de creadorxs tanto emergentes como de trayectoria. A través de un enfoque que privilegia la investigación y el proceso artístico, ofrece residencias de creación, donde las premisas son definidas por los propios artistas en función de sus intereses e inquietudes.
@@ -32,9 +49,6 @@ export default function Section1() {
         </p>
         <p className={styles.paragraph}>
           Comprometidxs con el desarrollo de estrategias innovadoras que respondan a los desafíos de nuestro tiempo, impulsamos programas de residencias y eventos públicos, generando espacios de encuentro que potencien el diálogo, la reflexión y la experimentación dentro de la escena independiente local e internacional.
-        </p>
-        <p className={styles.paragraph}>
-          Nos en Vera es, ante todo, un espacio de convergencia y creación colectiva en el campo de la performance.
         </p>
       </div>
     </section>

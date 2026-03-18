@@ -3,7 +3,10 @@
 import Link from "next/link";
 import { TransitionLink } from "../../../components/TransitionLink";
 import React, { use, useEffect, useMemo, useState } from "react";
+import dynamic from "next/dynamic";
 import styles from "../../../styles/page.module.css";
+
+const Lightbox = dynamic(() => import("../../../components/Lightbox"), { ssr: false });
 import { firestore } from "../../firebase/firebaseConfig";
 import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 
@@ -16,16 +19,19 @@ import {
   eventContainsResidency,
 } from "../../../lib/eventUtils";
 
-export default function PerformanceDetail({ params }) {
+export default function EventDetail({ params }) {
   const { slug } = use(params);
   const [performance, setPerformance] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   useEffect(() => {
     const fetchPerformance = async () => {
       setLoading(true);
       setError(null);
+      setImgLoaded(false);
 
       try {
         const docRef = doc(firestore, "events", slug);
@@ -51,13 +57,13 @@ export default function PerformanceDetail({ params }) {
           if (normalized) {
             setPerformance(normalized);
           } else {
-            setError("La actividad encontrada no corresponde a una performance, residencia o formación.");
+            setError("La actividad encontrada no corresponde a una publicación válida.");
           }
         } else {
           setError("Actividad no encontrada.");
         }
       } catch (err) {
-        console.error("Error fetching performance:", err);
+        console.error("Error fetching event:", err);
         setError("Ocurrió un error al cargar la actividad.");
       } finally {
         setLoading(false);
@@ -107,7 +113,7 @@ export default function PerformanceDetail({ params }) {
           >
             <header className={styles.pageHeaderSmall} style={{ display: "flex", flexDirection: "column", justifyContent: "flex-end", marginBottom: 0 }}>
               <h1 style={{ fontWeight: 600, letterSpacing: "1px", marginBottom: 0 }}>
-                {performance?.name || "Performance"}
+                {performance?.name || "Actividad"}
                 {enriched?.year ? (
                   <span style={{ fontSize: "1.5rem", fontWeight: 400, color: "#666", marginLeft: "0.5rem" }}>
                     · {enriched.year}
@@ -130,21 +136,43 @@ export default function PerformanceDetail({ params }) {
                   <div
                     className={styles.responsiveImageContainer}
                     style={{
-                      minWidth: "5rem",
-                      maxWidth: "50%",
+                      width: "50%",
                       flexShrink: 0,
-                      backgroundColor: "#f0f0f0",
+                      backgroundColor: imgLoaded ? "#f0f0f0" : "transparent",
+                      backgroundImage: imgLoaded ? "none" : "linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)",
+                      backgroundSize: imgLoaded ? "auto" : "200% 100%",
+                      animation: imgLoaded ? "none" : "shimmer 1.5s infinite",
+                      aspectRatio: imgLoaded ? "auto" : "3 / 4",
                       overflow: "hidden",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       borderRadius: "var(--border-radius)",
+                      transition: "aspect-ratio 0.3s ease",
+                      cursor: "pointer",
                     }}
+                    onClick={() => setLightboxOpen(true)}
                   >
                     <img
                       src={performance.banner || performance.flyer || FALLBACK_IMAGE}
-                      alt={performance.name || "Performance"}
-                      style={{ minWidth: "5rem", width: "100%", height: "auto", objectFit: "contain", display: "block" }}
+                      alt={performance.name || "Actividad"}
+                      onLoad={() => setImgLoaded(true)}
+                      style={{ 
+                        minWidth: "5rem", 
+                        width: "100%", 
+                        height: "auto", 
+                        objectFit: "contain", 
+                        display: "block",
+                        opacity: imgLoaded ? 1 : 0,
+                        transition: "opacity 0.3s ease, transform 0.3s ease",
+                        transform: "scale(1)",
+                      }}
+                      onMouseEnter={(e) => {
+                        if (imgLoaded) e.currentTarget.style.transform = "scale(1.02)";
+                      }}
+                      onMouseLeave={(e) => {
+                        if (imgLoaded) e.currentTarget.style.transform = "scale(1)";
+                      }}
                     />
                   </div>
 
@@ -209,7 +237,7 @@ export default function PerformanceDetail({ params }) {
 
                     {enriched?.formattedDates?.length ? (
                       <div style={{ textAlign: "left", alignSelf: "flex-start" }}>
-                        <h2 style={{ fontSize: "1.1rem", textTransform: "uppercase", letterSpacing: "0.5px", textAlign: "left" }}>Funciones</h2>
+                        <h2 style={{ fontSize: "1.1rem", textTransform: "uppercase", letterSpacing: "0.5px", textAlign: "left" }}>Fechas</h2>
                         <ul style={{ listStyle: "none", padding: 0, margin: "0.5rem 0 0 0", display: "flex", flexDirection: "column", gap: "0.35rem", textAlign: "left" }}>
                           {enriched.formattedDates.map((entry, index) => (
                             <li key={`date-${index}`} style={{ color: "#444", textAlign: "left" }}>
@@ -265,34 +293,13 @@ export default function PerformanceDetail({ params }) {
                               textAlign: "left",
                             }}
                           >
-                            Comprar entradas
+                            Más Información / Entradas
                           </a>
                         ) : null}
                       </div>
                     ) : null}
                   </div>
                 </section>
-{/* 
-                {performance.flyer ? (
-                  <section style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                    <h2 style={{ fontSize: "1.1rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>Flyer</h2>
-                    {isLikelyVideo(performance.flyer) ? (
-                      <video
-                        controls
-                        style={{ width: "100%", maxHeight: "60vh", backgroundColor: "#000" }}
-                      >
-                        <source src={performance.flyer} type="video/mp4" />
-                        Tu navegador no soporta la reproducción de video.
-                      </video>
-                    ) : (
-                      <img
-                        src={performance.flyer}
-                        alt={`${performance.name || "Performance"} flyer`}
-                        style={{ width: "100%", maxHeight: "80vh", objectFit: "contain", backgroundColor: "#fafafa" }}
-                      />
-                    )}
-                  </section>
-                ) : null} */}
 
                 {performance.gallery?.length ? (
                   <section style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -308,7 +315,7 @@ export default function PerformanceDetail({ params }) {
                         <figure key={`gallery-${index}`} style={{ margin: 0, display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                           <img
                             src={item.url}
-                            alt={item.description || `${performance.name || "Performance"} imagen ${index + 1}`}
+                            alt={item.description || `${performance.name || "Actividad"} imagen ${index + 1}`}
                             style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", backgroundColor: "#f0f0f0", borderRadius: "var(--border-radius)" }}
                           />
                           {item.description ? (
@@ -421,6 +428,15 @@ export default function PerformanceDetail({ params }) {
                     ← agenda
                   </TransitionLink>
                 </div>
+
+                {lightboxOpen && (
+                  <Lightbox
+                    isOpen={lightboxOpen}
+                    imageSrc={performance.banner || performance.flyer || FALLBACK_IMAGE}
+                    imageAlt={performance.name || "Actividad"}
+                    onClose={() => setLightboxOpen(false)}
+                  />
+                )}
               </>
             )}
           </div>
@@ -429,5 +445,3 @@ export default function PerformanceDetail({ params }) {
     </div>
   );
 }
-
-

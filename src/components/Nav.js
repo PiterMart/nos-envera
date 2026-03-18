@@ -94,8 +94,7 @@ export default function Nav() {
                         height={120}
                         className={styles.nav_logo_image}
                         priority={true}
-                        quality={100}
-                        unoptimized={true}
+                        quality={75}
                     />
                 </button>
             </div>

@@ -8,6 +8,7 @@
   background-color: white;
   position: relative;
   z-index: 2;
+  min-height: 200px; /* Reserve space to prevent CLS layout shift */
 }
 
 .footerContent {

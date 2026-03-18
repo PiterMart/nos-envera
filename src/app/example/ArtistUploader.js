@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, useRef, useMemo } from "react";
-import { firestore, storage } from "./firebaseConfig";
+import { firestore } from "../firebase/firebaseConfig";
+import { storage } from "../firebase/firebaseStorage";
 import { getDocs, addDoc, collection, doc, updateDoc, Timestamp, arrayUnion, getDoc, setDoc, deleteDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { logCreate, logUpdate, RESOURCE_TYPES } from "./activityLogger";

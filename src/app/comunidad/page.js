@@ -176,7 +176,7 @@ export default function Comunidad() {
 
       setMemberLayouts((prev) => {
         if (!prev[dragging]) return prev;
-        
+
         return {
           ...prev,
           [dragging]: {
@@ -205,7 +205,7 @@ export default function Comunidad() {
       const wasDragging = hasDraggedRef.current;
       setDragging(null);
       setDragOffset({ x: 0, y: 0 });
-      
+
       if (wasDragging) {
         setJustDragged(true);
         // Reset after a delay to allow click handler to check
@@ -227,7 +227,7 @@ export default function Comunidad() {
       const wasDragging = hasDraggedRef.current;
       setDragging(null);
       setDragOffset({ x: 0, y: 0 });
-      
+
       if (wasDragging) {
         setJustDragged(true);
         // Reset after a delay to allow click handler to check
@@ -285,11 +285,11 @@ export default function Comunidad() {
     // Get current position in container coordinates (percentage)
     const x = ((clientX - containerRect.left) / containerRect.width) * 100;
     const y = ((clientY - containerRect.top) / containerRect.height) * 100;
-    
+
     // Get element's current position
     const elementX = parseFloat(layout.left) || 0;
     const elementY = parseFloat(layout.top) || 0;
-    
+
     // Calculate offset from touch/click point to element position
     const offsetX = x - elementX;
     const offsetY = y - elementY;
@@ -320,7 +320,7 @@ export default function Comunidad() {
       <div className={styles.page_container} style={{ position: "relative", zIndex: 2 }}>
         <AnimatedPageSection
           title="COMUNIDAD"
-          subtext="Esta sección reúne las biografías de artistas, investigadorxs y colaboradorxs que mantienen activo Nos en Vera, como un archivo vivo de la comunidad que lo hace posible."
+          subtext="Esta sección reúne las biografías de artistas, investigadorxs y colaboradorxs que mantienen activo Nos en Vera, como un mapa de la comunidad que lo hace posible."
           loaded={!isLoading}
         />
         <div style={{ width: "100%", marginTop: "0.75rem", marginBottom: "2rem" }}>
@@ -388,193 +388,192 @@ export default function Comunidad() {
                     transition: "opacity 0.25s ease",
                   }}
                 >
-                {isOrdered ? (
-                  <div style={{
-                    columnCount: width < BREAKPOINT_SM ? 2 : 4,
-                    columnGap: "2rem",
-                    width: "100%",
-                  }}>
-                    {memberNames.length === 0 ? (
-                      <p style={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: "var(--border-radius)",
-                        padding: "1rem",
-                        backgroundColor: "#fafafa",
-                        textAlign: "center",
-                        color: "#666",
-                      }}>
-                        No hay miembros registrados todavía.
-                      </p>
-                    ) : (
-                      Object.entries(
-                        memberNames.reduce((groups, member) => {
-                          const letter = (member.name?.[0] || "#").toUpperCase();
-                          if (!groups[letter]) groups[letter] = [];
-                          groups[letter].push(member);
-                          return groups;
-                        }, {})
-                      )
-                        .sort(([a], [b]) => a.localeCompare(b))
-                        .map(([letter, members]) => (
-                          <div key={letter} style={{
-                            breakInside: "avoid",
-                            marginBottom: "1rem",
-                          }}>
-                            <div style={{
-                              fontFamily: "var(--font-family-base)",
-                              fontSize: "3.75rem",
-                              fontWeight: 600,
-                              letterSpacing: "0.5px",
-                              textAlign: "left",
-                              margin: 0,
-                              marginBottom: "0.5rem",
-                              paddingBottom: "0.25rem",
-                              borderBottom: "2px solid black",
-                              width: "100%",
-                            }}>
-                              {letter}
-                            </div>
-                            <ul style={{
-                              listStyle: "none",
-                              padding: 0,
-                              margin: 0,
-                              display: "flex",
-                              flexDirection: "column",
-                              gap: "0rem",
-                              textAlign: "left",
-                            }}>
-                              {members.map(({ id, name, slug, team }) => {
-                                const basePath = team === true ? "/somos" : "/comunidad";
-                                const href = slug ? `${basePath}/${slug}` : `${basePath}/${id}`;
-                                return (
-                                  <li
-                                    key={id}
-                                    style={{
-                                      padding: "0",
-                                    }}
-                                  >
-                                    <TransitionLink
-                                      href={href}
-                                      className={styles.memberLink}
-                                      style={{
-                                        fontSize: width < BREAKPOINT_SM ? "1rem" : "1.2rem",
-                                        fontWeight: 700,
-                                        fontFamily: "var(--font-paragraph)",
-                                        fontStyle: "italic",
-                                        color: "#000",
-                                        textDecoration: "none",
-                                        display: "block",
-                                        textAlign: "left",
-                                      }}
-                                    >
-                                      {name}
-                                    </TransitionLink>
-                                  </li>
-                                );
-                              })}
-                            </ul>
-                          </div>
-                        ))
-                    )}
-                  </div>
-                ) : (
-                  <ul
-                    ref={containerRef}
-                    style={{
-                      listStyle: "none",
-                      padding: 0,
-                      margin: 0,
+                  {isOrdered ? (
+                    <div style={{
+                      columnCount: width < BREAKPOINT_SM ? 2 : 4,
+                      columnGap: "2rem",
                       width: "100%",
-                      position: "relative",
-                      minHeight: `${scatterLayout.minHeightVh}vh`,
-                      touchAction: dragging ? "none" : "auto",
-                    }}
-                  >
-                    {memberNames.map(({ id, name, slug, team }) => {
-                      const layout = memberLayouts[id];
-                      const isDragging = dragging === id;
-                      const basePath = team === true ? "/somos" : "/comunidad";
-                      const href = slug ? `${basePath}/${slug}` : `${basePath}/${id}`;
-
-                      return (
-                        <li
-                          key={id}
-                          style={{
-                            border: "none",
-                            borderRadius: 0,
-                            padding: 0,
-                            backgroundColor: "transparent",
-                            position: "absolute",
-                            top: layout?.top ?? "50%",
-                            left: layout?.left ?? "10%",
-                            right: layout?.right,
-                            transform: `rotate(${
-                              layout?.rotation ?? 0
-                            }deg) scale(${layout?.scale ?? 1})`,
-                            transformOrigin: "left center",
-                            zIndex: isDragging ? 10 : 1,
-                            userSelect: "none",
-                            WebkitUserSelect: "none",
-                            touchAction: "none",
-                            WebkitTouchCallout: "none",
-                          }}
-                        >
-                          <TransitionLink
-                            href={href}
-                            className={styles.memberLink}
-                            draggable="false"
-                            onMouseDown={(e) => {
-                              startDrag(e.clientX, e.clientY, id, e);
-                            }}
-                            onTouchStart={(e) => {
-                              if (e.touches.length > 0) {
-                                const touch = e.touches[0];
-                                startDrag(touch.clientX, touch.clientY, id, e);
-                              }
-                            }}
-                            onClick={(e) => {
-                              // Only navigate if we didn't drag
-                              if (hasDraggedRef.current || justDragged) {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                return false;
-                              }
-                            }}
-                            style={{
-                              fontSize: width < BREAKPOINT_SM ? "1rem" : "1.2rem",
-                              fontWeight: 700,
-                              fontFamily: "var(--font-paragraph)",
-                              fontStyle: "italic",
-                              color: "#000",
-                              textDecoration: "none",
-                              whiteSpace: "nowrap",
-                              textAlign: "left",
-                              cursor: "move",
-                              display: "block",
-                              pointerEvents: "auto",
-                            }}
-                          >
-                            {name}
-                          </TransitionLink>
-                        </li>
-                      );
-                    })}
-                    {memberNames.length === 0 && (
-                        <li
-                        style={{
+                    }}>
+                      {memberNames.length === 0 ? (
+                        <p style={{
                           border: "1px solid #e0e0e0",
                           borderRadius: "var(--border-radius)",
                           padding: "1rem",
                           backgroundColor: "#fafafa",
                           textAlign: "center",
                           color: "#666",
-                        }}
-                      >
-                        No hay miembros registrados todavía.
-                      </li>
-                    )}
-                  </ul>
-                )}
+                        }}>
+                          No hay miembros registrados todavía.
+                        </p>
+                      ) : (
+                        Object.entries(
+                          memberNames.reduce((groups, member) => {
+                            const letter = (member.name?.[0] || "#").toUpperCase();
+                            if (!groups[letter]) groups[letter] = [];
+                            groups[letter].push(member);
+                            return groups;
+                          }, {})
+                        )
+                          .sort(([a], [b]) => a.localeCompare(b))
+                          .map(([letter, members]) => (
+                            <div key={letter} style={{
+                              breakInside: "avoid",
+                              marginBottom: "1rem",
+                            }}>
+                              <div style={{
+                                fontFamily: "var(--font-family-base)",
+                                fontSize: "3.75rem",
+                                fontWeight: 600,
+                                letterSpacing: "0.5px",
+                                textAlign: "left",
+                                margin: 0,
+                                marginBottom: "0.5rem",
+                                paddingBottom: "0.25rem",
+                                borderBottom: "2px solid black",
+                                width: "100%",
+                              }}>
+                                {letter}
+                              </div>
+                              <ul style={{
+                                listStyle: "none",
+                                padding: 0,
+                                margin: 0,
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: "0rem",
+                                textAlign: "left",
+                              }}>
+                                {members.map(({ id, name, slug, team }) => {
+                                  const basePath = team === true ? "/somos" : "/comunidad";
+                                  const href = slug ? `${basePath}/${slug}` : `${basePath}/${id}`;
+                                  return (
+                                    <li
+                                      key={id}
+                                      style={{
+                                        padding: "0",
+                                      }}
+                                    >
+                                      <TransitionLink
+                                        href={href}
+                                        className={styles.memberLink}
+                                        style={{
+                                          fontSize: width < BREAKPOINT_SM ? "1rem" : "1.2rem",
+                                          fontWeight: 700,
+                                          fontFamily: "var(--font-paragraph)",
+                                          fontStyle: "italic",
+                                          color: "#000",
+                                          textDecoration: "none",
+                                          display: "block",
+                                          textAlign: "left",
+                                        }}
+                                      >
+                                        {name}
+                                      </TransitionLink>
+                                    </li>
+                                  );
+                                })}
+                              </ul>
+                            </div>
+                          ))
+                      )}
+                    </div>
+                  ) : (
+                    <ul
+                      ref={containerRef}
+                      style={{
+                        listStyle: "none",
+                        padding: 0,
+                        margin: 0,
+                        width: "100%",
+                        position: "relative",
+                        minHeight: `${scatterLayout.minHeightVh}vh`,
+                        touchAction: dragging ? "none" : "auto",
+                      }}
+                    >
+                      {memberNames.map(({ id, name, slug, team }) => {
+                        const layout = memberLayouts[id];
+                        const isDragging = dragging === id;
+                        const basePath = team === true ? "/somos" : "/comunidad";
+                        const href = slug ? `${basePath}/${slug}` : `${basePath}/${id}`;
+
+                        return (
+                          <li
+                            key={id}
+                            style={{
+                              border: "none",
+                              borderRadius: 0,
+                              padding: 0,
+                              backgroundColor: "transparent",
+                              position: "absolute",
+                              top: layout?.top ?? "50%",
+                              left: layout?.left ?? "10%",
+                              right: layout?.right,
+                              transform: `rotate(${layout?.rotation ?? 0
+                                }deg) scale(${layout?.scale ?? 1})`,
+                              transformOrigin: "left center",
+                              zIndex: isDragging ? 10 : 1,
+                              userSelect: "none",
+                              WebkitUserSelect: "none",
+                              touchAction: "none",
+                              WebkitTouchCallout: "none",
+                            }}
+                          >
+                            <TransitionLink
+                              href={href}
+                              className={styles.memberLink}
+                              draggable="false"
+                              onMouseDown={(e) => {
+                                startDrag(e.clientX, e.clientY, id, e);
+                              }}
+                              onTouchStart={(e) => {
+                                if (e.touches.length > 0) {
+                                  const touch = e.touches[0];
+                                  startDrag(touch.clientX, touch.clientY, id, e);
+                                }
+                              }}
+                              onClick={(e) => {
+                                // Only navigate if we didn't drag
+                                if (hasDraggedRef.current || justDragged) {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  return false;
+                                }
+                              }}
+                              style={{
+                                fontSize: width < BREAKPOINT_SM ? "1rem" : "1.2rem",
+                                fontWeight: 700,
+                                fontFamily: "var(--font-paragraph)",
+                                fontStyle: "italic",
+                                color: "#000",
+                                textDecoration: "none",
+                                whiteSpace: "nowrap",
+                                textAlign: "left",
+                                cursor: "move",
+                                display: "block",
+                                pointerEvents: "auto",
+                              }}
+                            >
+                              {name}
+                            </TransitionLink>
+                          </li>
+                        );
+                      })}
+                      {memberNames.length === 0 && (
+                        <li
+                          style={{
+                            border: "1px solid #e0e0e0",
+                            borderRadius: "var(--border-radius)",
+                            padding: "1rem",
+                            backgroundColor: "#fafafa",
+                            textAlign: "center",
+                            color: "#666",
+                          }}
+                        >
+                          No hay miembros registrados todavía.
+                        </li>
+                      )}
+                    </ul>
+                  )}
                 </div>
               </>
             )}

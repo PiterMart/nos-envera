@@ -215,7 +215,9 @@ export default function Archivo() {
           <div className={styles.contentMaxWidth} style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
             <AnimatedPageSection
               title="ARCHIVO"
-              subtext="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.."
+              subtext="Este es un archivo en constante construcción y crecimiento. Guarda registro de cada obra, proceso y actividad que tuvo lugar en nuestro espacio desde su inicio en 2023 hasta el presente.
+El archivo permite volver sobre lo sucedido, leer continuidades, desvíos y transformaciones.
+"
               loaded={!loading}
             />
 
@@ -266,14 +268,14 @@ export default function Archivo() {
                   {activeFilter === "all"
                     ? "No hay eventos registrados todavía."
                     : activeFilter === "perfos"
-                    ? "No hay perfos registradas todavía."
-                    : activeFilter === "formacion"
-                    ? "No hay formaciones registradas todavía."
-                    : "No hay residencias registradas todavía."}
+                      ? "No hay perfos registradas todavía."
+                      : activeFilter === "formacion"
+                        ? "No hay formaciones registradas todavía."
+                        : "No hay residencias registradas todavía."}
                 </p>
               </div>
             ) : (
-              <Grid key={activeFilter} cards={cards} hideImages={true} basePath="/archivo" loaded={!loading} />
+              <Grid key={activeFilter} cards={cards} hideImages={true} basePath="/evento" loaded={!loading} />
             )}
           </div>
         </div>

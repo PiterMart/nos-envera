@@ -86,7 +86,7 @@ export default function Agenda() {
           <div className={styles.contentMaxWidth} style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
             <AnimatedPageSection
               title="AGENDA"
-              subtext="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+              subtext="Estas son las próximas actividades abiertas a la comunidad que ofrece Nos en Vera: funciones, aperturas de procesos y espacios de formación. "
               loaded={!loading}
             />
 
@@ -99,7 +99,7 @@ export default function Agenda() {
                 <p>No hay eventos este mes.</p>
               </div>
             ) : (
-              <Grid cards={cards} hideImages={true} basePath="/archivo" loaded={!loading} />
+              <Grid cards={cards} hideImages={true} basePath="/evento" loaded={!loading} />
             )}
           </div>
         </div>

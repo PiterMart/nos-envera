@@ -154,7 +154,7 @@ const archivoArticleStyles = {
 const CURSOR_IMAGE_WIDTH = 280;
 const CURSOR_IMAGE_HEIGHT = 360;
 
-const AdaptiveImage = React.memo(function AdaptiveImage({ src, alt, tight, priority = false }) {
+const AdaptiveImage = React.memo(function AdaptiveImage({ src, alt, tight, priority = false, fetchPriority }) {
   const [dimensions, setDimensions] = useState(null);
 
   const handleLoad = useCallback((e) => {
@@ -180,6 +180,7 @@ const AdaptiveImage = React.memo(function AdaptiveImage({ src, alt, tight, prior
         style={{ objectFit: "contain" }}
         onLoad={handleLoad}
         priority={priority}
+        {...(fetchPriority ? { fetchPriority } : {})}
       />
     </div>
   );
@@ -220,7 +221,7 @@ const titleSlideInnerStyles = {
 
 const ABOVE_THE_FOLD_COUNT = 8; /* priority-load first N images */
 
-export default function Grid({ cards, hideImages = false, tight = false, hoverOverlay = false, basePath = "/archivo", yearHeadingClassName, loaded = true }) {
+export default function Grid({ cards, hideImages = false, tight = false, hoverOverlay = false, basePath = "/evento", yearHeadingClassName, loaded = true }) {
   const groups = useMemo(() => groupByYear(cards), [cards]);
   const [hasAnimated, setHasAnimated] = useState(false);
 
@@ -451,7 +452,7 @@ export default function Grid({ cards, hideImages = false, tight = false, hoverOv
                       <article style={articleStyle}>
                         {!hideImages && card.imageUrl ? (
                           <div style={imageWithTitleWrapperStyles}>
-                            <AdaptiveImage src={card.imageUrl} alt={card.title} tight={tight} priority={isPriority} />
+                            <AdaptiveImage src={card.imageUrl} alt={card.title} tight={tight} priority={isPriority} fetchPriority={isPriority ? "high" : undefined} />
                             {hoverOverlay && (
                               <div
                                 style={{

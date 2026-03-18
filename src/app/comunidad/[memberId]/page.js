@@ -265,7 +265,7 @@ export default function ComunidadMemberPage({ params }) {
                   ) : memberEvents.length === 0 ? (
                     <p className={detailStyles.paragraphs}>Todavía no hay actividades registradas para este miembro.</p>
                   ) : (
-                    <Grid cards={memberEvents} hideImages={true} basePath="/archivo" />
+                    <Grid cards={memberEvents} hideImages={true} basePath="/evento" />
                   )}
                 </div>
 
