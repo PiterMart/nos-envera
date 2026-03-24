@@ -64,8 +64,8 @@
   --font-paragraph-light: "Overused Grotesk", Georgia, "Times New Roman", serif;
   --paragraph-font-size: 1.25rem;
   --paragraph-line-height: 1.25rem;
-  --subtext-font-size: 1.55rem;
-  --subtext-line-height: 1.55rem;
+  --subtext-font-size: 1.25rem;
+  --subtext-line-height: 1.5rem;
   --font-weight-ultralight: 200;
   --font-weight-medium: 500;
   --font-weight-demibold: 600;
@@ -75,6 +75,7 @@
   --line-height-relaxed: 1.7;
   --letter-spacing-tight: -0.015em;
   --letter-spacing-default: 0.01em;
+  --page-padding: 0.35rem;
 }
 
 html,
@@ -106,6 +107,11 @@ p {
   font-size: var(--paragraph-font-size);
   line-height: var(--paragraph-line-height);
   text-align: justify;
+  width: 95%;
+}
+
+.paragraph {
+  width: 95%;
 }
 
 @media (max-width: 768px) {
@@ -114,6 +120,7 @@ p {
   }
   .mainContent {
     margin: 0;
+    padding: 1.5rem calc(var(--page-padding) + 0.5rem) calc(var(--page-padding) + 0.5rem) calc(var(--page-padding) + 0.5rem);
   }
 }
 
@@ -214,7 +221,7 @@ a {
   max-width: 100%;
   overflow-x: hidden;
   box-sizing: border-box;
-  padding-top: 80px; /* Space for fixed navbar */
+  padding: 7.5rem var(--page-padding) var(--page-padding) var(--page-padding);
   margin: auto;
 }
 

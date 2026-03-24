@@ -24,6 +24,15 @@ const createInitialFormData = () => ({
   roles: [],
 });
 
+/** Firestore Timestamp, Date, ISO string, or missing — never throw */
+function parseMemberBirthDate(value) {
+  if (value == null) return null;
+  if (typeof value.toDate === "function") return value.toDate();
+  if (value instanceof Date) return value;
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
 export default function MemberUploader() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -76,8 +85,6 @@ export default function MemberUploader() {
     setProfilePicturePreview(null);
     setCvFile(null);
     setRoleInput("");
-    setSearchQuery("");
-    setShowSearchResults(false);
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -99,6 +106,7 @@ export default function MemberUploader() {
     }
 
     try {
+      setError(null);
       const memberDoc = await getDoc(doc(firestore, "members", id));
       if (memberDoc.exists()) {
         const data = memberDoc.data();
@@ -112,7 +120,7 @@ export default function MemberUploader() {
           slug: data.slug || "",
           profilePicture: data.profilePicture || "",
           cvUrl: data.cvUrl || "",
-          birthDate: data.birthDate ? data.birthDate.toDate() : null,
+          birthDate: parseMemberBirthDate(data.birthDate),
           team: Boolean(data.team),
           roles: Array.isArray(data.roles)
             ? data.roles.filter((role) => typeof role === "string" && role.trim())
@@ -121,8 +129,6 @@ export default function MemberUploader() {
             : [],
         });
         setRoleInput("");
-        setSearchQuery("");
-        setShowSearchResults(false);
 
         if (profilePicturePreview?.startsWith("blob:")) {
           URL.revokeObjectURL(profilePicturePreview);

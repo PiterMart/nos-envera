@@ -2,7 +2,7 @@
 .espacioGallery {
   width: 100%;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 2rem var(--page-padding);
 }
 
 .espacioGrid {
@@ -37,7 +37,7 @@
 
 @media (max-width: 768px) {
   .espacioGallery {
-    padding: 1.5rem 0.5rem;
+    padding: 1.5rem var(--page-padding);
   }
 
   .espacioGrid {
@@ -185,7 +185,7 @@
 @media (max-width: 768px) {
   .intro {
     margin-top: 4rem;
-    padding: 0 1rem;
+    padding: 0 var(--page-padding);
   }
 
   .title {
@@ -194,6 +194,7 @@
   }
 
   .paragraph {
+    width: 95%;
     font-size: 1rem;
   }
 
@@ -214,7 +215,7 @@
   }
 
   .card {
-    padding: 1rem;
+    padding: var(--page-padding);
   }
 
   .cardBody {

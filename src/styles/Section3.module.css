@@ -1,6 +1,6 @@
 .section {
   width: 100%;
-  padding: 10vh 1rem;
+  padding: 10vh var(--page-padding);
   position: relative;
   z-index: 2;
   background-color: #0000008f;
@@ -50,4 +50,10 @@
 
 .titleButton:hover {
   text-decoration: none;
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 10vh var(--page-padding);
+  }
 }

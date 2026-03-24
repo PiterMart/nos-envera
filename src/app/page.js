@@ -24,6 +24,7 @@ export default function Home() {
               borderBottom: "1px solid #222",
               textAlign: "center",
               display: "inline-block",
+              textDecoration: 'none'
             }}
           >
             somos →

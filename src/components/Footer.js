@@ -34,19 +34,20 @@ export default function Footer() {
               rel="noopener noreferrer"
               className={styles.socialLink}
               aria-label="Instagram"
-              style={{ display: 'inline-flex' }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
                 <circle cx="12" cy="12" r="5" />
                 <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" />
               </svg>
+              <span>nos.envera</span>
             </a>
           </div>
 
           {/* 2. SUSCRIBITE - newsletter */}
           <div className={styles.footerCol}>
-            <h3 className={styles.contactTitle}>Suscribite a nuestro newsletter</h3>
+            <h3 className={styles.contactTitle}>Suscribite</h3>
             <MailchimpForm compact />
           </div>
 

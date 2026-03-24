@@ -118,29 +118,64 @@ export default function Archivo() {
   const updateActiveFromScroll = useCallback(() => {
     const container = sliderRef.current;
     if (!container) return;
-    const containerRect = container.getBoundingClientRect();
-    const containerCenter = containerRect.left + containerRect.width / 2;
+    const wrap = container.parentElement;
+    if (!wrap) return;
+
+    // Desktop: filter comes from clicks only. Geometry-based "closest to center" would
+    // override the first tab whenever another tab sits nearer the viewport center.
+    if (isDesktop) {
+      return;
+    }
+
     const items = itemRefs.current;
     let closestIndex = 0;
-    let closestDist = Infinity;
-    items.forEach((el, i) => {
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const elCenter = rect.left + rect.width / 2;
-      const dist = Math.abs(elCenter - containerCenter);
-      if (dist < closestDist) {
-        closestDist = dist;
-        closestIndex = i;
-      }
-    });
+
+    const pickClosestToCenter = () => {
+      const containerRect = container.getBoundingClientRect();
+      const containerCenter = containerRect.left + containerRect.width / 2;
+      let best = 0;
+      let closestDist = Infinity;
+      items.forEach((el, i) => {
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const elCenter = rect.left + rect.width / 2;
+        const dist = Math.abs(elCenter - containerCenter);
+        if (dist < closestDist) {
+          closestDist = dist;
+          best = i;
+        }
+      });
+      return best;
+    };
+
+    const hasOverflow = container.scrollWidth > container.clientWidth + 2;
+    if (!hasOverflow) {
+      return;
+    }
+
+    const maxScroll = container.scrollWidth - container.clientWidth;
+    // Tight thresholds so "second" tab isn't snapped back to first while still near scroll start
+    const atStart = container.scrollLeft < 1;
+    const atEnd = maxScroll > 0 && container.scrollLeft > maxScroll - 1;
+
+    if (atStart) {
+      closestIndex = 0;
+    } else if (atEnd) {
+      closestIndex = FILTER_OPTIONS.length - 1;
+    } else {
+      closestIndex = pickClosestToCenter();
+    }
+
     const value = FILTER_OPTIONS[closestIndex]?.value;
     if (value != null) setActiveFilter(value);
     const centeredEl = itemRefs.current[closestIndex];
     if (centeredEl) {
-      const w = centeredEl.getBoundingClientRect().width;
-      setCenteredItemWidth(w);
+      const elRect = centeredEl.getBoundingClientRect();
+      const wrapRect = wrap.getBoundingClientRect();
+      setCenteredItemWidth(elRect.width);
+      setFrameLeft(elRect.left - wrapRect.left);
     }
-  }, []);
+  }, [isDesktop]);
 
   useEffect(() => {
     const container = sliderRef.current;
@@ -188,7 +223,6 @@ export default function Archivo() {
   }, []);
 
   useEffect(() => {
-    if (!isDesktop) return;
     const idx = FILTER_OPTIONS.findIndex((o) => o.value === activeFilter);
     const el = itemRefs.current[idx];
     const wrap = sliderRef.current?.parentElement;
@@ -221,7 +255,7 @@ El archivo permite volver sobre lo sucedido, leer continuidades, desvíos y tran
               loaded={!loading}
             />
 
-            <div className={styles.agendaFilterSliderWrap}>
+            <div className={`${styles.agendaFilterSliderWrap} ${styles.agendaFilterAlignContent}`}>
               <div
                 ref={sliderRef}
                 className={styles.agendaFilterSlider}
@@ -252,7 +286,8 @@ El archivo permite volver sobre lo sucedido, leer continuidades, desvíos y tran
                 className={styles.agendaFilterFrame}
                 style={{
                   width: centeredItemWidth != null ? centeredItemWidth : undefined,
-                  ...(isDesktop ? { left: frameLeft, transform: "none" } : {}),
+                  left: frameLeft,
+                  transform: "none",
                 }}
                 aria-hidden
               />

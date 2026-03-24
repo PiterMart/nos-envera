@@ -80,6 +80,13 @@ export default function ArticlesPage() {
                 ? [{ title: "", url: data.link.trim() }]
                 : [];
 
+            const coverImage =
+              typeof data.coverImage === "string" && data.coverImage.trim()
+                ? data.coverImage.trim()
+                : typeof data.image === "string" && data.image.trim()
+                  ? data.image.trim()
+                  : "";
+
             return {
               id: docSnap.id,
               title: data.title || "Sin título",
@@ -87,6 +94,7 @@ export default function ArticlesPage() {
               description: data.description || "",
               links,
               date,
+              coverImage,
             };
           })
           .sort((a, b) => {
@@ -252,6 +260,27 @@ export default function ArticlesPage() {
                           >
                             {articleItem.subtitle && (
                               <p style={{ fontWeight: "500" }}>{articleItem.subtitle}</p>
+                            )}
+
+                            {articleItem.coverImage && (
+                              <div
+                                style={{
+                                  marginTop: "0.25rem",
+                                  marginBottom: "0.5rem",
+                                  maxWidth: "100%",
+                                }}
+                              >
+                                <img
+                                  src={articleItem.coverImage}
+                                  alt=""
+                                  style={{
+                                    width: "100%",
+                                    maxHeight: "280px",
+                                    objectFit: "cover",
+                                    display: "block",
+                                  }}
+                                />
+                              </div>
                             )}
 
                             {articleItem.date && (

@@ -127,7 +127,7 @@
   width: 100%;
   max-width: 100vw;
   margin-bottom: -20vh;
-  padding: 0 1rem;
+  padding: 0;
   box-sizing: border-box;
 }
 
@@ -184,7 +184,7 @@
   margin-top: 27vh;
   max-width: 800px;
   width: 100%;
-  padding: 0 1rem;
+  padding: 0;
   box-sizing: border-box;
 }
 
@@ -252,7 +252,7 @@
   width: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 1rem;
+  padding: 0;
   margin-bottom: 5rem;
   z-index: 2;
   background-color: transparent;
@@ -265,22 +265,46 @@
   box-sizing: border-box;
 }
 
+.image_container{
+  border-radius: var(--border-radius);
+}
+
+.link_container{
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  align-items: stretch;
+}
+
+.backNavLink {
+  display: block;
+  width: 100%;
+  text-decoration: none;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #222;
+  border-bottom: 1px solid #222;
+  text-align: right;
+  padding-bottom: 0.2rem;
+}
+
 .page_container{
   width: 100%;
   max-width: 100%;
   margin: auto;
-  margin-top: 3rem;
+  margin-top: 2rem;
   display: flex;
   flex-direction: column;
-  gap:3rem;
+  gap:2rem;
   box-sizing: border-box;
 }
 
 @media (max-width: 768px) {
   .page {
     align-items: stretch;
-    padding: 0.5rem;
-    padding-top: 5rem;
+    padding: 0;
   }
 
   .page_container,
@@ -349,7 +373,7 @@
 .pageHeader {
   text-align: left;
   margin-bottom: 0;
-  padding-bottom: 0.5rem;
+  padding-bottom: 0;
   border-bottom: 3px solid #000;
 }
 
@@ -374,7 +398,7 @@
   font-family: var(--font-family-base);
   font-size: clamp(3rem, 8vw, 6rem);
   line-height: 1;
-  margin-bottom: 0;
+  margin-bottom: 0.5rem;
   letter-spacing: 1px;
   font-weight: 600;
   text-transform: uppercase;
@@ -457,6 +481,18 @@
   position: relative;
   width: 100%;
   margin-bottom: 2rem;
+}
+
+/* Align filter with title and paragraph (e.g. archivo page) */
+.agendaFilterAlignContent {
+  max-width: 800px;
+}
+
+/* Remove mobile left gutter (symmetric padding-inline); frame position stays in sync via JS */
+@media (max-width: 768px) {
+  .agendaFilterAlignContent .agendaFilterTrack {
+    padding-left: 0;
+  }
 }
 .agendaFilterSlider {
   width: 100%;
@@ -578,7 +614,7 @@
   box-shadow: 0 4px 12px rgba(255, 68, 68, 0.25);
 }
 .paragraph {
-  width: 70%;
+  width: 95%;
   margin: auto;
   font-family: var(--font-paragraph);
   font-style: italic;

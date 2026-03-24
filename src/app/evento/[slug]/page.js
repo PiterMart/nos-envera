@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import BackNavLinks from "../../../components/BackNavLinks";
 import { TransitionLink } from "../../../components/TransitionLink";
 import React, { use, useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
@@ -26,6 +26,7 @@ export default function EventDetail({ params }) {
   const [error, setError] = useState(null);
   const [imgLoaded, setImgLoaded] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   useEffect(() => {
     const fetchPerformance = async () => {
@@ -73,6 +74,18 @@ export default function EventDetail({ params }) {
     fetchPerformance();
   }, [slug]);
 
+  const lightboxSlides = useMemo(() => {
+    if (!performance) return [];
+    const banner = performance.banner || performance.flyer || FALLBACK_IMAGE;
+    const slides = [{ src: banner, alt: performance.name || "Actividad" }];
+    if (performance.gallery?.length) {
+      performance.gallery.forEach((item, i) => {
+        slides.push({ src: item.url, alt: item.description || `${performance.name || "Actividad"} imagen ${i + 1}` });
+      });
+    }
+    return slides;
+  }, [performance]);
+
   const enriched = useMemo(() => {
     if (!performance) return null;
 
@@ -96,6 +109,19 @@ export default function EventDetail({ params }) {
       formattedDates,
       year,
     };
+  }, [performance]);
+
+  const backNavLinks = useMemo(() => {
+    if (!performance) return [];
+    const links = [];
+    if (performance.eventTypes?.length) {
+      if (eventContainsPerformance(performance.eventTypes)) links.push({ href: "/performances", label: "Perfos" });
+      if (eventContainsTraining(performance.eventTypes)) links.push({ href: "/formaciones", label: "Formación" });
+      if (eventContainsResidency(performance.eventTypes)) links.push({ href: "/residencias", label: "Residencias" });
+    }
+    links.push({ href: "/archivo", label: "archivo" });
+    links.push({ href: "/agenda", label: "agenda" });
+    return links;
   }, [performance]);
 
   return (
@@ -151,7 +177,7 @@ export default function EventDetail({ params }) {
                       transition: "aspect-ratio 0.3s ease",
                       cursor: "pointer",
                     }}
-                    onClick={() => setLightboxOpen(true)}
+                    onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }}
                   >
                     <img
                       src={performance.banner || performance.flyer || FALLBACK_IMAGE}
@@ -198,12 +224,12 @@ export default function EventDetail({ params }) {
                           {performance.artists.map((artist, index) => (
                             <li key={`artist-${index}`} style={{ color: "#444", textAlign: "left" }}>
                               {artist.memberId ? (
-                                <Link
+                                <TransitionLink
                                   href={`/comunidad/${artist.memberId}`}
                                   style={{ color: "#444", textDecoration: "none", borderBottom: "1px solid #444" }}
                                 >
                                   {artist.name}
-                                </Link>
+                                </TransitionLink>
                               ) : (
                                 artist.name
                               )}
@@ -220,12 +246,12 @@ export default function EventDetail({ params }) {
                           {performance.directors.map((director, index) => (
                             <li key={`director-${index}`} style={{ color: "#444", textAlign: "left" }}>
                               {director.memberId ? (
-                                <Link
+                                <TransitionLink
                                   href={`/comunidad/${director.memberId}`}
                                   style={{ color: "#444", textDecoration: "none", borderBottom: "1px solid #444" }}
                                 >
                                   {director.name}
-                                </Link>
+                                </TransitionLink>
                               ) : (
                                 director.name
                               )}
@@ -303,7 +329,6 @@ export default function EventDetail({ params }) {
 
                 {performance.gallery?.length ? (
                   <section style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                    <h2 style={{ fontSize: "1.1rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>Galería</h2>
                     <div
                       style={{
                         display: "grid",
@@ -312,7 +337,21 @@ export default function EventDetail({ params }) {
                       }}
                     >
                       {performance.gallery.map((item, index) => (
-                        <figure key={`gallery-${index}`} style={{ margin: 0, display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                        <figure
+                          key={`gallery-${index}`}
+                          style={{
+                            margin: 0,
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "0.75rem",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => { setLightboxIndex(index + 1); setLightboxOpen(true); }}
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={(e) => e.key === "Enter" && (setLightboxIndex(index + 1), setLightboxOpen(true))}
+                          aria-label={`Ver imagen ${index + 1} en galería`}
+                        >
                           <img
                             src={item.url}
                             alt={item.description || `${performance.name || "Actividad"} imagen ${index + 1}`}
@@ -327,113 +366,13 @@ export default function EventDetail({ params }) {
                   </section>
                 ) : null}
 
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "0.75rem",
-                    marginTop: "2rem",
-                    alignSelf: "flex-end",
-                    alignItems: "flex-end",
-                  }}
-                >
-                  {performance.eventTypes?.length ? (
-                    <>
-                      {eventContainsPerformance(performance.eventTypes) && (
-                        <TransitionLink
-                          href="/performances"
-                          direction="back"
-                          style={{
-                            textDecoration: "none",
-                            fontSize: "0.9rem",
-                            textTransform: "uppercase",
-                            letterSpacing: "0.5px",
-                            color: "#222",
-                            borderBottom: "1px solid #222",
-                            textAlign: "right",
-                            display: "inline-block",
-                          }}
-                        >
-                          ← Perfos
-                        </TransitionLink>
-                      )}
-                      {eventContainsTraining(performance.eventTypes) && (
-                        <TransitionLink
-                          href="/formaciones"
-                          direction="back"
-                          style={{
-                            textDecoration: "none",
-                            fontSize: "0.9rem",
-                            textTransform: "uppercase",
-                            letterSpacing: "0.5px",
-                            color: "#222",
-                            borderBottom: "1px solid #222",
-                            textAlign: "right",
-                            display: "inline-block",
-                          }}
-                        >
-                          ← Formación
-                        </TransitionLink>
-                      )}
-                      {eventContainsResidency(performance.eventTypes) && (
-                        <TransitionLink
-                          href="/residencias"
-                          direction="back"
-                          style={{
-                            textDecoration: "none",
-                            fontSize: "0.9rem",
-                            textTransform: "uppercase",
-                            letterSpacing: "0.5px",
-                            color: "#222",
-                            borderBottom: "1px solid #222",
-                            textAlign: "right",
-                            display: "inline-block",
-                          }}
-                        >
-                          ← Residencias
-                        </TransitionLink>
-                      )}
-                    </>
-                  ) : null}
-                  <TransitionLink
-                    href="/archivo"
-                    direction="back"
-                    style={{
-                      textDecoration: "none",
-                      fontSize: "0.9rem",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.5px",
-                      color: "#222",
-                      borderBottom: "1px solid #222",
-                      textAlign: "right",
-                      display: "inline-block",
-                    }}
-                  >
-                    ← archivo
-                  </TransitionLink>
-                  <TransitionLink
-                    href="/agenda"
-                    direction="back"
-                    style={{
-                      textDecoration: "none",
-                      fontSize: "0.9rem",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.5px",
-                      color: "#222",
-                      borderBottom: "1px solid #222",
-                      textAlign: "right",
-                      display: "inline-block",
-                    }}
-                  >
-                    ← agenda
-                  </TransitionLink>
-                </div>
+                <BackNavLinks links={backNavLinks} />
 
-                {lightboxOpen && (
+                {lightboxOpen && lightboxSlides.length > 0 && (
                   <Lightbox
                     isOpen={lightboxOpen}
-                    imageSrc={performance.banner || performance.flyer || FALLBACK_IMAGE}
-                    imageAlt={performance.name || "Actividad"}
+                    slides={lightboxSlides}
+                    index={lightboxIndex}
                     onClose={() => setLightboxOpen(false)}
                   />
                 )}

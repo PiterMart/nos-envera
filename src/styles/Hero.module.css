@@ -5,7 +5,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 2rem 1rem;
+  padding: 2rem var(--page-padding);
   z-index: 1;
   pointer-events: auto;
 }
@@ -41,6 +41,6 @@
 @media (max-width: 768px) {
   .hero {
     align-items: flex-start;
-    padding-top: 5vh;
+    padding: 5vh var(--page-padding) 0 var(--page-padding);
   }
 }

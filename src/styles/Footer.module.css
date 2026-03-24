@@ -14,7 +14,7 @@
 .footerContent {
   width: 100%;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 2rem var(--page-padding);
   display: flex;
   flex-direction: column;
   gap: 3rem;
@@ -340,7 +340,7 @@
 /* Responsive styles */
 @media (max-width: 768px) {
   .footerContent {
-    padding: 2rem 1rem;
+    padding: 2rem var(--page-padding);
     gap: 2rem;
   }
 

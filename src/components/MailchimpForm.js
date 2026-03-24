@@ -52,7 +52,7 @@ export default function MailchimpForm({ compact = false }) {
           type="submit"
           className={compact ? styles.newsletterButton : styles.newsletterButtonFull}
         >
-          Suscribir
+          NEWSLETTER →
         </button>
       </form>
       {status === 'error' && (

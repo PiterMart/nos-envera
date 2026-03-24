@@ -25,6 +25,9 @@ export default function Section1() {
   return (
     <section className={styles.section}>
       <div className={styles.container}>
+        <div ref={headerRef} style={{ marginBottom: '1.5rem', overflow: 'hidden' }}>
+          <AnimatedPageHeader loaded={loaded}>NOS EN VERA</AnimatedPageHeader>
+        </div>
         <div className={styles.imageWrapper}>
           <Image
             src="/dominiq.jpg"
@@ -34,9 +37,6 @@ export default function Section1() {
             className={styles.image}
             priority
           />
-        </div>
-        <div ref={headerRef} style={{ marginBottom: '1.5rem', overflow: 'hidden' }}>
-          <AnimatedPageHeader loaded={loaded}>NOS EN VERA</AnimatedPageHeader>
         </div>
         <p className={styles.paragraph}>
           Fundado en 2023 en el barrio de Villa Crespo, Ciudad Autónoma de Buenos Aires, Nos en Vera es un espacio de investigación en artes y prácticas performativas, dedicado a la producción, exhibición y el desarrollo artístico. Una plataforma para la experimentación y el cruce de lenguajes, que busca generar nuevas relaciones dentro del universo de las artes escénicas, fomentando el intercambio y la colaboración entre artistas de diversas disciplinas.

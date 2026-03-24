@@ -1,14 +1,30 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { TransitionLink } from './TransitionLink';
 import styles from '../styles/nav.module.css';
 import { NAV_PAGES } from '../constants/navigation';
 
+function easeOutBounce(x) {
+    const n1 = 7.5625;
+    const d1 = 2.75;
+    if (x < 1 / d1) {
+        return n1 * x * x;
+    } else if (x < 2 / d1) {
+        return n1 * (x -= 1.5 / d1) * x + 0.75;
+    } else if (x < 2.5 / d1) {
+        return n1 * (x -= 2.25 / d1) * x + 0.9375;
+    } else {
+        return n1 * (x -= 2.625 / d1) * x + 0.984375;
+    }
+}
+
 export default function Nav() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const currentPath = usePathname();
+    const logoRef = useRef(null);
+    const animRef = useRef(null);
 
     // Scroll to footer when hash is present in URL (e.g., after navigation)
     useEffect(() => {
@@ -32,6 +48,12 @@ export default function Nav() {
         };
     }, [currentPath]);
 
+    useEffect(() => {
+        return () => {
+            if (animRef.current) cancelAnimationFrame(animRef.current);
+        };
+    }, []);
+
     const handleNavigation = (page, e) => {
         setIsMenuOpen(false);
     };
@@ -45,7 +67,41 @@ export default function Nav() {
         }
     };
 
+    const runBounceAnimation = () => {
+        const el = logoRef.current;
+        if (!el || animRef.current) return;
+
+        const duration = 850;
+        const pressDuration = 60;
+        const startTime = performance.now();
+        el.style.transition = 'none';
+
+        const tick = (now) => {
+            const elapsed = now - startTime;
+            if (elapsed >= duration) {
+                el.style.transform = 'scale(1)';
+                el.style.transition = '';
+                animRef.current = null;
+                return;
+            }
+
+            let scale;
+            if (elapsed < pressDuration) {
+                const t = elapsed / pressDuration;
+                scale = 0.5 - 0.08 * t;
+            } else {
+                const t = Math.min(1, (elapsed - pressDuration) / (duration - pressDuration));
+                const eased = easeOutBounce(t);
+                scale = 0.92 + 0.2 * eased;
+            }
+            el.style.transform = `scale(${scale})`;
+            animRef.current = requestAnimationFrame(tick);
+        };
+        animRef.current = requestAnimationFrame(tick);
+    };
+
     const toggleMenu = () => {
+        runBounceAnimation();
         setIsMenuOpen((prev) => !prev);
     };
 
@@ -83,6 +139,7 @@ export default function Nav() {
                     </ul>
                 </div>
                 <button 
+                    ref={logoRef}
                     className={styles.nav_logo_button} 
                     onClick={toggleMenu}
                     aria-label="Toggle menu"

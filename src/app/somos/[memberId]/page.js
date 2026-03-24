@@ -1,21 +1,25 @@
 "use client";
 
-import { TransitionLink } from "../../../components/TransitionLink";
+import BackNavLinks from "../../../components/BackNavLinks";
 import { use, useEffect, useMemo, useState } from "react";
+import dynamic from "next/dynamic";
 import { doc, getDoc, getDocs, collection, query, where } from "firebase/firestore";
 import pageStyles from "../../../styles/page.module.css";
 import detailStyles from "../../../styles/equipoDetail.module.css";
 import { firestore } from "../../firebase/firebaseConfig";
 import Grid from "../../../components/grid";
-
+import styles from "../../../styles/page.module.css";
 import {
   FALLBACK_IMAGE,
   normalizeEventTypes,
+  normalizeGallery,
   parseDateEntry,
   extractYear,
   normalizeArray,
   sortByYearDesc,
 } from "../../../lib/eventUtils";
+
+const Lightbox = dynamic(() => import("../../../components/Lightbox"), { ssr: false });
 
 export default function TeamMemberPage({ params }) {
   const { memberId } = use(params);
@@ -23,8 +27,11 @@ export default function TeamMemberPage({ params }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [memberEvents, setMemberEvents] = useState([]);
+  const [memberEventImages, setMemberEventImages] = useState([]);
   const [eventsLoading, setEventsLoading] = useState(false);
   const [eventsError, setEventsError] = useState(null);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   useEffect(() => {
     let isMounted = true;
@@ -100,6 +107,7 @@ export default function TeamMemberPage({ params }) {
       if (!member || !member.id) {
         if (isMounted) {
           setMemberEvents([]);
+          setMemberEventImages([]);
           setEventsLoading(false);
         }
         return;
@@ -112,41 +120,63 @@ export default function TeamMemberPage({ params }) {
         const snapshot = await getDocs(collection(firestore, "events"));
         const documents = snapshot.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
 
-        const eventsForMember = documents
-          .map((eventDoc) => {
-            const artists = Array.isArray(eventDoc.artists) ? eventDoc.artists : [];
-            const directors = Array.isArray(eventDoc.directors) ? eventDoc.directors : [];
+        const eventsForMember = [];
+        const allImages = [];
+        const seenUrls = new Set();
 
-            const participates = [...artists, ...directors].some((person) => {
-              if (!person || typeof person !== "object") return false;
-              return person.memberId === member.id;
-            });
+        for (const eventDoc of documents) {
+          const artists = Array.isArray(eventDoc.artists) ? eventDoc.artists : [];
+          const directors = Array.isArray(eventDoc.directors) ? eventDoc.directors : [];
 
-            if (!participates) return null;
+          const participates = [...artists, ...directors].some((person) => {
+            if (!person || typeof person !== "object") return false;
+            return person.memberId === member.id;
+          });
 
-            const eventTypes = normalizeEventTypes(eventDoc.event_type || eventDoc.eventType || eventDoc.type);
-            const dates = Array.isArray(eventDoc.dates)
-              ? eventDoc.dates.map(parseDateEntry).filter(Boolean)
-              : [];
-            const imageUrl = eventDoc.banner || eventDoc.flyer || eventDoc.gallery?.[0]?.url || FALLBACK_IMAGE;
-            const slug = eventDoc.slug || eventDoc.id;
-            const title = eventDoc.name || eventDoc.title || "Evento";
-            const year = extractYear(dates) ?? "—";
+          if (!participates) continue;
 
-            return {
-              id: eventDoc.id,
-              title,
-              slug,
-              imageUrl,
-              year,
-              eventTypes,
-            };
-          })
-          .filter(Boolean)
-          .sort(sortByYearDesc);
+          const eventTypes = normalizeEventTypes(eventDoc.event_type || eventDoc.eventType || eventDoc.type);
+          const dates = Array.isArray(eventDoc.dates)
+            ? eventDoc.dates.map(parseDateEntry).filter(Boolean)
+            : [];
+          const imageUrl = eventDoc.banner || eventDoc.flyer || eventDoc.gallery?.[0]?.url || FALLBACK_IMAGE;
+          const slug = eventDoc.slug || eventDoc.id;
+          const title = eventDoc.name || eventDoc.title || "Evento";
+          const year = extractYear(dates) ?? "—";
+
+          eventsForMember.push({
+            id: eventDoc.id,
+            title,
+            slug,
+            imageUrl,
+            year,
+            eventTypes,
+          });
+
+          // Collect images: banner, flyer, gallery
+          const eventName = title;
+          if (eventDoc.banner && !seenUrls.has(eventDoc.banner)) {
+            seenUrls.add(eventDoc.banner);
+            allImages.push({ url: eventDoc.banner, alt: eventName });
+          }
+          if (eventDoc.flyer && eventDoc.flyer !== eventDoc.banner && !seenUrls.has(eventDoc.flyer)) {
+            seenUrls.add(eventDoc.flyer);
+            allImages.push({ url: eventDoc.flyer, alt: eventName });
+          }
+          const gallery = normalizeGallery(eventDoc.gallery);
+          gallery.forEach((item, i) => {
+            if (item?.url && !seenUrls.has(item.url)) {
+              seenUrls.add(item.url);
+              allImages.push({ url: item.url, alt: item.description || `${eventName} ${i + 1}` });
+            }
+          });
+        }
+
+        eventsForMember.sort(sortByYearDesc);
 
         if (isMounted) {
           setMemberEvents(eventsForMember);
+          setMemberEventImages(allImages);
         }
       } catch (fetchError) {
         console.error("Error fetching events for member:", fetchError);
@@ -161,6 +191,7 @@ export default function TeamMemberPage({ params }) {
     };
 
     setMemberEvents([]);
+    setMemberEventImages([]);
     setEventsError(null);
     setEventsLoading(false);
 
@@ -188,6 +219,7 @@ export default function TeamMemberPage({ params }) {
           {!isLoading && error && <p className={pageStyles.error}>{error}</p>}
 
           {!isLoading && !error && member && (
+            <>
             <section className={detailStyles.profile}>
               <div className={detailStyles.mediaColumn}>
                 <div className={detailStyles.imageWrapper}>
@@ -262,13 +294,54 @@ export default function TeamMemberPage({ params }) {
                 </div>
               </div>
             </section>
+
+            {memberEventImages.length > 0 && (
+              <div className={`${detailStyles.section} ${detailStyles.eventGallerySectionFullWidth}`}>
+                <div className={detailStyles.eventGalleryGrid}>
+                  {memberEventImages.map((img, index) => (
+                    <figure
+                      key={`gallery-${index}`}
+                      style={{
+                        margin: 0,
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "0.75rem",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => { setLightboxIndex(index); setLightboxOpen(true); }}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => e.key === "Enter" && (setLightboxIndex(index), setLightboxOpen(true))}
+                      aria-label={`Ver imagen ${index + 1} en galería`}
+                    >
+                      <img
+                        src={img.url}
+                        alt={img.alt}
+                        style={{
+                          width: "100%",
+                          aspectRatio: "1 / 1",
+                          objectFit: "cover",
+                          backgroundColor: "#f0f0f0",
+                          borderRadius: "var(--border-radius)",
+                        }}
+                      />
+                    </figure>
+                  ))}
+                </div>
+              </div>
+            )}
+            </>
           )}
-          <div className={detailStyles.backRowBottom}>
-            <TransitionLink href="/somos" direction="back" className={detailStyles.backLink}>
-              <span aria-hidden>←</span>
-              <span>Volver a equipo</span>
-            </TransitionLink>
-          </div>
+
+          {lightboxOpen && memberEventImages.length > 0 && (
+            <Lightbox
+              isOpen={lightboxOpen}
+              slides={memberEventImages.map((img) => ({ src: img.url, alt: img.alt }))}
+              index={lightboxIndex}
+              onClose={() => setLightboxOpen(false)}
+            />
+          )}
+          <BackNavLinks links={[{ href: "/somos", label: "SOMOS" }, { href: "/comunidad", label: "COMUNIDAD" }]} />
           </div>
         </div>
       </main>

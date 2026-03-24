@@ -109,13 +109,11 @@ const yearHeadingWrapperStyle = {
   gap: "0.5rem",
   width: "100%",
   marginBottom: "0.5rem",
-  paddingBottom: "1rem",
 };
 
 const FADE_TRANSITION = "opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1)";
 
 const YEAR_PLACEHOLDER = "\u2014";
-const CARD_DOT = "\u2022";
 
 function groupByYear(cards) {
   const byYear = {};
@@ -361,7 +359,6 @@ export default function Grid({ cards, hideImages = false, tight = false, hoverOv
                 style={{
                   marginTop: idx === 0 ? 0 : "1.5rem",
                   marginBottom: 0,
-                  paddingBottom: "1rem",
                   borderBottom: "none",
                   display: "flex",
                   alignItems: "flex-end",
@@ -498,8 +495,7 @@ export default function Grid({ cards, hideImages = false, tight = false, hoverOv
                           </div>
                       ) : null}
                       {!hoverOverlay && (
-                        <h3 style={{ fontFamily: "var(--font-grid-card)", fontStyle: "italic", fontSize: "1.1rem", fontWeight: 400, letterSpacing: "0.5px", margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                          <span style={{ color: "black", fontSize: "0.6em", lineHeight: 1 }}>{CARD_DOT}</span>
+                        <h3 style={{ fontFamily: "var(--font-grid-card)", fontStyle: "italic", fontSize: "1.1rem", fontWeight: 400, letterSpacing: "0.5px", margin: 0 }}>
                           {card.title}
                         </h3>
                       )}

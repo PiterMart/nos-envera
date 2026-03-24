@@ -57,7 +57,7 @@ export default function PageTransitionProvider({ children }) {
     setPhase('entering');
   }, [router]);
 
-  // One frame after showing overlay, add entering class so it animates from left
+  // One frame after showing overlay, add entering class so it animates
   useEffect(() => {
     if (!visible || phase !== 'entering') return;
     const raf = requestAnimationFrame(() => {
@@ -92,7 +92,7 @@ export default function PageTransitionProvider({ children }) {
   // When exiting animation is done, hide overlay
   const handleTransitionEnd = useCallback((e) => {
     if (e.target !== overlayRef.current) return;
-    if (e.propertyName !== 'transform') return;
+    if (e.propertyName !== 'opacity' && e.propertyName !== 'filter') return;
     if (phaseRef.current !== 'exiting') return;
     setPhase('idle');
     setEnteringClass(false);

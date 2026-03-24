@@ -1,6 +1,6 @@
 .section {
   width: 100%;
-  padding: 2rem 1rem;
+  padding: 2rem var(--page-padding);
   position: relative;
   z-index: 2;
   background-color: transparent;
@@ -37,6 +37,7 @@
 }
 
 .paragraph {
+  width: 95%;
   font-family: var(--font-paragraph);
   font-style: italic;
   font-size: var(--paragraph-font-size);
@@ -48,6 +49,10 @@
 
 /* Mobile styles - stack vertically */
 @media (max-width: 768px) {
+  .section {
+    padding: 2rem var(--page-padding);
+  }
+
   .imageWrapper {
     float: none;
     width: 100%;

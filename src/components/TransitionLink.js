@@ -17,6 +17,7 @@ export function TransitionLink({ href, onClick, children, direction = 'forward',
     if (e.defaultPrevented) return;
     if (isInternal && href) {
       e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       startTransition(href);
     }
   };

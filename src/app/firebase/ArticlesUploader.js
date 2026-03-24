@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { firestore } from "./firebaseConfig";
+import { storage } from "./firebaseStorage";
 import {
   collection,
   doc,
@@ -11,9 +12,11 @@ import {
   updateDoc,
   Timestamp,
 } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { logCreate, logUpdate, RESOURCE_TYPES } from "./activityLogger";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import imageCompression from "browser-image-compression";
 import styles from "../../styles/uploader.module.css";
 
 const createEmptyForm = () => ({
@@ -22,6 +25,7 @@ const createEmptyForm = () => ({
   date: null,
   description: "",
   links: [{ title: "", url: "" }],
+  coverImage: "",
 });
 
 export default function ArticlesUploader() {
@@ -31,6 +35,10 @@ export default function ArticlesUploader() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [coverImageFile, setCoverImageFile] = useState(null);
+  const [coverImagePreview, setCoverImagePreview] = useState(null);
+  const [isCoverDragOver, setIsCoverDragOver] = useState(false);
+  const coverImageInputRef = useRef(null);
 
   const fetchArticlesDocuments = useCallback(async () => {
     try {
@@ -63,6 +71,7 @@ export default function ArticlesUploader() {
             link: linksFromData[0]?.url || "",
             description: data.description || "",
             date: parsedDate,
+            coverImage: typeof data.coverImage === "string" ? data.coverImage : "",
           };
         })
         .sort((a, b) => {
@@ -82,9 +91,25 @@ export default function ArticlesUploader() {
     fetchArticlesDocuments();
   }, [fetchArticlesDocuments]);
 
+  useEffect(() => {
+    return () => {
+      if (coverImagePreview?.startsWith("blob:")) {
+        URL.revokeObjectURL(coverImagePreview);
+      }
+    };
+  }, [coverImagePreview]);
+
   const resetForm = () => {
+    if (coverImagePreview?.startsWith("blob:")) {
+      URL.revokeObjectURL(coverImagePreview);
+    }
     setFormData(createEmptyForm());
     setSelectedArticleId("");
+    setCoverImageFile(null);
+    setCoverImagePreview(null);
+    if (coverImageInputRef.current) {
+      coverImageInputRef.current.value = "";
+    }
   };
 
   const handleInputChange = (field) => (event) => {
@@ -177,6 +202,13 @@ export default function ArticlesUploader() {
           ? new Date(rawDate)
           : null;
 
+      const existingCover =
+        typeof data.coverImage === "string" && data.coverImage.trim()
+          ? data.coverImage.trim()
+          : typeof data.image === "string" && data.image.trim()
+            ? data.image.trim()
+            : "";
+
       setFormData({
         title: data.title || "",
         subtitle: data.subtitle || "",
@@ -185,6 +217,7 @@ export default function ArticlesUploader() {
             ? parsedDate
             : null,
         description: data.description || "",
+        coverImage: existingCover,
         links: (() => {
           if (Array.isArray(data.links) && data.links.length > 0) {
             return data.links.map((entry) => ({
@@ -198,9 +231,76 @@ export default function ArticlesUploader() {
           return createEmptyForm().links;
         })(),
       });
+
+      if (coverImagePreview?.startsWith("blob:")) {
+        URL.revokeObjectURL(coverImagePreview);
+      }
+      setCoverImageFile(null);
+      setCoverImagePreview(existingCover || null);
+      if (coverImageInputRef.current) {
+        coverImageInputRef.current.value = "";
+      }
     } catch (err) {
       console.error("Error loading article document:", err);
       setError("No se pudo cargar el artículo seleccionado.");
+    }
+  };
+
+  const uploadCoverImage = async (articleId) => {
+    if (!(coverImageFile instanceof File)) {
+      return formData.coverImage || "";
+    }
+
+    const compressedFile = await imageCompression(coverImageFile, {
+      maxSizeMB: 0.25,
+      maxWidthOrHeight: 800,
+    });
+
+    const coverRef = ref(
+      storage,
+      `articles/${articleId}/coverImage/${articleId}_coverImage`
+    );
+    await uploadBytes(coverRef, compressedFile);
+    return getDownloadURL(coverRef);
+  };
+
+  const handleCoverImageFile = (file) => {
+    if (file && file.type.startsWith("image/")) {
+      if (coverImagePreview?.startsWith("blob:")) {
+        URL.revokeObjectURL(coverImagePreview);
+      }
+      setCoverImageFile(file);
+      setCoverImagePreview(URL.createObjectURL(file));
+      setError(null);
+      setSuccess(null);
+    } else {
+      setError("Por favor selecciona un archivo de imagen válido.");
+    }
+  };
+
+  const handleCoverDragOver = (event) => {
+    event.preventDefault();
+    setIsCoverDragOver(true);
+  };
+
+  const handleCoverDragLeave = (event) => {
+    event.preventDefault();
+    setIsCoverDragOver(false);
+  };
+
+  const handleCoverDrop = (event) => {
+    event.preventDefault();
+    setIsCoverDragOver(false);
+    const files = event.dataTransfer.files;
+    if (files.length > 0) {
+      handleCoverImageFile(files[0]);
+    }
+  };
+
+  const handleCoverFileInputChange = (event) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      handleCoverImageFile(file);
     }
   };
 
@@ -237,6 +337,8 @@ export default function ArticlesUploader() {
 
       const articleId = selectedArticleId || doc(collection(firestore, "articles")).id;
 
+      const coverImageUrl = await uploadCoverImage(articleId);
+
       const payload = {
         title: trimmedTitle,
         subtitle: trimmedSubtitle,
@@ -244,6 +346,7 @@ export default function ArticlesUploader() {
         date: Timestamp.fromDate(selectedDate),
         links: sanitizedLinks,
         link: sanitizedLinks[0]?.url || "",
+        coverImage: coverImageUrl || "",
       };
 
       if (selectedArticleId) {
@@ -252,17 +355,20 @@ export default function ArticlesUploader() {
           articleTitle: trimmedTitle,
           fieldsUpdated: Object.keys(payload),
         });
-        setSuccess("¡Artículo actualizado con éxito!");
       } else {
         await setDoc(doc(firestore, "articles", articleId), payload);
         await logCreate(RESOURCE_TYPES.ARTICLE, articleId, {
           articleTitle: trimmedTitle,
         });
-        setSuccess("¡Artículo creado con éxito!");
-        resetForm();
       }
 
       await fetchArticlesDocuments();
+      await handleArticleSelection(articleId);
+      setSuccess(
+        selectedArticleId
+          ? "¡Artículo actualizado con éxito!"
+          : "¡Artículo creado con éxito!"
+      );
     } catch (err) {
       console.error("Error saving article document:", err);
       setError(err.message || "No se pudo guardar el artículo.");
@@ -328,6 +434,46 @@ export default function ArticlesUploader() {
             dateFormat="dd/MM/yyyy"
             isClearable
           />
+        </div>
+
+        <div className={styles.profilePictureContainer}>
+          <p className={styles.subtitle}>Imagen de portada</p>
+          <div
+            className={`${styles.profilePictureDropZone} ${isCoverDragOver ? styles.dragOver : ""}`}
+            onDragOver={handleCoverDragOver}
+            onDragLeave={handleCoverDragLeave}
+            onDrop={handleCoverDrop}
+            onClick={() => coverImageInputRef.current?.click()}
+          >
+            {coverImagePreview ? (
+              <div className={styles.profilePicturePreview}>
+                <img
+                  src={coverImagePreview}
+                  alt="Vista previa de la portada"
+                  className={styles.profilePreviewImage}
+                />
+                <div className={styles.profilePictureOverlay}>
+                  <span>Haz clic o arrastra para cambiar</span>
+                </div>
+              </div>
+            ) : (
+              <div className={styles.profilePicturePlaceholder}>
+                <p>Arrastra y suelta una imagen aquí</p>
+                <p>o haz clic para explorar</p>
+                <small>Misma compresión que fotos de miembros (máx. 800px)</small>
+              </div>
+            )}
+          </div>
+          <input
+            ref={coverImageInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleCoverFileInputChange}
+            style={{ display: "none" }}
+          />
+          <p className={styles.helpText}>
+            Opcional. Se comprime, se sube a Storage y la URL queda guardada en el artículo.
+          </p>
         </div>
 
         <div className={styles.inputGroup}>

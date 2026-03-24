@@ -323,16 +323,7 @@ export default function Comunidad() {
           subtext="Esta sección reúne las biografías de artistas, investigadorxs y colaboradorxs que mantienen activo Nos en Vera, como un mapa de la comunidad que lo hace posible."
           loaded={!isLoading}
         />
-        <div style={{ width: "100%", marginTop: "0.75rem", marginBottom: "2rem" }}>
-          <Image
-            src="/23 PRACTICAS DE SINCRONIZ - perfo.jpg"
-            alt="23 Prácticas de sincronización"
-            width={1200}
-            height={800}
-            style={{ width: "100%", height: "auto", display: "block" }}
-            sizes="(max-width: 768px) 100vw, 1200px"
-          />
-        </div>
+
         <div
           className={styles.homepage_container}
           style={{ paddingTop: "0" }}
@@ -428,7 +419,7 @@ export default function Comunidad() {
                                 textAlign: "left",
                                 margin: 0,
                                 marginBottom: "0.5rem",
-                                paddingBottom: "0.25rem",
+                                padding: 0,
                                 borderBottom: "2px solid black",
                                 width: "100%",
                               }}>
@@ -578,6 +569,17 @@ export default function Comunidad() {
               </>
             )}
           </div>
+        </div>
+        <div style={{ width: "100%", marginTop: "0.75rem", marginBottom: "2rem" }}>
+          <Image
+            src="/23 PRACTICAS DE SINCRONIZ - perfo.jpg"
+            alt="23 Prácticas de sincronización"
+            width={1200}
+            height={800}
+            style={{ width: "100%", height: "auto", display: "block" }}
+            className={styles.image_container}
+            sizes="(max-width: 768px) 100vw, 1200px"
+          />
         </div>
       </div>
     </div>

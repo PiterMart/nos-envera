@@ -1,6 +1,6 @@
  "use client";
  
-import { TransitionLink } from "../../../components/TransitionLink";
+import BackNavLinks from "../../../components/BackNavLinks";
 import { useRouter } from "next/navigation";
  import { use, useEffect, useMemo, useState } from "react";
  import { doc, getDoc, getDocs, collection, query, where } from "firebase/firestore";
@@ -269,25 +269,7 @@ export default function ComunidadMemberPage({ params }) {
                   )}
                 </div>
 
-                <TransitionLink
-                  href="/comunidad"
-                  direction="back"
-                  style={{
-                    textDecoration: "none",
-                    fontSize: "0.9rem",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.5px",
-                    color: "#222",
-                    borderBottom: "1px solid #222",
-                    marginTop: "2rem",
-                    alignSelf: "flex-end",
-                    textAlign: "right",
-                    display: "inline-block",
-                    marginLeft: "auto",
-                  }}
-                >
-                  ← Volver a la comunidad
-                </TransitionLink>
+                <BackNavLinks links={[{ href: "/comunidad", label: "COMUNIDAD" }]} />
               </div>
             </section>
           )}

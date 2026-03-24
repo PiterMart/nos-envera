@@ -36,6 +36,13 @@ export default function ArticlesList() {
             ? [{ title: "", url: data.link.trim() }]
             : [];
 
+          const coverImage =
+            typeof data.coverImage === "string" && data.coverImage.trim()
+              ? data.coverImage.trim()
+              : typeof data.image === "string" && data.image.trim()
+                ? data.image.trim()
+                : "";
+
           return {
             id: doc.id,
             title: data.title || "Sin título",
@@ -43,6 +50,7 @@ export default function ArticlesList() {
             links: linksFromData,
             description: data.description || "",
             date: parsedDate,
+            coverImage,
           };
         });
 
@@ -132,6 +140,20 @@ export default function ArticlesList() {
             return (
               <div key={article.id} className={styles.artistCard}>
                 <div className={styles.artistHeader}>
+                  {article.coverImage && (
+                    <div style={{ flexShrink: 0, width: "96px", height: "96px" }}>
+                      <img
+                        src={article.coverImage}
+                        alt=""
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          border: "1px solid #e0e0e0",
+                        }}
+                      />
+                    </div>
+                  )}
                   <div className={styles.artistInfo}>
                     <h3 className={styles.artistName}>
                       {article.title || "Artículo sin título"}
