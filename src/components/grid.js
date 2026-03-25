@@ -456,7 +456,7 @@ export default function Grid({ cards, hideImages = false, tight = false, hoverOv
                       <article style={articleStyle}>
                         {!hideImages && card.imageUrl ? (
                           <div style={imageWithTitleWrapperStyles}>
-                            <AdaptiveImage src={card.imageUrl} alt={card.title} tight={tight} priority={isPriority} fetchPriority={isPriority ? "high" : undefined} />
+                            <AdaptiveImage src={card.imageUrl} alt={`Imagen de ${card.title} - Nos Envera`} tight={tight} priority={isPriority} fetchPriority={isPriority ? "high" : undefined} />
                             {hoverOverlay && (
                               <div
                                 style={{

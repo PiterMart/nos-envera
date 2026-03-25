@@ -7,5 +7,6 @@ export const NAV_PAGES = [
   { name: "FORMACIONES", path: "/formaciones" },
   { name: "RESIDENCIAS", path: "/residencias" },
   { name: "ARCHIVO", path: "/archivo" },
+  { name: "SALA", path: "/sala" },
   { name: "CONTACTO", path: "/contacto" },
 ];

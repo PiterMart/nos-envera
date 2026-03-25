@@ -1,143 +1,70 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
+// Refactored to Server Component for SEO.
+import React from "react";
 import styles from "../../styles/page.module.css";
 import { firestore } from "../firebase/firebaseConfig";
+import { collection, getDocs } from "firebase/firestore";
+import ArticlesClient from "./ArticlesClient";
 
-const formatArticleDate = (value) => {
-  if (!value) return "";
-  try {
-    if (typeof value.toDate === "function") {
-      const date = value.toDate();
-      return date.toLocaleDateString("es-ES", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-    }
-
-    const parsed = new Date(value);
-    if (!Number.isNaN(parsed.getTime())) {
-      return parsed.toLocaleDateString("es-ES", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-    }
-
-    return String(value);
-  } catch (error) {
-    console.error("Failed to format article date:", error);
-    return "";
-  }
+export const metadata = {
+  title: "Artículos",
+  description: "Explora nuestra colección de artículos, investigaciones y publicaciones sobre performance y artes escénicas en Nos en Vera.",
 };
 
-export default function ArticlesPage() {
-  const [articleItems, setArticleItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [visibleSubtitles, setVisibleSubtitles] = useState(new Set());
-  const [expandedItems, setExpandedItems] = useState(new Set());
+async function getArticles() {
+  try {
+    const snapshot = await getDocs(collection(firestore, "articles"));
+    return snapshot.docs
+      .map((docSnap) => {
+        const data = docSnap.data() || {};
+        const rawDate = data.date;
+        const date =
+          rawDate && typeof rawDate.toDate === "function"
+            ? rawDate.toDate().toISOString() // Convert to string for serialization
+            : rawDate instanceof Date
+              ? rawDate.toISOString()
+              : rawDate;
 
-  const toggleExpanded = (itemId) => {
-    setExpandedItems((prev) => {
-      const next = new Set(prev);
-      if (next.has(itemId)) {
-        next.delete(itemId);
-      } else {
-        next.add(itemId);
-      }
-      return next;
-    });
-  };
+        const links = Array.isArray(data.links)
+          ? data.links
+              .map((entry) => ({
+                title: (entry?.title || "").trim(),
+                url: (entry?.url || "").trim(),
+              }))
+              .filter((entry) => entry.url)
+          : typeof data.link === "string" && data.link.trim()
+            ? [{ title: "", url: data.link.trim() }]
+            : [];
 
-  useEffect(() => {
-    const fetchArticles = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const snapshot = await getDocs(collection(firestore, "articles"));
-        const items = snapshot.docs
-          .map((docSnap) => {
-            const data = docSnap.data() || {};
-            const rawDate = data.date;
-            const date =
-              rawDate && typeof rawDate.toDate === "function"
-                ? rawDate.toDate()
-                : rawDate
-                  ? new Date(rawDate)
-                  : null;
+        const coverImage =
+          typeof data.coverImage === "string" && data.coverImage.trim()
+            ? data.coverImage.trim()
+            : typeof data.image === "string" && data.image.trim()
+              ? data.image.trim()
+              : "";
 
-            const links = Array.isArray(data.links)
-              ? data.links
-                .map((entry) => ({
-                  title: (entry?.title || "").trim(),
-                  url: (entry?.url || "").trim(),
-                }))
-                .filter((entry) => entry.url)
-              : typeof data.link === "string" && data.link.trim()
-                ? [{ title: "", url: data.link.trim() }]
-                : [];
-
-            const coverImage =
-              typeof data.coverImage === "string" && data.coverImage.trim()
-                ? data.coverImage.trim()
-                : typeof data.image === "string" && data.image.trim()
-                  ? data.image.trim()
-                  : "";
-
-            return {
-              id: docSnap.id,
-              title: data.title || "Sin título",
-              subtitle: data.subtitle || "",
-              description: data.description || "",
-              links,
-              date,
-              coverImage,
-            };
-          })
-          .sort((a, b) => {
-            const aTime = a.date instanceof Date ? a.date.getTime() : 0;
-            const bTime = b.date instanceof Date ? b.date.getTime() : 0;
-            return bTime - aTime;
-          });
-
-        setArticleItems(items);
-      } catch (err) {
-        console.error("Failed to load article items:", err);
-        setError("No se pudieron cargar los artículos. Intenta nuevamente.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchArticles();
-  }, []);
-
-  useEffect(() => {
-    const observerOptions = {
-      threshold: 0.2,
-      rootMargin: "0px 0px -50px 0px",
-    };
-
-    const observerCallback = (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const subtitleId = entry.target.getAttribute("data-subtitle-id");
-          if (subtitleId) {
-            setVisibleSubtitles((prev) => new Set([...prev, subtitleId]));
-          }
-        }
+        return {
+          id: docSnap.id,
+          title: data.title || "Sin título",
+          subtitle: data.subtitle || "",
+          description: data.description || "",
+          links,
+          date,
+          coverImage,
+        };
+      })
+      .sort((a, b) => {
+        const aTime = a.date ? new Date(a.date).getTime() : 0;
+        const bTime = b.date ? new Date(b.date).getTime() : 0;
+        return bTime - aTime;
       });
-    };
+  } catch (err) {
+    console.error("Failed to load article items on server:", err);
+    return [];
+  }
+}
 
-    const observer = new IntersectionObserver(observerCallback, observerOptions);
-    const subtitleElements = document.querySelectorAll("[data-subtitle-id]");
-    subtitleElements.forEach((element) => observer.observe(element));
-
-    return () => observer.disconnect();
-  }, [articleItems]);
+export default async function ArticlesPage() {
+  const articles = await getArticles();
 
   return (
     <div className={styles.page}>
@@ -152,181 +79,14 @@ export default function ArticlesPage() {
               margin: "auto",
             }}
           >
-            <header
-              className={`${styles.pageHeader} ${visibleSubtitles.has("subtitle1")
-                  ? styles.sectionSubtitleVisible
-                  : ""
-                }`}
-              data-subtitle-id="subtitle1"
-            >
+            <header className={styles.pageHeader}>
               <h1>ARTÍCULOS</h1>
             </header>
-            <p className={styles.pageSubtext}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida. Duis ac tellus et risus vulputate vehicula. Donec lobortis risus a elit. Etiam tempor. Ut ullamcorper, ligula ut dictum pharetra, nisi nunc fringilla magna, in commodo elit erat nec turpis. Ut pharetra augue nec augue. Nam elit magna, hendrerit sit amet, tincidunt ac, viverra sed, nulla. Donec porta diam eu massa. Quisque diam lorem, interdum vitae, dapibus ac, scelerisque.</p>
+            <p className={styles.pageSubtext}>
+              Investigaciones, registros y reflexiones sobre la práctica artística y performática contemporánea.
+            </p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-              {loading && (
-                <div style={{ textAlign: "center", padding: "3rem", color: "#666" }}>
-                  <p>Cargando artículos...</p>
-                </div>
-              )}
-
-              {!loading && error && (
-                <div style={{ textAlign: "center", padding: "3rem", color: "#c00" }}>
-                  <p>{error}</p>
-                </div>
-              )}
-
-              {!loading && !error && articleItems.length === 0 && (
-                <div style={{ textAlign: "center", padding: "3rem", color: "#666" }}>
-                  <p>Aún no hay artículos cargados.</p>
-                </div>
-              )}
-
-              {!loading && !error && articleItems.length > 0 && (
-                <ul
-                  style={{
-                    listStyle: "none",
-                    margin: 0,
-                    padding: 0,
-                    borderTop: "1px solid #e0e0e0",
-                  }}
-                >
-                  {articleItems.map((articleItem) => {
-                    const isExpanded = expandedItems.has(articleItem.id);
-                    return (
-                      <li
-                        key={articleItem.id}
-                        style={{
-                          borderBottom: "1px solid #e0e0e0",
-                          padding: "0.5rem 0",
-                        }}
-                      >
-                        <button
-                          type="button"
-                          onClick={() => toggleExpanded(articleItem.id)}
-                          aria-expanded={isExpanded}
-                          style={{
-                            width: "100%",
-                            textAlign: "left",
-                            background: "none",
-                            border: "none",
-                            padding: "0.75rem 0",
-                            cursor: "pointer",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                            gap: "1rem",
-                            fontSize: "1.1rem",
-                            color: "#111",
-                          }}
-                        >
-                          <span
-                            className={`${styles.sectionSubtitle} ${visibleSubtitles.has(`subtitle-${articleItem.id}`)
-                                ? styles.sectionSubtitleVisible
-                                : ""
-                              }`}
-                            data-subtitle-id={`subtitle-${articleItem.id}`}
-                            style={{
-                              display: "block",
-                              fontSize: "1.2rem",
-                              lineHeight: "1.4rem",
-                            }}
-                          >
-                            {articleItem.title}
-                          </span>
-                          <span
-                            style={{
-                              fontSize: "1.5rem",
-                              lineHeight: "1",
-                              transform: isExpanded ? "rotate(45deg)" : "rotate(0deg)",
-                              transition: "transform 0.2s ease",
-                            }}
-                            aria-hidden="true"
-                          >
-                            +
-                          </span>
-                        </button>
-
-                        {isExpanded && (
-                          <div
-                            style={{
-                              paddingBottom: "1rem",
-                              display: "flex",
-                              flexDirection: "column",
-                              gap: "0.75rem",
-                              fontSize: "0.95rem",
-                              color: "#333",
-                            }}
-                          >
-                            {articleItem.subtitle && (
-                              <p style={{ fontWeight: "500" }}>{articleItem.subtitle}</p>
-                            )}
-
-                            {articleItem.coverImage && (
-                              <div
-                                style={{
-                                  marginTop: "0.25rem",
-                                  marginBottom: "0.5rem",
-                                  maxWidth: "100%",
-                                }}
-                              >
-                                <img
-                                  src={articleItem.coverImage}
-                                  alt=""
-                                  style={{
-                                    width: "100%",
-                                    maxHeight: "280px",
-                                    objectFit: "cover",
-                                    display: "block",
-                                  }}
-                                />
-                              </div>
-                            )}
-
-                            {articleItem.date && (
-                              <p style={{ color: "#666" }}>{formatArticleDate(articleItem.date)}</p>
-                            )}
-
-                            {articleItem.description && (
-                              <p style={{ lineHeight: "1.6rem", marginBottom: "0.5rem" }}>
-                                {articleItem.description}
-                              </p>
-                            )}
-
-                            {articleItem.links && articleItem.links.length > 0 && (
-                              <div
-                                style={{
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  gap: "0.5rem",
-                                }}
-                              >
-                                {articleItem.links.map((link, linkIndex) => (
-                                  <a
-                                    key={`${articleItem.id}-link-${linkIndex}`}
-                                    href={link.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    style={{
-                                      padding: "0.5rem 0",
-                                      color: "#0066cc",
-                                      textDecoration: "underline",
-                                      fontSize: "0.95rem",
-                                    }}
-                                  >
-                                    {link.title || "Ver publicación"}
-                                  </a>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-            </div>
+            <ArticlesClient initialArticles={articles} />
           </div>
         </div>
       </div>

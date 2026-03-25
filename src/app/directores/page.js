@@ -1,6 +1,10 @@
-"use client";
 import styles from "../../styles/page.module.css";
 import Image from "next/image";
+
+export const metadata = {
+  title: "Directores | Artwings",
+  description: "Conoce a los directores de ARTWINGS, visionarios que guían la dirección curatorial y estratégica de nuestro espacio.",
+};
 
 export default function Directores() {
   return (
@@ -39,6 +43,3 @@ export default function Directores() {
     </div>
   );
 }
-
-
-

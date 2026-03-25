@@ -1,8 +1,12 @@
-'use client';
 import Image from "next/image";
 import styles from "../../styles/page.module.css";
 import FooterStyles from "../../styles/Footer.module.css";
 import MailchimpForm from "../../components/MailchimpForm";
+
+export const metadata = {
+  title: "Contacto | Nos en Vera",
+  description: "Ponte en contacto con Nos en Vera. Encuéntranos en Vera 1350, CABA, o síguenos en nuestras redes sociales.",
+};
 
 export default function Contacto() {
   const contactInfo = {
@@ -18,9 +22,11 @@ export default function Contacto() {
           <header className={styles.pageHeader}>
             <h1>CONTACTO</h1>
           </header>
-          <p className={styles.pageSubtext}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida. Duis ac tellus et risus vulputate vehicula. Donec lobortis risus a elit. Etiam tempor. Ut ullamcorper, ligula ut dictum pharetra, nisi nunc fringilla magna, in commodo elit erat nec turpis. Ut pharetra augue nec augue. Nam elit magna, hendrerit sit amet, tincidunt ac, viverra sed, nulla. Donec porta diam eu massa. Quisque diam lorem, interdum vitae, dapibus ac, scelerisque.</p>
+          <p className={styles.pageSubtext}>
+            Ubicado en el corazón de Villa Crespo, Nos en Vera es un espacio de encuentro, creación y exhibición. 
+            Escríbenos para consultas sobre residencias, talleres o propuestas artísticas.
+          </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem', width: '100%', marginTop: '2rem' }}>
-            {/* Contact Information */}
             <div className={FooterStyles.footerContact}>
               <div>
                 <h3 className={FooterStyles.contactTitle} style={{ marginBottom: '1rem' }}>MAIL</h3>
@@ -36,9 +42,8 @@ export default function Contacto() {
                     href="https://www.instagram.com/nos.envera/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.6rem', textDecoration: 'none', color: 'var(--foreground)', transition: 'color 0.3s ease' }}
-                    onMouseEnter={(e) => { e.currentTarget.style.color = '#E1306C'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--foreground)'; }}
+                    className={styles.instagramLink}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.6rem', textDecoration: 'none', color: 'inherit' }}
                   >
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
@@ -52,7 +57,6 @@ export default function Contacto() {
               <MailchimpForm />
             </div>
 
-            {/* Map */}
             {contactInfo.googleMapsEmbed && (
               <div className={FooterStyles.mapContainer}>
                 <div>
@@ -71,6 +75,7 @@ export default function Contacto() {
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                   title="Nos en Vera - Ubicación"
+                  style={{ border: 0, borderRadius: 'var(--border-radius)' }}
                 ></iframe>
               </div>
             )}

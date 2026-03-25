@@ -30,7 +30,7 @@ export default function Section1() {
         </div>
         <div className={styles.imageWrapper}>
           <Image
-            src="/espacio/NosEnvera-Fabrica4.jpg"
+            src="/23 PIRATERIA - resi.jpg"
             alt="Section image"
             width={600}
             height={800}

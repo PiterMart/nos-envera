@@ -257,6 +257,15 @@
   z-index: 2;
   background-color: transparent;
 }
+
+.instagramLink {
+  transition: color 0.3s ease;
+}
+
+.instagramLink:hover {
+  color: #E1306C !important;
+}
+
 /* Single place to change content width for agenda, agenda slug, equipo member, etc. */
 .contentMaxWidth {
   width: 100%;
@@ -1269,6 +1278,22 @@
   position: relative;
   z-index: 0;
 }
+
+.galleryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.galleryItem {
+  position: relative;
+  width: 100%;
+  padding-bottom: 66%; /* 3:2 aspect ratio */
+  overflow: hidden;
+  border-radius: var(--border-radius, 8px);
+}
+
 
 /* Responsive visibility for archive filter wrapper */
 .desktopFilterOnly {

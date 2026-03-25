@@ -1,6 +1,10 @@
-"use client";
 import styles from "../../styles/page.module.css";
 import Image from "next/image";
+
+export const metadata = {
+  title: "Historia | Artwings",
+  description: "Descubre la evolución de ARTWINGS: nuestra misión de conectar el arte contemporáneo con el impacto social.",
+};
 
 export default function Historia() {
   return (
@@ -39,6 +43,3 @@ export default function Historia() {
     </div>
   );
 }
-
-
-

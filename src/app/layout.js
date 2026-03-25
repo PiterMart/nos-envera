@@ -8,10 +8,31 @@ import PageTransitionWrapper from "../components/PageTransitionWrapper";
 import ScrollToTop from "../components/ScrollToTop";
 
 export const metadata = {
-  title: "Nos en Vera",
-  description: "Espacio de arte y cultura dedicado a la promoción de artistas emergentes y la experimentación artística",
+  title: {
+    template: "%s | Nos en Vera",
+    default: "Nos en Vera | Espacio de Performance y Creación",
+  },
+  description: "Espacio de arte y cultura dedicado a la promoción de artistas emergentes, la investigación y la experimentación en el campo de la performance.",
+  keywords: ["performance", "arte", "cultura", "investigación artística", "artistas emergentes", "Buenos Aires"],
+  metadataBase: new URL("https://www.nosenvera.com"),
+  alternates: {
+    canonical: "/",
+  },
   icons: {
     icon: '/favicon.ico',
+  },
+  openGraph: {
+    title: "Nos en Vera",
+    description: "Espacio de convergencia y creación colectiva en el campo de la performance.",
+    url: "https://www.nosenvera.com",
+    siteName: "Nos en Vera",
+    locale: "es_ES",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Nos en Vera",
+    description: "Espacio de convergencia y creación colectiva en el campo de la performance.",
   },
 };
 

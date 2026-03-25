@@ -1,6 +1,11 @@
 import EventTypePage from "../../components/EventTypePage";
 import { RESIDENCY_TYPE } from "../../lib/eventUtils";
 
+export const metadata = {
+  title: "Residencias | Investigación Artística",
+  description: "Programas de residencia para el desarrollo de proyectos artísticos y procesos de investigación en Nos en Vera.",
+};
+
 export default function Residencias() {
   return (
     <EventTypePage

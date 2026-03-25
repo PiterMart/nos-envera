@@ -1,6 +1,11 @@
 import EventTypePage from "../../components/EventTypePage";
 import { TRAINING_TYPES } from "../../lib/eventUtils";
 
+export const metadata = {
+  title: "Formaciones | Talleres y Seminarios",
+  description: "Espacios de aprendizaje, entrenamiento y experimentación en artes escénicas y performance en Nos en Vera.",
+};
+
 export default function Formacion() {
   return (
     <EventTypePage
