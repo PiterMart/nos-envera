@@ -119,6 +119,7 @@
     overflow: visible;
     transition: opacity 0.4s ease, visibility 0.4s ease;
     pointer-events: none;
+    border-bottom: none;
   }
 
   .nav_list ul {

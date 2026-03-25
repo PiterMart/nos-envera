@@ -35,6 +35,7 @@ export default function EventUploader() {
     slug: "",
     event_type: [],
     purchase_link: "",
+    video_link: "",
   });
   const [existingGallery, setExistingGallery] = useState([]);
   const [newImages, setNewImages] = useState([]);
@@ -280,6 +281,7 @@ export default function EventUploader() {
             ? data.event_type.filter((type) => eventTypeOptions.includes(type))
             : [],
           purchase_link: data.purchase_link || data.purchaseLink || "",
+          video_link: data.video_link || "",
         });
         setDirectorInput("");
         setArtistInput("");
@@ -373,6 +375,9 @@ export default function EventUploader() {
       const purchaseLinkSanitized =
         typeof formData.purchase_link === "string" ? formData.purchase_link.trim() : "";
 
+      const videoLinkSanitized =
+        typeof formData.video_link === "string" ? formData.video_link.trim() : "";
+
       const eventData = {
         ...formData,
         event_type: sanitizedEventTypes,
@@ -391,6 +396,7 @@ export default function EventUploader() {
         receptionDate: null,
         receptionTime: "",
         purchase_link: purchaseLinkSanitized,
+        video_link: videoLinkSanitized,
       };
 
       if (selectedEvent) {
@@ -860,6 +866,7 @@ const uploadImages = async (eventId) => {
       slug: "",
       event_type: [],
       purchase_link: "",
+      video_link: "",
     });
     setImageDescriptions([]);
     setImagePreviews([]);
@@ -957,6 +964,9 @@ const uploadImages = async (eventId) => {
       const purchaseLinkSanitized =
         typeof formData.purchase_link === "string" ? formData.purchase_link.trim() : "";
 
+      const videoLinkSanitized =
+        typeof formData.video_link === "string" ? formData.video_link.trim() : "";
+
       const newEventData = {
         ...formData,
         slug,
@@ -975,6 +985,7 @@ const uploadImages = async (eventId) => {
         receptionDate: null,
         receptionTime: "",
         purchase_link: purchaseLinkSanitized,
+        video_link: videoLinkSanitized,
       };
   
 
@@ -1297,6 +1308,19 @@ const uploadImages = async (eventId) => {
           />
           <p className={styles.helpText}>
             Agrega un enlace donde los asistentes puedan adquirir entradas.
+          </p>
+        </div>
+        <div className={styles.inputGroup}>
+          <p className={styles.subtitle}>ENLACE DE YOUTUBE (VIDEO)</p>
+          <input
+            name="video_link"
+            type="url"
+            placeholder="https://youtube.com/..."
+            value={formData.video_link || ""}
+            onChange={(e) => setFormData({ ...formData, video_link: e.target.value })}
+          />
+          <p className={styles.helpText}>
+            Agrega un enlace a un video de YouTube para mostrar en la pagina del evento.
           </p>
         </div>
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { TransitionLink } from "./TransitionLink";
 import AnimatedUnderline from "./AnimatedUnderline";
@@ -222,6 +223,11 @@ const ABOVE_THE_FOLD_COUNT = 8; /* priority-load first N images */
 export default function Grid({ cards, hideImages = false, tight = false, hoverOverlay = false, basePath = "/evento", yearHeadingClassName, loaded = true }) {
   const groups = useMemo(() => groupByYear(cards), [cards]);
   const [hasAnimated, setHasAnimated] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   /* Trigger animation on mount; parent's loaded can be true before Grid mounts */
   useEffect(() => {
@@ -308,7 +314,7 @@ export default function Grid({ cards, hideImages = false, tight = false, hoverOv
 
   return (
     <>
-      {hideImages && (
+      {hideImages && mounted && createPortal(
         <div
           ref={cursorRef}
           role="presentation"
@@ -320,7 +326,7 @@ export default function Grid({ cards, hideImages = false, tight = false, hoverOv
             width: CURSOR_IMAGE_WIDTH,
             height: CURSOR_IMAGE_HEIGHT,
             pointerEvents: "none",
-            zIndex: 9999,
+            zIndex: 999999,
             opacity: cursorImageUrl ? 1 : 0,
             visibility: cursorImageUrl ? "visible" : "hidden",
             transition: "opacity 0.12s ease-out",
@@ -340,7 +346,8 @@ export default function Grid({ cards, hideImages = false, tight = false, hoverOv
               draggable={false}
             />
           )}
-        </div>
+        </div>,
+        document.body
       )}
       <section
         ref={sectionRef}

@@ -270,6 +270,10 @@ export const normalizeEventDoc = (docData, docId) => {
   const purchaseLink =
     typeof rawPurchaseLink === "string" ? rawPurchaseLink.trim() : "";
 
+  const rawVideoLink = docData.video_link || docData.videoLink || "";
+  const videoLink =
+    typeof rawVideoLink === "string" ? rawVideoLink.trim() : "";
+
   return {
     id: docId,
     name: docData.name || docData.title || "Presentación",
@@ -281,6 +285,7 @@ export const normalizeEventDoc = (docData, docId) => {
     address: docData.address || "",
     googleMapsLink: docData.googleMapsLink || "",
     purchaseLink,
+    videoLink,
     slug: docData.slug || docId,
     banner: docData.banner || "",
     flyer: docData.flyer || "",

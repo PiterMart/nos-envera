@@ -3,6 +3,7 @@ import styles from "../styles/page.module.css";
 import React from "react";
 import Hero from "../components/Hero";
 import { TransitionLink } from "../components/TransitionLink";
+import Highlights from "../components/Highlights";
 
 export default function Home() {
   return (
@@ -29,6 +30,7 @@ export default function Home() {
           >
             somos →
           </TransitionLink>
+          <Highlights />
         </div>
       </main>
     </div>

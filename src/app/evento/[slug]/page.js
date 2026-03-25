@@ -139,7 +139,7 @@ export default function EventDetail({ params }) {
           >
             <header className={styles.pageHeaderSmall} style={{ display: "flex", flexDirection: "column", justifyContent: "flex-end", marginBottom: 0 }}>
               <h1 style={{ fontWeight: 600, letterSpacing: "1px", marginBottom: 0 }}>
-                {performance?.name || "Actividad"}
+                {performance ? (performance.name || "Actividad") : "\u00A0"}
                 {enriched?.year ? (
                   <span style={{ fontSize: "1.5rem", fontWeight: 400, color: "#666", marginLeft: "0.5rem" }}>
                     · {enriched.year}
@@ -322,6 +322,20 @@ export default function EventDetail({ params }) {
                             Más Información / Entradas
                           </a>
                         ) : null}
+                      </div>
+                    ) : null}
+
+                    {performance.videoLink ? (
+                      <div className={styles.link_container} style={{ marginTop: "2rem" }}>
+                        <a
+                          href={performance.videoLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.backNavLink}
+                          style={{ width: "fit-content", display: "inline-block" }}
+                        >
+                          Ver Video →
+                        </a>
                       </div>
                     ) : null}
                   </div>

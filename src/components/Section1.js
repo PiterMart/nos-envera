@@ -26,11 +26,11 @@ export default function Section1() {
     <section className={styles.section}>
       <div className={styles.container}>
         <div ref={headerRef} style={{ marginBottom: '1.5rem', overflow: 'hidden' }}>
-          <AnimatedPageHeader loaded={loaded}>NOS EN VERA</AnimatedPageHeader>
+          <AnimatedPageHeader loaded={loaded}>SOMOS</AnimatedPageHeader>
         </div>
         <div className={styles.imageWrapper}>
           <Image
-            src="/dominiq.jpg"
+            src="/espacio/NosEnvera-Fabrica4.jpg"
             alt="Section image"
             width={600}
             height={800}
