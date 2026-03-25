@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import styles from "../styles/Highlights.module.css";
 import { firestore } from "../app/firebase/firebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
@@ -50,6 +50,44 @@ export default function Highlights() {
     fetchFeaturedEvents();
   }, []);
 
+  const trackRef = useRef(null);
+  const scrollIntervalRef = useRef(null);
+  
+  const handleMouseMove = (e) => {
+    // Desktop only
+    if (window.innerWidth <= 768) return; 
+
+    const element = e.currentTarget;
+    const { left, width } = element.getBoundingClientRect();
+    const x = e.clientX - left;
+    
+    // Hover zones: 15% from left or right edge
+    const edgePercentage = 0.15;
+    const scrollSpeed = 5;
+    
+    clearInterval(scrollIntervalRef.current);
+    
+    if (x < width * edgePercentage) {
+      // Hovering left edge
+      scrollIntervalRef.current = setInterval(() => {
+        if (trackRef.current) trackRef.current.scrollBy({ left: -scrollSpeed, behavior: 'auto' });
+      }, 16);
+    } else if (x > width * (1 - edgePercentage)) {
+      // Hovering right edge
+      scrollIntervalRef.current = setInterval(() => {
+        if (trackRef.current) trackRef.current.scrollBy({ left: scrollSpeed, behavior: 'auto' });
+      }, 16);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    clearInterval(scrollIntervalRef.current);
+  };
+
+  useEffect(() => {
+    return () => clearInterval(scrollIntervalRef.current);
+  }, []);
+
   if (loading) {
     return null;
   }
@@ -59,9 +97,13 @@ export default function Highlights() {
   }
 
   return (
-    <div className={styles.carouselContainer}>
+    <div 
+      className={styles.carouselContainer}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
       {/* <h2 className={styles.carouselTitle}>Highlights</h2> */}
-      <div className={styles.carouselTrack}>
+      <div className={styles.carouselTrack} ref={trackRef}>
         {featuredEvents.map(event => (
           <TransitionLink key={event.id} href={`/evento/${event.slug}`} className={styles.carouselItem}>
             {/* eslint-disable-next-line @next/next/no-img-element */}

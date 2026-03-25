@@ -19,7 +19,6 @@
   display: flex;
   gap: 1.5rem;
   overflow-x: auto;
-  scroll-snap-type: x mandatory;
   padding: 1rem;
   scrollbar-width: none; /* Firefox */
   -webkit-overflow-scrolling: touch;
@@ -30,9 +29,8 @@
 }
 
 .carouselItem {
-  flex: 0 0 320px;
+  flex: 0 0 auto;
   height: 420px;
-  scroll-snap-align: center;
   position: relative;
   border-radius: var(--border-radius, 8px);
   overflow: hidden;
@@ -42,7 +40,7 @@
 }
 
 .carouselImage {
-  width: 100%;
+  width: auto;
   height: 100%;
   object-fit: cover;
   transition: transform 0.4s ease;
@@ -80,8 +78,17 @@
 }
 
 @media (max-width: 768px) {
+  .carouselTrack {
+    scroll-snap-type: x mandatory;
+  }
   .carouselItem {
     flex: 0 0 85vw;
     height: 380px;
+    width: 85vw;
+    scroll-snap-align: center;
+  }
+  .carouselImage {
+    width: 100%;
+    object-fit: cover;
   }
 }
