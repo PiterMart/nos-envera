@@ -45,7 +45,7 @@ export default async function ComunidadPage() {
         />
 
         <div className={styles.homepage_container} style={{ paddingTop: "0" }}>
-          <div style={{ display: "flex", flexDirection: "column", width: "100%", margin: 0, padding: "0 1.5rem" }}>
+          <div className={styles.comunidadWrapper}>
             <ComunidadClient memberNames={members} />
           </div>
         </div>

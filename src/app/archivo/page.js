@@ -35,6 +35,7 @@ async function getEvents() {
         imageUrl,
         year,
         eventTypes,
+        dates,
       };
     });
   } catch (err) {

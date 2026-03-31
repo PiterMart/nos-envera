@@ -142,6 +142,14 @@ export const parseDateEntry = (entry) => {
     parsedDate = null;
   }
 
+  // Handle serialized Firestore Timestamps (plain objects with seconds/nanoseconds)
+  if (!parsedDate && dateValue && typeof dateValue === "object" && "seconds" in dateValue) {
+    const attempt = new Date((dateValue.seconds || 0) * 1000);
+    if (!Number.isNaN(attempt.getTime())) {
+      parsedDate = attempt;
+    }
+  }
+
   const time = typeof entry.time === "string" ? entry.time.trim() : "";
 
   if (!parsedDate && !time) {
@@ -212,6 +220,34 @@ export const eventHasDateInCurrentMonth = (dates = []) => {
       date.getFullYear() === currentYear && date.getMonth() === currentMonth
     );
   });
+};
+
+/**
+ * Returns true if the event has at least one date from today onwards.
+ */
+export const hasFutureDate = (dates = []) => {
+  const now = new Date();
+  now.setHours(0, 0, 0, 0); // Start of today
+
+  if (!dates.length) return false;
+
+  return dates.some((entry) => {
+    const date = entry?.date;
+    if (!date || !(date instanceof Date) || Number.isNaN(date.getTime()))
+      return false;
+    
+    // Compare date with now
+    return date >= now;
+  });
+};
+
+/**
+ * Returns true if the event has no dates in the future.
+ * Events with no dates are considered past (archived) by default.
+ */
+export const isPastEvent = (dates = []) => {
+  if (!dates.length) return true;
+  return !hasFutureDate(dates);
 };
 
 export const getEarliestDate = (eventDoc) => {
@@ -301,6 +337,27 @@ export const isLikelyVideo = (url = "") => {
     url.toLowerCase().endsWith(".mp4") ||
     url.toLowerCase().includes("mime=video")
   );
+};
+
+/**
+ * Converts a regular YouTube or Vimeo URL into an embeddable URL.
+ */
+export const getVideoEmbedUrl = (url) => {
+  if (!url) return null;
+
+  // YouTube
+  const ytMatch = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  if (ytMatch && ytMatch[1]) {
+    return `https://www.youtube.com/embed/${ytMatch[1]}`;
+  }
+
+  // Vimeo
+  const vimeoMatch = url.match(/(?:https?:\/\/)?(?:www\.)?(?:vimeo\.com\/|player\.vimeo\.com\/video\/)(\d+)/);
+  if (vimeoMatch && vimeoMatch[1]) {
+    return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+  }
+
+  return url;
 };
 
 /**

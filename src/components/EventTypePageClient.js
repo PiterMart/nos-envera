@@ -5,6 +5,7 @@ import React, { useMemo } from "react";
 import Grid from "./grid";
 import AnimatedPageSection from "./AnimatedPageSection";
 import { sortByYearDesc } from "../lib/eventUtils";
+import AgendaRedirect from "./AgendaRedirect";
 
 export default function EventTypePageClient({
   title,
@@ -27,6 +28,8 @@ export default function EventTypePageClient({
               subtext={subtext}
               loaded={true}
             />
+
+            <AgendaRedirect />
 
             {cards.length === 0 ? (
               <div style={{ textAlign: "center", padding: "3rem", color: "#666" }}>

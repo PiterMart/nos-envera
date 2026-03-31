@@ -108,7 +108,7 @@ export default function Hero() {
           }}
         >
           <Image
-            src="/NV_Logo3D_4.png"
+            src="/NV_Logo3D_5.png"
             alt="Nos en Vera Logo"
             width={800}
             height={600}

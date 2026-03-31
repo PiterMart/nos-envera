@@ -5,9 +5,10 @@ import Hero from "../components/Hero";
 import { TransitionLink } from "../components/TransitionLink";
 import Highlights from "../components/Highlights";
 import Video from "../components/Video";
+import HomepageAgenda from "../components/HomepageAgenda";
 
 export const metadata = {
-  title: "Inicio",
+  title: "Nos Envera",
   description: "Nos en Vera es un espacio de convergencia y creación colectiva en el campo de la performance. Una plataforma para la investigación, la producción, la exhibición y el desarrollo de prácticas escénicas.",
   openGraph: {
     title: "Nos en Vera | Espacio de Performance",
@@ -42,7 +43,10 @@ export default function Home() {
           >
             somos →
           </TransitionLink>
-          <Highlights />
+        </div>
+        <Highlights />
+        <div style={{ display: "flex", flexDirection: "column", width: "100%", maxWidth: "1200px", margin: "0 auto", padding: "0 1rem" }}>
+          <HomepageAgenda />
         </div>
       </main>
     </div>

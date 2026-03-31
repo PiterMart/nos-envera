@@ -57,7 +57,7 @@
 :root {
   --background: #ffffff;
   --foreground: #000000;
-  --border-radius: 10px;
+  --border-radius: 6px;
   --font-family-base: "Avenir Next Cyr", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-paragraph: "Overused Grotesk", Georgia, "Times New Roman", serif;
   --font-grid-card: "Overused Grotesk", Georgia, "Times New Roman", serif;
@@ -70,6 +70,7 @@
   --font-weight-medium: 500;
   --font-weight-demibold: 600;
   --font-weight-heavy: 800;
+  --header-font-size: 5rem;
   --line-height-tight: 1.1;
   --line-height-default: 1.5;
   --line-height-relaxed: 1.7;
@@ -96,11 +97,13 @@ body {
   margin: 0;
 
 }
-section { 
+
+section {
   display: flex;
   flex-direction: column;
   gap: 1.75rem;
 }
+
 p {
   font-family: var(--font-paragraph);
   font-style: italic;
@@ -118,6 +121,7 @@ p {
   p {
     padding: 0.25rem;
   }
+
   .mainContent {
     margin: 0;
     padding: 1.5rem calc(var(--page-padding) + 0.5rem) calc(var(--page-padding) + 0.5rem) calc(var(--page-padding) + 0.5rem);
@@ -171,7 +175,7 @@ p {
   text-underline-offset: 8px;
 } */
 
-button{
+button {
   background-color: #faf9f600;
   color: black;
   font-size: 1rem;
@@ -181,7 +185,8 @@ button{
   border: 1px solid gray;
   width: fit-content;
 }
-::-webkit-file-upload-button{
+
+::-webkit-file-upload-button {
   background-color: #FAF9F6;
   background-color: #ffffff;
   color: black;
@@ -310,6 +315,17 @@ a {
   font-style: italic;
 }
 
+.syllable {
+  display: inline;
+}
+
+@media (max-width: 768px) {
+  .syllable {
+    display: block;
+    line-height: 0.9;
+  }
+}
+
 
 /* Page transitions: wipe left-to-right (back) or right-to-left (forward) */
 @keyframes page-transition-old-slide-out-left {
@@ -317,23 +333,28 @@ a {
     transform: translateX(-100%);
   }
 }
+
 @keyframes page-transition-old-slide-out-right {
   to {
     transform: translateX(100%);
   }
 }
+
 @keyframes page-transition-new-slide-in-from-right {
   from {
     transform: translateX(100%);
   }
+
   to {
     transform: translateX(0);
   }
 }
+
 @keyframes page-transition-new-slide-in-from-left {
   from {
     transform: translateX(-100%);
   }
+
   to {
     transform: translateX(0);
   }
@@ -343,6 +364,7 @@ a {
 html[data-transition-direction="forward"]::view-transition-old(page-content) {
   animation: page-transition-old-slide-out-left 0.35s ease-in-out both;
 }
+
 html[data-transition-direction="forward"]::view-transition-new(page-content) {
   animation: page-transition-new-slide-in-from-right 0.35s ease-in-out both;
 }
@@ -351,6 +373,7 @@ html[data-transition-direction="forward"]::view-transition-new(page-content) {
 html[data-transition-direction="back"]::view-transition-old(page-content) {
   animation: page-transition-old-slide-out-right 0.35s ease-in-out both;
 }
+
 html[data-transition-direction="back"]::view-transition-new(page-content) {
   animation: page-transition-new-slide-in-from-left 0.35s ease-in-out both;
 }

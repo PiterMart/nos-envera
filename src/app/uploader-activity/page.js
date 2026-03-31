@@ -136,7 +136,7 @@ export default function ActivityLogsPage() {
     const labels = {
       member: "Miembro",
       event: "Evento",
-      article: "Artículo",
+      nota: "Nota",
     };
     return labels[resourceType] || resourceType || "N/A";
   };
@@ -300,7 +300,7 @@ export default function ActivityLogsPage() {
                         <td style={{ padding: "1rem", fontSize: "0.85rem", color: "#666" }}>
                           {log.metadata?.memberName && `Miembro: ${log.metadata.memberName}`}
                           {log.metadata?.eventName && `Evento: ${log.metadata.eventName}`}
-                          {log.metadata?.articleTitle && `Artículo: ${log.metadata.articleTitle}`}
+                          {log.metadata?.notaTitle && `Nota: ${log.metadata.notaTitle}`}
                           {log.metadata?.fieldsUpdated && `Campos: ${log.metadata.fieldsUpdated.length}`}
                           {!log.metadata?.memberName && !log.metadata?.eventName && !log.metadata?.articleTitle && !log.metadata?.fieldsUpdated && "-"}
                         </td>

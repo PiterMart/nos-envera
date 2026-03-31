@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "../../styles/page.module.css";
 import { firestore } from "../firebase/firebaseConfig";
-import Grid from "../../components/grid";
+import AgendaList from "../../components/AgendaList";
 import AnimatedPageSection from "../../components/AnimatedPageSection";
 import { collection, getDocs } from "firebase/firestore";
 import {
@@ -9,6 +9,7 @@ import {
   parseDateEntry,
   extractYear,
   eventHasDateInCurrentMonth,
+  hasFutureDate,
   sortByYearDesc,
 } from "../../lib/eventUtils";
 
@@ -42,8 +43,7 @@ async function getAgendaEvents() {
           dates,
         };
       })
-      .filter((event) => eventHasDateInCurrentMonth(event.dates))
-      .map(({ dates: _dates, ...event }) => event)
+      .filter((event) => hasFutureDate(event.dates))
       .sort(sortByYearDesc);
   } catch (err) {
     console.error("Error fetching agenda on server:", err);
@@ -67,10 +67,10 @@ export default async function AgendaPage() {
 
             {events.length === 0 ? (
               <div style={{ textAlign: "center", padding: "3rem", color: "#666" }}>
-                <p>No hay eventos este mes.</p>
+                <p>No hay actividades próximas programadas.</p>
               </div>
             ) : (
-              <Grid cards={events} hideImages={true} basePath="/evento" loaded={true} />
+              <AgendaList events={events} basePath="/evento" />
             )}
           </div>
         </div>

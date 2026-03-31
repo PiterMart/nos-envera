@@ -2,13 +2,14 @@
   width: 100%;
   margin-top: 5rem;
   margin-left: 0;
-  padding-top: 5rem;
+  padding-top: 3rem;
   padding-bottom: 2rem;
-  border-top: 1px solid black;
+  border-top: 2px solid black;
   background-color: white;
   position: relative;
   z-index: 2;
-  min-height: 200px; /* Reserve space to prevent CLS layout shift */
+  min-height: 200px;
+  /* Reserve space to prevent CLS layout shift */
 }
 
 .footerContent {
@@ -72,9 +73,6 @@
 }
 
 .socialLink {
-  font-family: var(--font-family-base);
-  font-size: 1.2rem;
-  font-weight: var(--font-weight-medium);
   color: var(--foreground);
   text-decoration: none;
   transition: color 0.3s ease-in;
@@ -103,10 +101,24 @@
 .contactTitle {
   font-family: var(--font-family-base);
   font-weight: var(--font-weight-heavy);
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   letter-spacing: var(--letter-spacing-tight);
   margin: 0;
   text-transform: uppercase;
+}
+
+.footerIndent {
+  margin-left: 1.25rem;
+  margin-top: 0.75rem;
+}
+
+.footerSubtext {
+  font-family: var(--font-paragraph);
+  font-size: 1.25rem;
+  font-weight: normal;
+  font-style: italic;
+  letter-spacing: normal;
+  color: var(--foreground);
 }
 
 .contactInfo,
@@ -136,7 +148,7 @@
 
 .footerMainRow {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   justify-content: space-between;
   align-items: flex-start;
   width: 100%;
@@ -251,11 +263,7 @@
 }
 
 .footerNavList li {
-  font-family: var(--font-paragraph);
-  font-style: italic;
-  font-weight: var(--font-weight-medium);
-  font-size: 1rem;
-  letter-spacing: 0.05em;
+  margin: 0;
 }
 
 .footerNavList li::marker {
@@ -355,10 +363,6 @@
   .footerNav ul {
     flex-direction: column;
     gap: 1rem;
-  }
-
-  .footerNav li {
-    font-size: 1rem;
   }
 
   .footerSocial {

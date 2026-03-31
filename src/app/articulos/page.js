@@ -4,6 +4,7 @@ import styles from "../../styles/page.module.css";
 import { firestore } from "../firebase/firebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
 import ArticlesClient from "./ArticlesClient";
+import AnimatedPageHeader from "../../components/AnimatedPageHeader";
 
 export const metadata = {
   title: "Artículos",
@@ -79,9 +80,7 @@ export default async function ArticlesPage() {
               margin: "auto",
             }}
           >
-            <header className={styles.pageHeader}>
-              <h1>ARTÍCULOS</h1>
-            </header>
+            <AnimatedPageHeader loaded={true}>ARTÍCULOS</AnimatedPageHeader>
             <p className={styles.pageSubtext}>
               Investigaciones, registros y reflexiones sobre la práctica artística y performática contemporánea.
             </p>

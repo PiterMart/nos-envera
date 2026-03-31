@@ -40,7 +40,7 @@ export default function MailchimpForm({ compact = false }) {
           type="email"
           name="EMAIL"
           required
-          placeholder="Tu email"
+          placeholder="→ Tu email"
           value={email}
           onChange={(e) => { setEmail(e.target.value); setStatus(null); }}
           className={compact ? styles.newsletterInput : styles.newsletterInputFull}

@@ -34,17 +34,7 @@ export default function Video({ children }) {
 
   return (
     <div className={styles.videoWrapper}>
-      {/* Main video background - first 100vh */}
       <div className={styles.videoContainer}>
-        {/* {!videoLoaded && (
-          <Image
-            src="/Zytnax_knight_duomodimilano32.jpg"
-            alt="Zyntax Knight"
-            fill
-            className={styles.fallbackImage}
-            priority
-          />
-        )} */}
 
         <video
           ref={videoRef}
@@ -54,19 +44,10 @@ export default function Video({ children }) {
           playsInline
           className={`${styles.backgroundVideo} ${videoLoaded ? styles.videoLoaded : ''}`}
         >
-          <source src="/resumen nv para web.mp4" type="video/mp4" />
+          <source src="/Showreel-nosenvera.mp4" type="video/mp4" />
         </video>
-
-        {/* Overlay and interactive elements go here */}
         {children}
       </div>
-
-      {/* Banner overlapping bottom of video */}
-      {/* <Banner /> */}
-
-      {/* Section: What can I help you with? */}
-      {/* <Section1 /> */}
-
     </div>
   );
 }

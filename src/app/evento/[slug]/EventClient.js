@@ -15,6 +15,8 @@ import {
   eventContainsPerformance,
   eventContainsTraining,
   eventContainsResidency,
+  getVideoEmbedUrl,
+  isLikelyVideo,
 } from "../../../lib/eventUtils";
 
 export default function EventClient({ performance }) {
@@ -40,11 +42,31 @@ export default function EventClient({ performance }) {
     const firstDate = performance?.dates?.find?.((entry) => entry?.date) || null;
     const formattedDates = (performance?.dates || [])
       .map((entry) => {
-        const formattedDate = formatDate(entry?.date);
+        const dateValue = entry?.date;
+        let dateObj;
+        if (dateValue?.toDate) {
+          dateObj = dateValue.toDate();
+        } else {
+          dateObj = new Date(dateValue);
+        }
+
+        let dateLabel = "";
+        if (dateObj instanceof Date && !Number.isNaN(dateObj.getTime())) {
+          const year = dateObj.getFullYear();
+          if (year <= 2025) {
+            dateLabel = new Intl.DateTimeFormat("es-ES", {
+              month: "long",
+              year: "numeric",
+            }).format(dateObj);
+          } else {
+            dateLabel = formatDate(dateValue);
+          }
+        }
+
         const time = entry?.time;
-        if (!formattedDate && !time) return null;
+        if (!dateLabel && !time) return null;
         return {
-          dateLabel: formattedDate,
+          dateLabel,
           time,
         };
       })
@@ -104,11 +126,11 @@ export default function EventClient({ performance }) {
             width={800}
             height={1000}
             sizes="(max-width: 768px) 100vw, 50vw"
-            style={{ 
-              minWidth: "5rem", 
-              width: "100%", 
-              height: "auto", 
-              objectFit: "contain", 
+            style={{
+              minWidth: "5rem",
+              width: "100%",
+              height: "auto",
+              objectFit: "contain",
               display: "block",
               opacity: imgLoaded ? 1 : 0,
               transition: "opacity 0.3s ease, transform 0.3s ease",
@@ -247,16 +269,24 @@ export default function EventClient({ performance }) {
           ) : null}
 
           {performance.videoLink ? (
-            <div className={styles.link_container} style={{ marginTop: "2rem" }}>
-              <a
-                href={performance.videoLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.backNavLink}
-                style={{ width: "fit-content", display: "inline-block" }}
-              >
-                Ver Video →
-              </a>
+            <div style={{ width: "100%", maxWidth: "350px" }}>
+              {isLikelyVideo(performance.videoLink) ? (
+                <video
+                  src={performance.videoLink}
+                  controls
+                  className={styles.directVideo}
+                />
+              ) : (
+                <div className={styles.videoWrapper}>
+                  <iframe
+                    src={getVideoEmbedUrl(performance.videoLink)}
+                    className={styles.videoIframe}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    title={`Video del evento ${performance.name || "Actividad"} - Nos Envera`}
+                  />
+                </div>
+              )}
             </div>
           ) : null}
         </div>

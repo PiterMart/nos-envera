@@ -21,7 +21,7 @@ export const ACTION_TYPES = {
 export const RESOURCE_TYPES = {
   MEMBER: "member",
   EVENT: "event",
-  ARTICLE: "article",
+  NOTA: "nota",
 };
 
 /**

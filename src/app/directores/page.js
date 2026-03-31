@@ -1,5 +1,5 @@
-import styles from "../../styles/page.module.css";
 import Image from "next/image";
+import AnimatedPageHeader from "../../components/AnimatedPageHeader";
 
 export const metadata = {
   title: "Directores | Artwings",
@@ -23,9 +23,7 @@ export default function Directores() {
           </div>
           <div className={styles.artists_page}>
             <div style={{display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', margin: "auto", marginTop: '5rem'}}>
-              <header className={styles.pageHeaderSmall}>
-                <h1>Directores</h1>
-              </header>
+              <AnimatedPageHeader loaded={true}>DIRECTORES</AnimatedPageHeader>
               
               <p style={{lineHeight: '1.5rem', textAlign: 'justify', marginTop: '2rem'}}>
                 Los directores de ARTWINGS son visionarios del arte contemporáneo que guían la dirección curatorial y estratégica de nuestro espacio.

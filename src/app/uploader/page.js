@@ -10,6 +10,8 @@ import ArticlesUploader from "../firebase/ArticlesUploader";
 import CommunityList from "../firebase/CommunityList";
 import EventList from "../firebase/EventList";
 import ArticlesList from "../firebase/ArticlesList";
+import NotasUploader from "../firebase/NotasUploader";
+import NotasList from "../firebase/NotasList";
 
 export default function Home() {
   const [activeSection, setActiveSection] = useState("community");
@@ -121,8 +123,8 @@ export default function Home() {
             <button onClick={() => setActiveSection("eventsList")} className={styles.navButton}>Lista de Eventos</button>
           </div>
           <div className={styles.navGroup}>
-            <button onClick={() => setActiveSection("features")} className={styles.navButton}>ARTÍCULOS</button>
-            <button onClick={() => setActiveSection("articlesList")} className={styles.navButton}>Lista de Artículos</button>
+            <button onClick={() => setActiveSection("features")} className={styles.navButton}>NOTAS</button>
+            <button onClick={() => setActiveSection("articlesList")} className={styles.navButton}>Lista de Notas</button>
           </div>
         </div>
 
@@ -134,11 +136,11 @@ export default function Home() {
           </div>
         )}
 
-        {/* Articles Section */}
+        {/* Articles Section -> Notas Section */}
         {activeSection === "features" && (
           <div id="features" style={{ width: "100%", padding: "1rem", display: "flex", flexDirection: "column", gap: "2rem", maxWidth: "1000px", margin: "auto" }}>
-            <p className={styles.title}>ARTÍCULOS</p>
-            <ArticlesUploader />
+            <p className={styles.title}>NOTAS</p>
+            <NotasUploader />
           </div>
         )}
 
@@ -166,11 +168,11 @@ export default function Home() {
           </div>
         )}
 
-        {/* Articles List Section */}
+        {/* Articles List Section -> Notas List Section */}
         {activeSection === "articlesList" && (
           <div id="articles-list" style={{ width: "100%", padding: "1rem", display: "flex", flexDirection: "column", gap: "2rem", maxWidth: "1000px", margin: "auto" }}>
-            <p className={styles.title}>LISTA DE ARTÍCULOS</p>
-            <ArticlesList />
+            <p className={styles.title}>LISTA DE NOTAS</p>
+            <NotasList />
           </div>
         )}
 

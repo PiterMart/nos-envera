@@ -109,7 +109,7 @@ export default async function EventDetail({ params }) {
             }}
           >
             <header className={styles.pageHeaderSmall} style={{ display: "flex", flexDirection: "column", justifyContent: "flex-end", marginBottom: 0 }}>
-              <h1 style={{ fontWeight: 600, letterSpacing: "1px", marginBottom: 0 }}>
+              <h1 className={styles.eventTitle} style={{ fontWeight: 600, letterSpacing: "1px", marginBottom: 0, fontFamily: "var(--font-family-base)" }}>
                 {performance.name || "Actividad"}
                 {year ? (
                   <span style={{ fontSize: "1.5rem", fontWeight: 400, color: "#666", marginLeft: "0.5rem" }}>

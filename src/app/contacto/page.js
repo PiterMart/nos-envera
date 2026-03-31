@@ -1,7 +1,8 @@
 import Image from "next/image";
 import styles from "../../styles/page.module.css";
-import FooterStyles from "../../styles/Footer.module.css";
+import FootStyles from "../../styles/Footer.module.css";
 import MailchimpForm from "../../components/MailchimpForm";
+import AnimatedPageHeader from "../../components/AnimatedPageHeader";
 
 export const metadata = {
   title: "Contacto | Nos en Vera",
@@ -19,9 +20,7 @@ export default function Contacto() {
     <div className={styles.page}>
       <main className={styles.main}>
         <div className={styles.page_container}>
-          <header className={styles.pageHeader}>
-            <h1>CONTACTO</h1>
-          </header>
+          <AnimatedPageHeader loaded={true}>CONTACTO</AnimatedPageHeader>
           <p className={styles.pageSubtext}>
             Ubicado en el corazón de Villa Crespo, Nos en Vera es un espacio de encuentro, creación y exhibición. 
             Escríbenos para consultas sobre residencias, talleres o propuestas artísticas.

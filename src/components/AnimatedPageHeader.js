@@ -3,6 +3,7 @@
 import React from "react";
 import styles from "../styles/page.module.css";
 import AnimatedUnderline from "./AnimatedUnderline";
+import { formatSyllabicTitle } from "../lib/titleUtils";
 
 const sharedTransition = "0.6s cubic-bezier(0.16, 1, 0.3, 1)";
 
@@ -28,7 +29,7 @@ export default function AnimatedPageHeader({ children, loaded = false, className
           transition: `opacity ${sharedTransition}`,
         }}
       >
-        {children}
+        {formatSyllabicTitle(children)}
       </h1>
       <AnimatedUnderline loaded={loaded} className={styles.animatedUnderline} />
     </header>

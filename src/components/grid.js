@@ -39,7 +39,7 @@ const masonryLinkStyles = {
   maxWidth: "none",
 };
 
-const articleStyles = {
+const notaStyles = {
   width: "100%",
   display: "flex",
   flexDirection: "column",
@@ -47,8 +47,8 @@ const articleStyles = {
   textAlign: "left",
 };
 
-const articleStylesTight = {
-  ...articleStyles,
+const notaStylesTight = {
+  ...notaStyles,
   gap: "0.35rem",
 };
 
@@ -138,8 +138,8 @@ const archivoLinkStyles = {
   width: "100%",
 };
 
-const archivoArticleStyles = {
-  ...articleStyles,
+const archivoNotaStyles = {
+  ...notaStyles,
   width: "100%",
   gap: 0,
   minHeight: "2.5rem",
@@ -431,7 +431,7 @@ export default function Grid({ cards, hideImages = false, tight = false, hoverOv
                   setRevealedCardId(card.id);
                 };
                 const linkStyle = hideImages ? archivoLinkStyles : useMasonry ? masonryLinkStyles : linkStyles;
-                const articleStyle = hideImages ? archivoArticleStyles : tight ? articleStylesTight : articleStyles;
+                const articleStyle = hideImages ? archivoNotaStyles : tight ? notaStylesTight : notaStyles;
                 const cardDelay = animating ? `${0.06 + flatIndex * 0.03}s` : "0s";
                 const content = (
                     <TransitionLink

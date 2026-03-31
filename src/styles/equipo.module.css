@@ -214,6 +214,10 @@
     flex: 0 0 calc(50% - 0.75rem);
   }
 
+  .carouselSlide:first-child {
+    flex: 0 0 100%;
+  }
+
   .card {
     padding: var(--page-padding);
   }

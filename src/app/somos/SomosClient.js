@@ -24,6 +24,7 @@ export default function SomosClient({ teamMembers }) {
     <>
       <Section1 />
       <section className={teamStyles.carouselSection}>
+        <h1 className={pageStyles.pageHeader}>EQUIPO</h1>
         {visibleMembers.length === 0 ? (
           <p className={teamStyles.emptyState}>No hay miembros del equipo registrados todavía.</p>
         ) : (
@@ -60,7 +61,7 @@ export default function SomosClient({ teamMembers }) {
         )}
       </section>
 
-      <section className={teamStyles.espacioGallery}>
+      {/* <section className={teamStyles.espacioGallery}>
         <div className={teamStyles.espacioGrid}>
           <div
             className={`${teamStyles.espacioImageWrapper} ${teamStyles.espacioImageFullWidth}`}
@@ -106,7 +107,7 @@ export default function SomosClient({ teamMembers }) {
           slides={ESPACIO_IMAGES.map((src, i) => ({ src, alt: `Nos en Vera espacio ${i + 1}` }))}
           index={lightboxIndex}
         />
-      </section>
+      </section> */}
     </>
   );
 }
