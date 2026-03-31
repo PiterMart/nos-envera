@@ -1,6 +1,6 @@
 import Image from "next/image";
 import styles from "../../styles/page.module.css";
-import FootStyles from "../../styles/Footer.module.css";
+import FooterStyles from "../../styles/Footer.module.css";
 import MailchimpForm from "../../components/MailchimpForm";
 import AnimatedPageHeader from "../../components/AnimatedPageHeader";
 
