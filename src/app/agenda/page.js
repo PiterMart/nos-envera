@@ -11,6 +11,8 @@ import {
   eventHasDateInCurrentMonth,
   hasFutureDate,
   sortByYearDesc,
+  normalizeArrayOfPeople,
+  normalizeEventTypes
 } from "../../lib/eventUtils";
 
 export const metadata = {
@@ -33,6 +35,8 @@ async function getAgendaEvents() {
         const slug = eventDoc.slug || eventDoc.id;
         const title = eventDoc.name || eventDoc.title || "Evento";
         const year = extractYear(dates) ?? "—";
+        const type = normalizeEventTypes(eventDoc.event_type || eventDoc.eventType || eventDoc.type);
+        const directors = normalizeArrayOfPeople(eventDoc.directors);
 
         return {
           id: eventDoc.id,
@@ -41,10 +45,21 @@ async function getAgendaEvents() {
           imageUrl,
           year,
           dates,
+          type,
+          directors
         };
       })
       .filter((event) => hasFutureDate(event.dates))
-      .sort(sortByYearDesc);
+      .sort((a, b) => {
+        const getFirstFutureDate = (dates) => {
+          const now = new Date();
+          now.setHours(0, 0, 0, 0);
+          const future = dates.filter(d => d.date >= now);
+          if (future.length === 0) return new Date(9999, 0, 1).getTime();
+          return future.sort((x, y) => x.date - y.date)[0].date.getTime();
+        };
+        return getFirstFutureDate(a.dates) - getFirstFutureDate(b.dates);
+      });
   } catch (err) {
     console.error("Error fetching agenda on server:", err);
     return [];
@@ -56,7 +71,16 @@ export default async function AgendaPage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.page_container}>
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+            .agendaPageOverride *:not(h1) {
+              font-family: var(--font-paragraph) !important;
+            }
+          `,
+        }}
+      />
+      <div className={`${styles.page_container} agendaPageOverride`}>
         <div className={styles.homepage_container} style={{ paddingTop: "2rem" }}>
           <div className={styles.contentMaxWidth} style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
             <AnimatedPageSection

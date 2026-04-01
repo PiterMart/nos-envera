@@ -6,6 +6,7 @@ import { TransitionLink } from "../components/TransitionLink";
 import Highlights from "../components/Highlights";
 import Video from "../components/Video";
 import HomepageAgenda from "../components/HomepageAgenda";
+import HomepageIntro from "../components/HomepageIntro";
 
 export const metadata = {
   title: "Nos Envera",
@@ -23,27 +24,7 @@ export default function Home() {
       <Hero />
       <Video />
       <main className={styles.main}>
-        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", padding: "4rem 1rem", minHeight: "30vh", gap: "2rem" }}>
-          <p className={styles.paragraph} style={{ textAlign: "center", maxWidth: "800px", margin: "0 auto" }}>
-            Nos en Vera es un espacio de convergencia y creación colectiva en el campo de la performance. Una plataforma para la investigación, la producción, la exhibición y el desarrollo de prácticas escénicas.
-          </p>
-          <TransitionLink
-            href="/somos"
-            style={{
-              textDecoration: "none",
-              fontSize: "0.9rem",
-              textTransform: "uppercase",
-              letterSpacing: "0.5px",
-              color: "#222",
-              borderBottom: "1px solid #222",
-              textAlign: "center",
-              display: "inline-block",
-              textDecoration: 'none'
-            }}
-          >
-            somos →
-          </TransitionLink>
-        </div>
+        <HomepageIntro />
         <Highlights />
         <div style={{ display: "flex", flexDirection: "column", width: "100%", maxWidth: "1200px", margin: "0 auto", padding: "0 1rem" }}>
           <HomepageAgenda />

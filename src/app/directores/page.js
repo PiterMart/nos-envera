@@ -1,5 +1,6 @@
 import Image from "next/image";
 import AnimatedPageHeader from "../../components/AnimatedPageHeader";
+import styles from "../../styles/page.module.css";
 
 export const metadata = {
   title: "Directores | Artwings",

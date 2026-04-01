@@ -5,21 +5,34 @@ import { TransitionLink } from "./TransitionLink";
 import AnimatedUnderline from "./AnimatedUnderline";
 import { formatDate } from "../lib/eventUtils";
 
-const YEAR_PLACEHOLDER = "—";
+const MONTH_PLACEHOLDER = "—";
 
-function groupByYear(cards) {
-  const byYear = {};
+function groupByMonth(cards) {
+  const groups = [];
   for (const card of cards) {
-    const y = card.year ?? YEAR_PLACEHOLDER;
-    if (!byYear[y]) byYear[y] = [];
-    byYear[y].push(card);
+    let monthString = MONTH_PLACEHOLDER;
+    if (card.dates && card.dates.length > 0) {
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+      const futureDates = card.dates.filter(d => d.date >= now);
+      // Fallback to first date if all are in the past
+      const targetDate = futureDates.length > 0 ? futureDates[0].date : card.dates[0].date;
+      
+      if (targetDate) {
+        const formatted = new Intl.DateTimeFormat('es-ES', { month: 'long' }).format(targetDate);
+        monthString = formatted.charAt(0).toUpperCase() + formatted.slice(1);
+      }
+    }
+
+    let group = groups.find(g => g.month === monthString);
+    if (!group) {
+      group = { month: monthString, events: [] };
+      groups.push(group);
+    }
+    group.events.push(card);
   }
-  const keys = Object.keys(byYear).sort((a, b) => {
-    if (a === YEAR_PLACEHOLDER && b !== YEAR_PLACEHOLDER) return 1;
-    if (a !== YEAR_PLACEHOLDER && b === YEAR_PLACEHOLDER) return -1;
-    return String(b).localeCompare(String(a));
-  });
-  return keys.map((year) => [year, byYear[year]]);
+  
+  return groups.map(g => [g.month, g.events]);
 }
 
 const listContainerStyles = {
@@ -47,7 +60,9 @@ const titleStyles = {
   fontWeight: 400,
   letterSpacing: "0.5px",
   margin: 0,
+  marginLeft: "15vw",
   color: "black",
+  textAlign: "left",
 };
 
 const dateStyles = {
@@ -59,12 +74,12 @@ const dateStyles = {
 };
 
 export default function AgendaList({ events, basePath = "/evento" }) {
-  const groups = useMemo(() => groupByYear(events), [events]);
+  const groups = useMemo(() => groupByMonth(events), [events]);
 
   return (
     <section style={listContainerStyles}>
-      {groups.map(([year, groupEvents], idx) => (
-        <div key={year} style={{ width: "100%", marginTop: idx === 0 ? 0 : "2rem" }}>
+      {groups.map(([month, groupEvents], idx) => (
+        <div key={month} style={{ width: "100%", marginTop: idx === 0 ? 0 : "2rem" }}>
           <header
             style={{
               marginBottom: "1rem",
@@ -85,7 +100,7 @@ export default function AgendaList({ events, basePath = "/evento" }) {
                 textAlign: "left",
               }}
             >
-              {year}
+              {month}
             </h2>
             <AnimatedUnderline
               loaded={true}
@@ -101,9 +116,10 @@ export default function AgendaList({ events, basePath = "/evento" }) {
             {groupEvents.map((event) => {
               const dateString = (event.dates || [])
                 .map((d) => {
-                  const formattedStr = formatDate(d.date);
-                  const timeStr = d.time ? ` a las ${d.time}` : "";
-                  return formattedStr ? `${formattedStr}${timeStr}` : null;
+                  if (!d.date) return null;
+                  const dateObj = d.date.toDate ? d.date.toDate() : new Date(d.date);
+                  if (isNaN(dateObj.getTime())) return null;
+                  return new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long' }).format(dateObj);
                 })
                 .filter(Boolean)
                 .join(" | ");
@@ -118,6 +134,14 @@ export default function AgendaList({ events, basePath = "/evento" }) {
                   <article style={agendaItemStyles}>
                     <h3 style={titleStyles}>{event.title}</h3>
                     {dateString && <p style={dateStyles}>{dateString}</p>}
+                    {(event.type?.length > 0 || event.directors?.length > 0) && (
+                      <p style={{ ...dateStyles, fontStyle: "italic", fontSize: "0.9rem" }}>
+                        {[
+                          event.type?.length > 0 ? event.type.join(", ") : null,
+                          event.directors?.length > 0 ? `Dir: ${event.directors.map(dir => dir.name).join(", ")}` : null
+                        ].filter(Boolean).join(" | ")}
+                      </p>
+                    )}
                   </article>
                 </TransitionLink>
               );

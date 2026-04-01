@@ -38,13 +38,13 @@ export default function NotasClient({ initialNotas }) {
   const [visibleSubtitles, setVisibleSubtitles] = useState(new Set());
   const [expandedItems, setExpandedItems] = useState(new Set());
 
-  const toggleExpanded = (itemId) => {
+  const setExpanded = (itemId, isExpanded) => {
     setExpandedItems((prev) => {
       const next = new Set(prev);
-      if (next.has(itemId)) {
-        next.delete(itemId);
-      } else {
+      if (isExpanded) {
         next.add(itemId);
+      } else {
+        next.delete(itemId);
       }
       return next;
     });
@@ -108,28 +108,24 @@ export default function NotasClient({ initialNotas }) {
             return (
               <li
                 key={notaItem.id}
+                onMouseEnter={() => setExpanded(notaItem.id, true)}
+                onMouseLeave={() => setExpanded(notaItem.id, false)}
                 style={{
-                  borderBottom: "1px solid #e0e0e0",
-                  padding: "0.5rem 0",
+                  borderBottom: "1px solid black",
+                  padding: "0",
                 }}
               >
-                <button
-                  type="button"
-                  onClick={() => toggleExpanded(notaItem.id)}
+                <div
                   aria-expanded={isExpanded}
                   style={{
                     width: "100%",
                     textAlign: "left",
-                    background: "none",
-                    border: "none",
-                    padding: "0.75rem 0",
-                    cursor: "pointer",
+                    padding: "1rem 0 0.5rem 0",
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "space-between",
+                    justifyContent: "flex-start",
                     gap: "1rem",
-                    fontSize: "1.1rem",
-                    color: "#111",
+                    color: "black",
                   }}
                 >
                   <span
@@ -141,8 +137,12 @@ export default function NotasClient({ initialNotas }) {
                     data-subtitle-id={`subtitle-${notaItem.id}`}
                     style={{
                       display: "block",
-                      fontSize: "1.2rem",
-                      lineHeight: "1.4rem",
+                      fontFamily: "var(--font-grid-card)",
+                      fontStyle: "italic",
+                      fontSize: "1.1rem",
+                      fontWeight: 600,
+                      letterSpacing: "0.5px",
+                      lineHeight: "1.3",
                     }}
                   >
                     {notaItem.title}
@@ -158,82 +158,95 @@ export default function NotasClient({ initialNotas }) {
                   >
                     +
                   </span>
-                </button>
+                </div>
 
                 {isExpanded && (
                   <div
                     style={{
                       paddingBottom: "1rem",
                       display: "flex",
-                      flexDirection: "column",
-                      gap: "0.75rem",
+                      flexDirection: "row",
+                      gap: "1.5rem",
                       fontSize: "0.95rem",
                       color: "#333",
+                      alignItems: "flex-start",
                     }}
                   >
-                    {notaItem.subtitle && (
-                      <p style={{ fontWeight: "500" }}>{notaItem.subtitle}</p>
-                    )}
-
                     {notaItem.coverImage && (
                       <div
                         style={{
+                          flexShrink: 0,
+                          width: "40%",
+                          maxWidth: "350px",
                           marginTop: "0.25rem",
                           marginBottom: "0.5rem",
-                          maxWidth: "100%",
                         }}
                       >
                         <img
                           src={notaItem.coverImage}
                           alt={notaItem.title}
                           style={{
-                            width: "100%",
-                            maxHeight: "280px",
-                            objectFit: "cover",
+                            maxWidth: "100%",
+                            maxHeight: "40vh",
+                            height: "auto",
+                            objectFit: "contain",
                             display: "block",
                           }}
                         />
                       </div>
                     )}
 
-                    {notaItem.date && (
-                      <p style={{ color: "#666" }}>
-                        {formatNotaDate(notaItem.date)}
-                      </p>
-                    )}
+                    <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "0" }}>
+                      {notaItem.subtitle && (
+                        <p style={{ fontWeight: "500", margin: 0 }}>{notaItem.subtitle}</p>
+                      )}
 
-                    {notaItem.description && (
-                      <p style={{ lineHeight: "1.6rem", marginBottom: "0.5rem" }}>
-                        {notaItem.description}
-                      </p>
-                    )}
+                      {notaItem.date && (
+                        <p style={{ color: "#666", margin: 0 }}>
+                          {formatNotaDate(notaItem.date)}
+                        </p>
+                      )}
 
-                    {notaItem.links && notaItem.links.length > 0 && (
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "0.5rem",
-                        }}
-                      >
-                        {notaItem.links.map((link, linkIndex) => (
-                          <a
-                            key={`${notaItem.id}-link-${linkIndex}`}
-                            href={link.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{
-                              padding: "0.5rem 0",
-                              color: "#0066cc",
-                              textDecoration: "underline",
-                              fontSize: "0.95rem",
-                            }}
-                          >
-                            {link.title || "Ver publicación"}
-                          </a>
-                        ))}
-                      </div>
-                    )}
+                      {notaItem.description && (
+                        <p style={{ lineHeight: "1.6rem", margin: 0 }}>
+                          {notaItem.description}
+                        </p>
+                      )}
+
+                      {notaItem.links && notaItem.links.length > 0 && (
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "0.5rem",
+                          }}
+                        >
+                          {notaItem.links.map((link, linkIndex) => (
+                            <a
+                              key={`${notaItem.id}-link-${linkIndex}`}
+                              href={link.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                display: "inline-block",
+                                marginTop: "0.75rem",
+                                padding: "0.6rem 1.2rem",
+                                backgroundColor: "#111",
+                                color: "#fff",
+                                textDecoration: "none",
+                                letterSpacing: "0.5px",
+                                fontSize: "0.85rem",
+                                textTransform: "uppercase",
+                                textAlign: "center",
+                                alignSelf: "flex-start",
+                              }}
+                            >
+                              VER NOTA
+                            </a>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               </li>

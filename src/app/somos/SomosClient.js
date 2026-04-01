@@ -60,54 +60,6 @@ export default function SomosClient({ teamMembers }) {
           </div>
         )}
       </section>
-
-      {/* <section className={teamStyles.espacioGallery}>
-        <div className={teamStyles.espacioGrid}>
-          <div
-            className={`${teamStyles.espacioImageWrapper} ${teamStyles.espacioImageFullWidth}`}
-            role="button"
-            tabIndex={0}
-            onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }}
-            onKeyDown={(e) => e.key === "Enter" && (setLightboxIndex(0), setLightboxOpen(true))}
-            aria-label="Abrir imagen 1 en galería"
-          >
-            <Image
-              src={ESPACIO_IMAGES[0]}
-              alt="Nos en Vera espacio 1 - Nos Envera"
-              width={1200}
-              height={600}
-              className={teamStyles.espacioImage}
-              sizes="100vw"
-            />
-          </div>
-          {ESPACIO_IMAGES.slice(1).map((src, i) => (
-            <div
-              key={src}
-              className={teamStyles.espacioImageWrapper}
-              role="button"
-              tabIndex={0}
-              onClick={() => { setLightboxIndex(i + 1); setLightboxOpen(true); }}
-              onKeyDown={(e) => e.key === "Enter" && (setLightboxIndex(i + 1), setLightboxOpen(true))}
-              aria-label={`Abrir imagen ${i + 2} en galería`}
-            >
-              <Image
-                src={src}
-                alt={`Nos en Vera espacio ${i + 2} - Nos Envera`}
-                width={600}
-                height={400}
-                className={teamStyles.espacioImage}
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-            </div>
-          ))}
-        </div>
-        <Lightbox
-          isOpen={lightboxOpen}
-          onClose={() => setLightboxOpen(false)}
-          slides={ESPACIO_IMAGES.map((src, i) => ({ src, alt: `Nos en Vera espacio ${i + 1}` }))}
-          index={lightboxIndex}
-        />
-      </section> */}
     </>
   );
 }

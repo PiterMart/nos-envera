@@ -3,15 +3,18 @@ import Image from "next/image";
 import { firestore } from "../app/firebase/firebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
 import { TransitionLink } from "./TransitionLink";
+import HomepageAgendaSlider from "./HomepageAgendaSlider";
 import styles from "../styles/page.module.css";
 import {
   FALLBACK_IMAGE_WIDE as FALLBACK_IMAGE,
   parseDateEntry,
   hasFutureDate,
   formatDate,
+  normalizeArrayOfPeople,
+  normalizeEventTypes
 } from "../lib/eventUtils";
 
-async function getNextAgendaEvent() {
+async function getUpcomingAgendaEvents() {
   try {
     const snapshot = await getDocs(collection(firestore, "events"));
     const documents = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
@@ -25,55 +28,57 @@ async function getNextAgendaEvent() {
       })
       .filter((event) => hasFutureDate(event.parsedDates));
 
-    if (futureEvents.length === 0) return null;
+    if (futureEvents.length === 0) return [];
 
     const now = new Date();
     now.setHours(0, 0, 0, 0);
 
     // Sort by earliest future date
     futureEvents.sort((a, b) => {
-      const dateA = a.parsedDates.find(d => d.date >= now)?.date || new Date(9999,0,1);
-      const dateB = b.parsedDates.find(d => d.date >= now)?.date || new Date(9999,0,1);
+      const dateA = a.parsedDates.find(d => d.date >= now)?.date || new Date(9999, 0, 1);
+      const dateB = b.parsedDates.find(d => d.date >= now)?.date || new Date(9999, 0, 1);
       return dateA - dateB;
     });
 
-    const nextEvent = futureEvents[0];
-    const imageUrl = nextEvent.banner || nextEvent.flyer || nextEvent.gallery?.[0]?.url || FALLBACK_IMAGE;
+    return futureEvents.slice(0, 5).map(event => {
+      const imageUrl = event.banner || event.flyer || event.gallery?.[0]?.url || FALLBACK_IMAGE;
 
-    const dateString = (nextEvent.parsedDates || [])
-      .map(d => {
-        const formattedStr = formatDate(d.date);
-        const timeStr = d.time ? ` a las ${d.time}` : "";
-        return formattedStr ? `${formattedStr}${timeStr}` : null;
-      })
-      .filter(Boolean)
-      .join(" | ");
+      const dateString = (event.parsedDates || [])
+        .map(d => {
+          if (!d.date) return null;
+          return new Intl.DateTimeFormat('es-AR', { day: 'numeric', month: 'long' }).format(d.date);
+        })
+        .filter(Boolean)
+        .join(" | ");
 
-    return {
-      id: nextEvent.id,
-      title: nextEvent.name || nextEvent.title || "Evento",
-      subtitle: nextEvent.subtitle || "",
-      description: Array.isArray(nextEvent.description) ? nextEvent.description : typeof nextEvent.description === 'string' ? nextEvent.description.split('\n') : [],
-      slug: nextEvent.slug || nextEvent.id,
-      imageUrl,
-      dateString
-    };
+      return {
+        id: event.id,
+        title: event.name || event.title || "Evento",
+        subtitle: event.subtitle || "",
+        description: Array.isArray(event.description) ? event.description : typeof event.description === 'string' ? event.description.split('\n') : [],
+        slug: event.slug || event.id,
+        imageUrl,
+        dateString,
+        type: normalizeEventTypes(event.event_type || event.eventType || event.type),
+        directors: normalizeArrayOfPeople(event.directors)
+      };
+    });
   } catch (err) {
     console.error("Error fetching agenda for homepage:", err);
-    return null;
+    return [];
   }
 }
 
 export default async function HomepageAgenda() {
-  const event = await getNextAgendaEvent();
+  const events = await getUpcomingAgendaEvents();
 
-  if (!event) return null;
+  if (!events || events.length === 0) return null;
 
   return (
-    <div className={styles.responsiveSection} style={{ width: "100%", padding: "4rem 0", display: "flex", flexDirection: "row", gap: "0", alignItems: "flex-start" }}>
+    <div className={styles.responsiveSection} style={{ width: "100%", padding: "4rem 0", display: "flex", flexDirection: "column", gap: "2rem", alignItems: "flex-start" }}>
       <div style={{ flexShrink: 0, paddingRight: "3rem" }}>
-        <h2 style={{ fontFamily: "var(--font-family-base)", fontSize: "4.5rem", fontWeight: 600, letterSpacing: "1px", margin: 0, textTransform: "uppercase", lineHeight: 1 }}>AGENDA</h2>
-        <div style={{ display: "flex", justifyContent: "flex-start", marginTop: "1.5rem" }}>
+        <h2 style={{ fontFamily: "var(--font-family-base)", fontSize: "4.5rem", fontWeight: 600, letterSpacing: "1px", margin: 0, textTransform: "uppercase", lineHeight: 1 }}>QUE PASA EN NOS ENVERA</h2>
+        <div style={{ display: "flex", justifyContent: "flex-start" }}>
           <TransitionLink
             href="/agenda"
             style={{
@@ -92,38 +97,7 @@ export default async function HomepageAgenda() {
         </div>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", flex: 1, textAlign: "left", alignItems: "flex-start", borderLeft: "1px solid black", paddingLeft: "3rem" }}>
-          <TransitionLink href={`/evento/${event.slug}`} style={{ textDecoration: "none", color: "inherit", display: "flex", flexDirection: "column", gap: "1rem" }}>
-            <h3 className={styles.eventTitle} style={{ fontWeight: 600, letterSpacing: "1px", marginBottom: 0, fontFamily: "var(--font-family-base)", fontSize: "2rem !important" }}>
-              {event.title}
-            </h3>
-            {event.dateString && (
-              <p style={{ fontFamily: "var(--font-family-base)", fontSize: "1.1rem", color: "#555", margin: 0 }}>
-                {event.dateString}
-              </p>
-            )}
-            {event.subtitle && (
-              <p style={{ fontSize: "1.1rem", color: "#444", margin: 0, textAlign: "left" }}>
-                {event.subtitle}
-              </p>
-            )}
-          </TransitionLink>
-
-          {event.description?.length > 0 ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem", lineHeight: "1.7", textAlign: "left", marginTop: "0.5rem" }}>
-              {event.description.slice(0, 2).map((paragraph, index) => (
-                <p key={`desc-${index}`} style={{ margin: 0, textAlign: "left" }}>
-                  {paragraph}
-                </p>
-              ))}
-              {event.description.length > 2 && (
-                <TransitionLink href={`/evento/${event.slug}`} style={{ color: "#222", fontWeight: 600, textDecoration: "none", alignSelf: "flex-start", borderBottom: "1px solid black" }}>
-                  Ver más
-                </TransitionLink>
-              )}
-            </div>
-          ) : null}
-        </div>
+      <HomepageAgendaSlider events={events} />
     </div>
   );
 }

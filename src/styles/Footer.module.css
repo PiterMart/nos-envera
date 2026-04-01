@@ -5,6 +5,7 @@
   padding-top: 3rem;
   padding-bottom: 2rem;
   border-top: 2px solid black;
+  padding-left: 2REM;
   background-color: white;
   position: relative;
   z-index: 2;
@@ -108,7 +109,7 @@
 }
 
 .footerIndent {
-  margin-left: 1.25rem;
+  margin-left: 1rem;
   margin-top: 0.75rem;
 }
 
@@ -148,7 +149,7 @@
 
 .footerMainRow {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   justify-content: space-between;
   align-items: flex-start;
   width: 100%;
@@ -347,6 +348,10 @@
 
 /* Responsive styles */
 @media (max-width: 768px) {
+  .footer {
+    padding-left: 0;
+  }
+
   .footerContent {
     padding: 2rem var(--page-padding);
     gap: 2rem;

@@ -26,8 +26,11 @@ export default function EventClient({ performance }) {
 
   const lightboxSlides = useMemo(() => {
     if (!performance) return [];
-    const banner = performance.banner || performance.flyer || FALLBACK_IMAGE;
-    const slides = [{ src: banner, alt: `Flyer del evento ${performance.name || "Actividad"} - Nos Envera` }];
+    const eventImage = performance.banner || performance.flyer;
+    const slides = [];
+    if (eventImage) {
+      slides.push({ src: eventImage, alt: `Flyer del evento ${performance.name || "Actividad"} - Nos Envera` });
+    }
     if (performance.gallery?.length) {
       performance.gallery.forEach((item, i) => {
         slides.push({ src: item.url, alt: item.description ? `${item.description} - Nos Envera` : `Imagen de galería ${i + 1} del evento ${performance.name || "Actividad"} - Nos Envera` });
@@ -96,54 +99,58 @@ export default function EventClient({ performance }) {
 
   if (!performance) return null;
 
+  const eventImage = performance.banner || performance.flyer;
+
   return (
     <>
       <section className={styles.responsiveSection} style={{ display: "flex", flexDirection: "row", gap: "1.5rem", alignItems: "flex-start" }}>
-        <div
-          className={styles.responsiveImageContainer}
-          style={{
-            width: "50%",
-            flexShrink: 0,
-            backgroundColor: imgLoaded ? "#f0f0f0" : "transparent",
-            backgroundImage: imgLoaded ? "none" : "linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)",
-            backgroundSize: imgLoaded ? "auto" : "200% 100%",
-            animation: imgLoaded ? "none" : "shimmer 1.5s infinite",
-            aspectRatio: imgLoaded ? "auto" : "3 / 4",
-            overflow: "hidden",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            borderRadius: "var(--border-radius)",
-            transition: "aspect-ratio 0.3s ease",
-            cursor: "pointer",
-          }}
-          onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }}
-        >
-          <Image
-            src={performance.banner || performance.flyer || FALLBACK_IMAGE}
-            alt={`Flyer del evento ${performance.name || "Actividad"} - Nos Envera`}
-            onLoad={() => setImgLoaded(true)}
-            width={800}
-            height={1000}
-            sizes="(max-width: 768px) 100vw, 50vw"
+        {eventImage ? (
+          <div
+            className={styles.responsiveImageContainer}
             style={{
-              minWidth: "5rem",
-              width: "100%",
-              height: "auto",
-              objectFit: "contain",
-              display: "block",
-              opacity: imgLoaded ? 1 : 0,
-              transition: "opacity 0.3s ease, transform 0.3s ease",
-              transform: "scale(1)",
+              width: "50%",
+              flexShrink: 0,
+              backgroundColor: imgLoaded ? "#f0f0f0" : "transparent",
+              backgroundImage: imgLoaded ? "none" : "linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)",
+              backgroundSize: imgLoaded ? "auto" : "200% 100%",
+              animation: imgLoaded ? "none" : "shimmer 1.5s infinite",
+              aspectRatio: imgLoaded ? "auto" : "3 / 4",
+              overflow: "hidden",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "var(--border-radius)",
+              transition: "aspect-ratio 0.3s ease",
+              cursor: "pointer",
             }}
-            onMouseEnter={(e) => {
-              if (imgLoaded) e.currentTarget.style.transform = "scale(1.02)";
-            }}
-            onMouseLeave={(e) => {
-              if (imgLoaded) e.currentTarget.style.transform = "scale(1)";
-            }}
-          />
-        </div>
+            onClick={() => { setLightboxIndex(0); setLightboxOpen(true); }}
+          >
+            <Image
+              src={eventImage}
+              alt={`Flyer del evento ${performance.name || "Actividad"} - Nos Envera`}
+              onLoad={() => setImgLoaded(true)}
+              width={800}
+              height={1000}
+              sizes="(max-width: 768px) 100vw, 50vw"
+              style={{
+                minWidth: "5rem",
+                width: "100%",
+                height: "auto",
+                objectFit: "contain",
+                display: "block",
+                opacity: imgLoaded ? 1 : 0,
+                transition: "opacity 0.3s ease, transform 0.3s ease",
+                transform: "scale(1)",
+              }}
+              onMouseEnter={(e) => {
+                if (imgLoaded) e.currentTarget.style.transform = "scale(1.02)";
+              }}
+              onMouseLeave={(e) => {
+                if (imgLoaded) e.currentTarget.style.transform = "scale(1)";
+              }}
+            />
+          </div>
+        ) : null}
 
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", flex: 1, textAlign: "left", alignItems: "flex-start" }}>
           {performance.subtitle ? (

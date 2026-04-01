@@ -22,11 +22,12 @@ function easeOutBounce(x) {
 
 export default function Nav() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [openSubMenu, setOpenSubMenu] = useState(null);
     const currentPath = usePathname();
     const logoRef = useRef(null);
     const animRef = useRef(null);
 
-    // Scroll to footer when hash is present in URL (e.g., after navigation)
+    // Scroll to footer when hash is present in URL
     useEffect(() => {
         const handleHashChange = () => {
             if (window.location.hash === '#footer') {
@@ -35,11 +36,10 @@ export default function Nav() {
                     if (footer) {
                         footer.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }
-                }, 300); // Delay to allow page to render
+                }, 300);
             }
         };
 
-        // Check on mount and path change
         handleHashChange();
         window.addEventListener('hashchange', handleHashChange);
         
@@ -56,11 +56,13 @@ export default function Nav() {
 
     const handleNavigation = (page, e) => {
         setIsMenuOpen(false);
+        setOpenSubMenu(null);
     };
 
     const scrollToFooter = (e) => {
         e.preventDefault();
         setIsMenuOpen(false);
+        setOpenSubMenu(null);
         const footer = document.getElementById('footer');
         if (footer) {
             footer.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -102,11 +104,13 @@ export default function Nav() {
 
     const toggleMenu = () => {
         runBounceAnimation();
-        setIsMenuOpen((prev) => !prev);
+        setIsMenuOpen((prev) => {
+            if (prev) setOpenSubMenu(null);
+            return !prev;
+        });
     };
 
     const isCurrent = (path) => {
-        // Apply current styling to the active page
         return currentPath === path;
     };
 
@@ -116,8 +120,32 @@ export default function Nav() {
                 <div className={`${styles.nav_list} ${isMenuOpen ? styles.nav_list_active : ''}`} id="navMenu">
                     <ul>
                         {NAV_PAGES.map((page, index) => (
-                            <li key={index}>
-                                {page.path === '/contacto' ? (
+                            <li key={index} className={page.children ? styles.nav_item_with_children : ''}>
+                                {page.children ? (
+                                    <div className={styles.nav_dropdown_container}>
+                                        <button 
+                                            className={`${styles.nav_dropdown_button} ${openSubMenu === index ? styles.nav_dropdown_active : ''}`}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                setOpenSubMenu(openSubMenu === index ? null : index);
+                                            }}
+                                        >
+                                            {page.name}
+                                        </button>
+                                        <div className={`${styles.nav_submenu} ${openSubMenu === index ? styles.nav_submenu_open : ''}`}>
+                                            {page.children.map((child, idx) => (
+                                                <TransitionLink
+                                                    key={idx}
+                                                    href={child.path}
+                                                    className={`${styles.nav_submenu_link} ${isCurrent(child.path) ? styles.page_current : ''}`}
+                                                    onClick={(e) => handleNavigation(child, e)}
+                                                >
+                                                    {child.name}
+                                                </TransitionLink>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ) : page.path === '/contacto' ? (
                                     <a
                                         href="#footer"
                                         onClick={scrollToFooter}

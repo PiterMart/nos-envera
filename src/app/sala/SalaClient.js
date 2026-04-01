@@ -6,10 +6,10 @@ import styles from '../../styles/Sala.module.css';
 import AnimatedPageHeader from '../../components/AnimatedPageHeader';
 
 const IMAGES = [
-  '/espacio/NosEnvera-Fabrica1.jpg',
   '/espacio/NosEnvera-Fabrica2.jpg',
   '/espacio/NosEnvera-Fabrica3.jpg',
   '/espacio/NosEnvera-Fabrica4.jpg',
+  '/espacio/NosEnvera-Fabrica5.jpg',
 ];
 
 function CarouselImage({ src, alt, onClick }) {
@@ -104,7 +104,7 @@ export default function SalaClient() {
       <section className={styles.responsiveSection}>
         <div className={styles.responsiveImageContainer}>
           <Image
-            src={IMAGES[0]}
+            src={IMAGES[3]}
             alt="Sala principal - Nos Envera"
             width={800}
             height={1000}
@@ -114,39 +114,50 @@ export default function SalaClient() {
         </div>
 
         <div className={styles.textContainer}>
-          <p className={styles.paragraph}>
-            La sala se encuentra en planta baja. Tiene una superficie total de 140 m² y una capacidad de hasta 120 personas de pie. Cuenta con sala principal, hall y oficina y sistema de sonido e iluminación profesional.
+          <p className={styles.paragraph} style={{ textAlign: "justify" }}>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida. Duis ac tellus et risus vulputate vehicula. Donec lobortis risus a elit.
           </p>
-          <p className={styles.paragraph}>
-            El espacio es accesible y cuenta con baños adaptados para personas con movilidad reducida.
-          </p>
-          <ul className={styles.list}>
-            <li>Superficie total: 140 m²</li>
-            <li>Capacidad: hasta 120 personas de pie</li>
-            <li>Ambientes: sala principal, hall, oficina</li>
-            <li>WiFi</li>
-            <li>Ambiente climatizado en invierno</li>
-            <li>Espacio es accesible con baños adaptados para personas con movilidad reducida.</li>
-          </ul>
 
-          <h3 style={{ fontSize: '1rem', fontStyle: 'italic', margin: '0' }}>Sonido:</h3>
-          <ul className={styles.list} style={{ marginTop: '0.5rem' }}>
-            <li>Sistema 2.1 Db Technologies 503</li>
-            <li>2 trípodes móviles</li>
-            <li>Mixer Yamaha MG10XU</li>
-            <li>Micrófono Shure SM58</li>
-          </ul>
-
-          <h3 style={{ fontSize: '1rem', fontStyle: 'italic', margin: '1rem 0 0 0' }}>Iluminación:</h3>
-          <ul className={styles.list} style={{ marginTop: '0.5rem' }}>
-            <li>Sistema uniforme de luminarias a techo con tonalidades frías, cálidas y ambientes</li>
-            <li>3 Tachos Led PLS-PAR 546 flat * 54 LED X 3w RGB * Control: auto/sonido/DMX/Master - slave *</li>
-            <li>Canales DMX: 8* Ángulo 25°</li>
-            <li>1 Tacho Led PLS PAR 544 RGB LED de 4W 3-in-1 RGB Ángulo: 25° * 5200Lm Modo: Auto/Sound/DMX/Master</li>
-            <li>1 soporte trípode iluminación DJ Luces T 1,2 para 8 tachos</li>
-            <li>Consola Dmx 512 Operator 192 Canales Controlador 240 Pasos para tachos de luz</li>
-          </ul>
+          <a
+            href="/NV_rider técnico- 2026 .pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "inline-block",
+              marginTop: "1.5rem",
+              padding: "0.8rem 1.5rem",
+              backgroundColor: "#111",
+              color: "#fff",
+              textDecoration: "none",
+              letterSpacing: "1px",
+              fontSize: "0.85rem",
+              textTransform: "uppercase",
+              textAlign: "center",
+              cursor: "pointer",
+              alignSelf: "flex-start",
+              transition: "opacity 0.2s ease"
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.opacity = "0.8")}
+            onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
+          >
+            Descargar Rider Técnico
+          </a>
+          <div className={styles.footerCol}>
+            <div>
+              <h3 className={styles.contactTitle}>Ubicación</h3>
+              <a
+                href="https://maps.app.goo.gl/x3uyNJrSMe7eSQqm8"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${styles.contactLink} ${styles.footerIndent} ${styles.footerSubtext}`}
+                style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', textDecoration: 'none' }}
+              >
+                <span> → Vera 1350 - Villa Crespo - CABA</span>
+              </a>
+            </div>
+          </div>
         </div>
+
       </section>
 
       {/* Gallery Section - Carousel */}
@@ -164,7 +175,7 @@ export default function SalaClient() {
       </section>
 
       {/* Maps Section - Limited to 500px, Left aligned */}
-      <section className={styles.section}>
+      {/* <section className={styles.section}>
         <div className={styles.mapContainer}>
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1642.067332152843!2d-58.4357497!3d-34.5947387!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcb590740a6b71%3A0xe5469abb20188686!2sVera%20845%2C%20C1414%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires!5e0!3m2!1ses-419!2sar!4v1711388543210!5m2!1ses-419!2sar"
@@ -176,7 +187,7 @@ export default function SalaClient() {
             title="Google Maps Location"
           ></iframe>
         </div>
-      </section>
+      </section> */}
 
       {/* Lightbox */}
       {lightboxOpen && (

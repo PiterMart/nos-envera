@@ -41,6 +41,5 @@
 @media (max-width: 768px) {
   .hero {
     align-items: flex-start;
-    padding: 5vh var(--page-padding) 0 var(--page-padding);
   }
 }

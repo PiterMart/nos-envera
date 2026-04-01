@@ -51,7 +51,7 @@
   margin-top: 0;
   overflow: visible;
   border-bottom: 2px solid #000;
-  padding-bottom: 1rem; 
+  padding-bottom: 1rem;
   padding-top: 1rem;
 }
 
@@ -101,7 +101,7 @@
 }
 
 /* Desktop Styles - Horizontal Menu */
-@media (min-width: 769px) {
+@media (min-width: 1280px) {
   .nav_list {
     position: relative;
     width: auto;
@@ -193,4 +193,108 @@
   position: relative;
   z-index: inherit;
   pointer-events: none;
+}
+
+/* --- DROPDOWN SUBMENU STYLES --- */
+
+.nav_dropdown_container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.nav_dropdown_button {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-weight: inherit;
+  font-size: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  pointer-events: auto;
+  transition: transform 0.3s ease-in, color 0.3s ease-in;
+  padding-left: 0.75rem;
+  padding-right: 0.5rem;
+  display: block;
+  width: 100%;
+}
+
+.nav_dropdown_active {
+  transform: scaleX(-1);
+  display: block;
+}
+
+.nav_submenu {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.4s ease, opacity 0.4s ease, margin 0.4s ease;
+  align-items: center;
+  width: 100%;
+}
+
+.nav_submenu_open {
+  max-height: 400px;
+  opacity: 1;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.nav_submenu_link {
+  font-size: inherit !important;
+  font-weight: inherit !important;
+  padding: 0 0.5rem 0 0.75rem !important;
+  text-align: left !important;
+  width: 100%;
+  display: block;
+  opacity: 0.85;
+}
+
+.nav_submenu_link:hover {
+  opacity: 1;
+  color: #007bff;
+}
+
+@media (min-width: 1280px) {
+  .nav_dropdown_container {
+    flex-direction: row;
+    height: 100%;
+  }
+
+  .nav_dropdown_button {
+    text-align: left;
+  }
+
+  .nav_submenu {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: transparent;
+    backdrop-filter: none;
+    padding: 0;
+    min-width: max-content;
+    box-shadow: none;
+    align-items: flex-start;
+  }
+
+  .nav_submenu_open {
+    padding: 0.5rem 0 !important;
+    margin-top: 0.5rem;
+  }
+
+  .nav_submenu_link {
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    padding: 0.5rem 0.75rem !important;
+    width: 100%;
+    text-align: left !important;
+  }
 }

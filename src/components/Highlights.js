@@ -101,7 +101,61 @@ export default function Highlights() {
 
   const trackRef = useRef(null);
   const scrollIntervalRef = useRef(null);
+  const animationRef = useRef(null);
+  const [isHovering, setIsHovering] = useState(false);
+  const accumulatedScroll = useRef(0);
+  const isRewinding = useRef(false);
   
+  // Optimized continuous slow scroll
+  useEffect(() => {
+    if (featuredEvents.length === 0 || isHovering) {
+      cancelAnimationFrame(animationRef.current);
+      return;
+    }
+
+    const scrollSpeed = 0.35; // Pixels per frame. Adjust for slower/faster.
+
+    const playScroll = () => {
+      if (!trackRef.current) return;
+      
+      const track = trackRef.current;
+      const { scrollWidth, clientWidth } = track;
+      
+      if (isRewinding.current) {
+        // Wait until it smoothly scrolls back near the beginning
+        if (track.scrollLeft <= 10) {
+          isRewinding.current = false;
+          accumulatedScroll.current = track.scrollLeft;
+        }
+        animationRef.current = requestAnimationFrame(playScroll);
+        return;
+      }
+
+      // Update our high-precision accumulator
+      accumulatedScroll.current += scrollSpeed;
+      
+      // Sync accumulator if user manually swiped/scrolled
+      if (Math.abs(accumulatedScroll.current - track.scrollLeft) > 5) {
+        accumulatedScroll.current = track.scrollLeft;
+      }
+      
+      // Apply the scroll
+      track.scrollLeft = accumulatedScroll.current;
+      
+      // Loop back to start smoothly if at the end
+      if (track.scrollLeft + clientWidth >= scrollWidth - 1) {
+        isRewinding.current = true;
+        track.scrollTo({ left: 0, behavior: 'smooth' });
+      }
+
+      animationRef.current = requestAnimationFrame(playScroll);
+    };
+
+    animationRef.current = requestAnimationFrame(playScroll);
+
+    return () => cancelAnimationFrame(animationRef.current);
+  }, [featuredEvents, isHovering]);
+
   const handleMouseMove = (e) => {
     // Desktop only
     if (window.innerWidth <= 768) return; 
@@ -131,11 +185,12 @@ export default function Highlights() {
 
   const handleMouseLeave = () => {
     clearInterval(scrollIntervalRef.current);
+    setIsHovering(false);
   };
 
-  useEffect(() => {
-    return () => clearInterval(scrollIntervalRef.current);
-  }, []);
+  const handleMouseEnter = () => {
+    setIsHovering(true);
+  };
 
   if (loading) {
     return null;
@@ -149,6 +204,7 @@ export default function Highlights() {
     <div 
       className={styles.carouselContainer}
       onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       {/* <h2 className={styles.carouselTitle}>Highlights</h2> */}
