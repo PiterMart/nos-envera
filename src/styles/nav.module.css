@@ -100,7 +100,7 @@
   text-align: left;
 }
 
-/* Desktop Styles - Horizontal Menu */
+/* Desktop Styles - Horizontal Menu (COMMENTED OUT AS REQUESTED)
 @media (min-width: 1280px) {
   .nav_list {
     position: relative;
@@ -147,13 +147,14 @@
     white-space: nowrap;
   }
 
-  /* Show menu when button is clicked - fade in */
+  // Show menu when button is clicked - fade in
   .nav_active .nav_list {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
   }
 }
+*/
 
 .nav_list li a:hover {
   color: #007bff;
@@ -262,6 +263,7 @@
   color: #007bff;
 }
 
+/* Desktop Submenu Styles (COMMENTED OUT AS REQUESTED)
 @media (min-width: 1280px) {
   .nav_dropdown_container {
     flex-direction: row;
@@ -298,3 +300,4 @@
     text-align: left !important;
   }
 }
+*/

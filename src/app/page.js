@@ -7,9 +7,10 @@ import Highlights from "../components/Highlights";
 import Video from "../components/Video";
 import HomepageAgenda from "../components/HomepageAgenda";
 import HomepageIntro from "../components/HomepageIntro";
+import SalaRedirect from "../components/SalaRedirect";
 
 export const metadata = {
-  title: "Nos Envera",
+  title: "Nos En Vera",
   description: "Nos en Vera es un espacio de convergencia y creación colectiva en el campo de la performance. Una plataforma para la investigación, la producción, la exhibición y el desarrollo de prácticas escénicas.",
   openGraph: {
     title: "Nos en Vera | Espacio de Performance",
@@ -28,6 +29,7 @@ export default function Home() {
         <Highlights />
         <div style={{ display: "flex", flexDirection: "column", width: "100%", maxWidth: "1200px", margin: "0 auto", padding: "0 1rem" }}>
           <HomepageAgenda />
+          <SalaRedirect />
         </div>
       </main>
     </div>

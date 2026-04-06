@@ -42,19 +42,13 @@ export default function HomepageIntro() {
         justifyContent: "center",
         alignItems: "flex-start",
         padding: "4rem 1rem",
+        paddingTop: "0em",
         minHeight: "30vh",
         gap: "2rem",
       }}
     >
       <motion.p
-        className={styles.paragraph}
-        style={{
-          textAlign: "left",
-          maxWidth: "1200px",
-          margin: 0,
-          fontSize: "2.5rem",
-          lineHeight: "2.5rem",
-        }}
+        className={`${styles.paragraph} ${styles.introText}`}
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
@@ -71,8 +65,9 @@ export default function HomepageIntro() {
           </motion.span>
         ))}
       </motion.p>
-      
+
       <motion.div
+        className={styles.introButtonContainer}
         initial={{ opacity: 0, y: 10 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.8 }}

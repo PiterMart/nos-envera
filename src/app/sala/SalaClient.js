@@ -119,7 +119,7 @@ export default function SalaClient() {
           </p>
 
           <a
-            href="/NV_rider técnico- 2026 .pdf"
+            href="/NV - rider técnico sala - 2026.pdf"
             target="_blank"
             rel="noopener noreferrer"
             style={{

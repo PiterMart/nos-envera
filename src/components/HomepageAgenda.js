@@ -11,7 +11,8 @@ import {
   hasFutureDate,
   formatDate,
   normalizeArrayOfPeople,
-  normalizeEventTypes
+  normalizeEventTypes,
+  PERFORMANCE_TYPES
 } from "../lib/eventUtils";
 
 async function getUpcomingAgendaEvents() {
@@ -46,7 +47,8 @@ async function getUpcomingAgendaEvents() {
       const dateString = (event.parsedDates || [])
         .map(d => {
           if (!d.date) return null;
-          return new Intl.DateTimeFormat('es-AR', { day: 'numeric', month: 'long' }).format(d.date);
+          const formattedDate = new Intl.DateTimeFormat('es-AR', { day: 'numeric', month: 'long' }).format(d.date);
+          return d.time ? `${formattedDate} ${d.time}` : formattedDate;
         })
         .filter(Boolean)
         .join(" | ");
@@ -59,7 +61,9 @@ async function getUpcomingAgendaEvents() {
         slug: event.slug || event.id,
         imageUrl,
         dateString,
-        type: normalizeEventTypes(event.event_type || event.eventType || event.type),
+        type: normalizeEventTypes(event.event_type || event.eventType || event.type).map(t =>
+          PERFORMANCE_TYPES.some(pt => pt.toLowerCase() === t.toLowerCase()) ? "Performance" : t
+        ),
         directors: normalizeArrayOfPeople(event.directors)
       };
     });
@@ -75,9 +79,10 @@ export default async function HomepageAgenda() {
   if (!events || events.length === 0) return null;
 
   return (
-    <div className={styles.responsiveSection} style={{ width: "100%", padding: "4rem 0", display: "flex", flexDirection: "column", gap: "2rem", alignItems: "flex-start" }}>
+    <div className={styles.responsiveSection} style={{ width: "100%", padding: "4rem 0", display: "flex", flexDirection: "row", gap: "2rem", alignItems: "flex-start" }}>
       <div style={{ flexShrink: 0, paddingRight: "3rem" }}>
-        <h2 style={{ fontFamily: "var(--font-family-base)", fontSize: "4.5rem", fontWeight: 600, letterSpacing: "1px", margin: 0, textTransform: "uppercase", lineHeight: 1 }}>QUE PASA EN NOS ENVERA</h2>
+        <h2 style={{ fontFamily: "var(--font-family-base)", fontSize: "4.5rem", fontWeight: 600, letterSpacing: "1px", margin: 0, textTransform: "uppercase", lineHeight: 1 }}>PROXIMOS</h2>
+        <h2 style={{ fontFamily: "var(--font-family-base)", fontSize: "4.5rem", fontWeight: 600, letterSpacing: "1px", margin: 0, textTransform: "uppercase", lineHeight: 1 }}>EVENTOS</h2>
         <div style={{ display: "flex", justifyContent: "flex-start" }}>
           <TransitionLink
             href="/agenda"

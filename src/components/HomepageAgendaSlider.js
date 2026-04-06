@@ -22,18 +22,9 @@ export default function HomepageAgendaSlider({ events }) {
   const currentEvent = events[currentIndex];
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        flex: 1,
-        position: "relative",
-        gap: "1.5rem",
-        marginRight: 'auto'
-      }}
-    >
+    <div className={styles.agendaSliderContainer}>
       {events.length > 1 && (
-        <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", marginTop: "1rem", gap: "0.75rem" }}>
+        <div className={styles.agendaSliderDots}>
           {events.map((_, idx) => (
             <div
               key={idx}
