@@ -28,6 +28,9 @@ export default function Section1() {
         <div ref={headerRef} style={{ marginBottom: '1.5rem', overflow: 'hidden' }}>
           <AnimatedPageHeader loaded={loaded}>SOMOS</AnimatedPageHeader>
         </div>
+        <p className={pageStyles.pageSubtext} style={{ marginBottom: '2rem', maxWidth: '1000px' }}>
+          Nos en Vera es un espacio de convergencia y creación colectiva en el campo de la performance. Una plataforma para la investigación, la producción, la exhibición y el desarrollo de prácticas escénicas.
+        </p>
         <div className={styles.imageWrapper}>
           <Image
             src="/SomosNosEnvera.jpg"

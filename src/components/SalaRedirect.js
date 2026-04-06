@@ -5,17 +5,18 @@ import { TransitionLink } from './TransitionLink';
 
 export default function SalaRedirect() {
   return (
-    <div style={{ width: "100%", padding: "4rem 0", display: "flex", flexDirection: "column", gap: "2rem", alignItems: "flex-start" }}>
-      <div style={{ width: "100%", position: "relative", height: "450px", borderRadius: "10px", overflow: "hidden" }}>
+    <div style={{ width: "100vw", marginLeft: "calc(-50vw + 50%)", padding: "4rem 0", display: "flex", flexDirection: "column", gap: "2rem", alignItems: "center" }}>
+      <div style={{ width: "100%", position: "relative", height: "60vh", overflow: "hidden" }}>
         <Image
           src="/espacio/SalaNosEnvera4.jpg"
           alt="Espacio Nos en Vera - Sala"
           fill
           style={{ objectFit: "cover" }}
-          sizes="(max-width: 768px) 100vw, 1200px"
+          sizes="100vw"
+          priority
         />
       </div>
-      <div style={{ display: "flex", justifyContent: "flex-start", width: "100%" }}>
+      <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
         <TransitionLink
           href="/sala"
           style={{
@@ -27,6 +28,7 @@ export default function SalaRedirect() {
             borderBottom: "1px solid #222",
             display: "inline-block",
             fontWeight: "600",
+            textAlign: "center"
           }}
         >
           sala →

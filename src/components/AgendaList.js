@@ -54,11 +54,11 @@ const agendaItemStyles = {
 };
 
 const titleStyles = {
-  fontFamily: "var(--font-grid-card)",
-  fontStyle: "italic",
-  fontSize: "1.25rem",
-  fontWeight: 400,
-  letterSpacing: "0.5px",
+  fontFamily: "var(--font-family-base)",
+  fontStyle: "normal",
+  fontSize: "2rem",
+  fontWeight: 600,
+  letterSpacing: "1px",
   margin: 0,
   marginLeft: "15vw",
   color: "black",
@@ -119,7 +119,8 @@ export default function AgendaList({ events, basePath = "/evento" }) {
                   if (!d.date) return null;
                   const dateObj = d.date.toDate ? d.date.toDate() : new Date(d.date);
                   if (isNaN(dateObj.getTime())) return null;
-                  return new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long' }).format(dateObj);
+                  const formattedDate = new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long' }).format(dateObj);
+                  return d.time ? `${formattedDate} · ${d.time}hs` : formattedDate;
                 })
                 .filter(Boolean)
                 .join(" | ");

@@ -105,7 +105,6 @@ export default async function EventDetail({ params }) {
               display: "flex",
               flexDirection: "column",
               gap: "2rem",
-              marginBottom: "10rem",
             }}
           >
             <header className={styles.pageHeaderSmall} style={{ display: "flex", flexDirection: "column", justifyContent: "flex-end", marginBottom: 0 }}>

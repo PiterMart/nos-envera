@@ -29,8 +29,8 @@ export default function Home() {
         <Highlights />
         <div style={{ display: "flex", flexDirection: "column", width: "100%", maxWidth: "1200px", margin: "0 auto", padding: "0 1rem" }}>
           <HomepageAgenda />
-          <SalaRedirect />
         </div>
+        <SalaRedirect />
       </main>
     </div>
   );
