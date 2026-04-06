@@ -347,7 +347,7 @@
 }
 
 /* Responsive styles */
-@media (max-width: 768px) {
+@media (max-width: 1090px) {
   .footer {
     padding-left: 0;
   }

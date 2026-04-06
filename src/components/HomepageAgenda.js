@@ -79,9 +79,9 @@ export default async function HomepageAgenda() {
   if (!events || events.length === 0) return null;
 
   return (
-    <div className={styles.responsiveSection} style={{ width: "100%", padding: "4rem 0", display: "flex", flexDirection: "row", gap: "2rem", alignItems: "flex-start" }}>
+    <div className={styles.responsiveSection} style={{ width: "100%", padding: "4rem 0", display: "flex", flexDirection: "row", gap: "2rem", alignItems: "flex-start", minHeight: '50vh' }}>
       <div style={{ flexShrink: 0, paddingRight: "3rem" }}>
-        <h2 style={{ fontFamily: "var(--font-family-base)", fontSize: "4.5rem", fontWeight: 600, letterSpacing: "1px", margin: 0, textTransform: "uppercase", lineHeight: 1 }}>PROXIMOS</h2>
+        <h2 style={{ fontFamily: "var(--font-family-base)", fontSize: "4.5rem", fontWeight: 600, letterSpacing: "1px", margin: 0, textTransform: "uppercase", lineHeight: 1 }}>PRÓXIMOS</h2>
         <h2 style={{ fontFamily: "var(--font-family-base)", fontSize: "4.5rem", fontWeight: 600, letterSpacing: "1px", margin: 0, textTransform: "uppercase", lineHeight: 1 }}>EVENTOS</h2>
         <div style={{ display: "flex", justifyContent: "flex-start" }}>
           <TransitionLink

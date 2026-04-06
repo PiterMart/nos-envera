@@ -6,10 +6,14 @@ import styles from '../../styles/Sala.module.css';
 import AnimatedPageHeader from '../../components/AnimatedPageHeader';
 
 const IMAGES = [
-  '/espacio/NosEnvera-Fabrica2.jpg',
-  '/espacio/NosEnvera-Fabrica3.jpg',
-  '/espacio/NosEnvera-Fabrica4.jpg',
-  '/espacio/NosEnvera-Fabrica5.jpg',
+  '/espacio/SalaNosEnvera4.jpg',
+  '/espacio/SalaNosEnvera.jpg',
+  '/espacio/SalaNosEnvera2.jpg',
+  '/espacio/SalaNosEnvera3.jpg',
+  '/espacio/SalaNosEnvera5.jpg',
+  '/espacio/SalaNosEnvera6.jpg',
+  '/espacio/SalaNosEnvera7.jpg',
+  '/espacio/SalaNosEnvera8.jpg',
 ];
 
 function CarouselImage({ src, alt, onClick }) {
@@ -104,7 +108,7 @@ export default function SalaClient() {
       <section className={styles.responsiveSection}>
         <div className={styles.responsiveImageContainer}>
           <Image
-            src={IMAGES[3]}
+            src={IMAGES[0]}
             alt="Sala principal - Nos Envera"
             width={800}
             height={1000}
@@ -115,7 +119,7 @@ export default function SalaClient() {
 
         <div className={styles.textContainer}>
           <p className={styles.paragraph} style={{ textAlign: "justify" }}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida. Duis ac tellus et risus vulputate vehicula. Donec lobortis risus a elit.
+            La sala es el campo de prueba donde los procesos toman cuerpo. Con equipamiento técnico y capacidad para adaptarse a distintos formatos, funciona como un dispositivo abierto, que se transforma y se adapta a lo que suceda.
           </p>
 
           <a

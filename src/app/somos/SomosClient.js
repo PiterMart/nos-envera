@@ -6,13 +6,7 @@ import { TransitionLink } from "../../components/TransitionLink";
 import teamStyles from "../../styles/equipo.module.css";
 import pageStyles from "../../styles/page.module.css";
 import Section1 from "../../components/Section1";
-import Lightbox from "../../components/Lightbox";
 
-const ESPACIO_IMAGES = [
-  "/espacio/NosEnvera-Fabrica1.jpg",
-  "/espacio/NosEnvera-Fabrica2.jpg",
-  "/espacio/NosEnvera-Fabrica3.jpg",
-];
 
 export default function SomosClient({ teamMembers }) {
   const [lightboxOpen, setLightboxOpen] = useState(false);

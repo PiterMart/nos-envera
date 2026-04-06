@@ -11,12 +11,12 @@ export const metadata = {
 
 const MEMBER_ORDER = [
   "Dominique Melhem",
+  "Ana Belén Rodríguez",
   "Laura Rod",
   "Jan Valente",
   "Javier Olivera",
   "Ángel Odessky",
   "Olivia Milberg",
-  "Ana Belén Rodríguez",
   "Nicolás Dodi",
   "Rodolfo Opazo",
 ];
@@ -31,11 +31,19 @@ async function getTeamMembers() {
         ...JSON.parse(JSON.stringify(memberDoc.data())),
       }))
       .sort((a, b) => {
-        const aIdx = MEMBER_ORDER.indexOf(a.name || "");
-        const bIdx = MEMBER_ORDER.indexOf(b.name || "");
+        const nameA = (a.name || "").trim().toLowerCase();
+        const nameB = (b.name || "").trim().toLowerCase();
+        
+        const aIdx = MEMBER_ORDER.findIndex(n => n.trim().toLowerCase() === nameA);
+        const bIdx = MEMBER_ORDER.findIndex(n => n.trim().toLowerCase() === nameB);
+        
         const aOrder = aIdx === -1 ? MEMBER_ORDER.length : aIdx;
         const bOrder = bIdx === -1 ? MEMBER_ORDER.length : bIdx;
-        return aOrder - bOrder;
+        
+        if (aOrder !== bOrder) {
+          return aOrder - bOrder;
+        }
+        return nameA.localeCompare(nameB);
       });
   } catch (error) {
     console.error("Error fetching team members on server:", error);
