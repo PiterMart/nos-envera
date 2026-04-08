@@ -8,7 +8,7 @@ export default function SalaRedirect() {
     <div style={{ width: "100vw", marginLeft: "calc(-50vw + 50%)", padding: "4rem 0", display: "flex", flexDirection: "column", gap: "2rem", alignItems: "center" }}>
       <div style={{ width: "100%", position: "relative", height: "60vh", overflow: "hidden" }}>
         <Image
-          src="/espacio/SalaNosEnvera4.jpg"
+          src="/espacio/SalaNosEnvera3.jpg"
           alt="Espacio Nos en Vera - Sala"
           fill
           style={{ objectFit: "cover" }}

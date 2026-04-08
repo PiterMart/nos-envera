@@ -11,6 +11,8 @@ export const metadata = {
   description: "Explora nuestra colección de notas, investigaciones y publicaciones sobre performance y artes escénicas en Nos en Vera.",
 };
 
+export const revalidate = 3600; // revalidate every hour
+
 async function getNotas() {
   try {
     const snapshot = await getDocs(collection(firestore, "notas"));

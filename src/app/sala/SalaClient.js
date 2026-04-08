@@ -108,7 +108,7 @@ export default function SalaClient() {
       <section className={styles.responsiveSection}>
         <div className={styles.responsiveImageContainer}>
           <Image
-            src={IMAGES[0]}
+            src={IMAGES[3]}
             alt="Sala principal - Nos Envera"
             width={800}
             height={1000}

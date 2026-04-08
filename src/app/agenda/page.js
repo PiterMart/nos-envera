@@ -20,6 +20,8 @@ export const metadata = {
   description: "Consulta las próximas actividades abiertas a la comunidad en Nos en Vera: funciones, aperturas y formación.",
 };
 
+export const revalidate = 3600; // revalidate every hour
+
 async function getAgendaEvents() {
   try {
     const snapshot = await getDocs(collection(firestore, "events"));

@@ -16,6 +16,8 @@ export const metadata = {
   description: "Registro de cada obra, proceso y actividad que ha tenido lugar en Nos en Vera desde su inicio en 2023.",
 };
 
+export const revalidate = 3600; // revalidate every hour
+
 async function getEvents() {
   try {
     const snapshot = await getDocs(collection(firestore, "events"));

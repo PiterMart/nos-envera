@@ -19,6 +19,8 @@ export const metadata = {
   },
 };
 
+export const revalidate = 3600; // revalidate every hour
+
 export default function Home() {
   return (
     <div className={styles.page}>

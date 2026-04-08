@@ -39,6 +39,8 @@ export async function generateMetadata({ params }) {
   };
 }
 
+export const revalidate = 3600; // revalidate every hour
+
 async function getMemberData(memberId) {
   try {
     let member = null;

@@ -11,6 +11,8 @@ export const metadata = {
   description: "Explora el mapa de la comunidad Nos en Vera: artistas, investigadorxs y colaboradorxs que dan vida a nuestro espacio.",
 };
 
+export const revalidate = 3600; // revalidate every hour
+
 async function getMembers() {
   try {
     const membersQuery = query(collection(firestore, "members"), orderBy("name", "asc"));

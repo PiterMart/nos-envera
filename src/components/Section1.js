@@ -42,7 +42,7 @@ export default function Section1() {
           />
         </div>
         <p className={styles.paragraph}>
-          Fundado en 2023 en el barrio de Villa Crespo, Ciudad Autónoma de Buenos Aires, Nos en Vera es un espacio de investigación en artes y prácticas performativas, dedicado a la producción, exhibición y el desarrollo artístico. Una plataforma para la experimentación y el cruce de lenguajes, que busca generar nuevas relaciones dentro del universo de las artes escénicas, fomentando el intercambio y la colaboración entre artistas de diversas disciplinas.
+          Fundado por Dominique Melhem en 2023 en el barrio de Villa Crespo, Ciudad Autónoma de Buenos Aires, Nos en Vera es un espacio de investigación en artes y prácticas performativas, dedicado a la producción, exhibición y el desarrollo artístico. Una plataforma para la experimentación y el cruce de lenguajes, que busca generar nuevas relaciones dentro del universo de las artes escénicas, fomentando el intercambio y la colaboración entre artistas de diversas disciplinas.
         </p>
         <p className={styles.paragraph}>
           Nos en Vera se consolidó como un punto de encuentro entre la comunidad local, artistas nacionales e internacionales, promoviendo la visibilización de creadorxs tanto emergentes como de trayectoria. A través de un enfoque que privilegia la investigación y el proceso artístico, ofrece residencias de creación, donde las premisas son definidas por los propios artistas en función de sus intereses e inquietudes.

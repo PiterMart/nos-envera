@@ -9,6 +9,8 @@ export const metadata = {
   description: "Conoce al equipo detrás de Nos en Vera, un espacio dedicado a la investigación y producción de artes performáticas.",
 };
 
+export const revalidate = 3600; // revalidate every hour
+
 const MEMBER_ORDER = [
   "Dominique Melhem",
   "Ana Belén Rodríguez",

@@ -53,6 +53,8 @@ export async function generateMetadata({ params }) {
   };
 }
 
+export const revalidate = 3600; // revalidate every hour
+
 async function getEvent(slug) {
   try {
     const docRef = doc(firestore, "events", slug);
