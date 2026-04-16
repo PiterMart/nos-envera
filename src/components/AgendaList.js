@@ -17,7 +17,7 @@ function groupByMonth(cards) {
       const futureDates = card.dates.filter(d => d.date >= now);
       // Fallback to first date if all are in the past
       const targetDate = futureDates.length > 0 ? futureDates[0].date : card.dates[0].date;
-      
+
       if (targetDate) {
         const formatted = new Intl.DateTimeFormat('es-ES', { month: 'long' }).format(targetDate);
         monthString = formatted.charAt(0).toUpperCase() + formatted.slice(1);
@@ -31,7 +31,7 @@ function groupByMonth(cards) {
     }
     group.events.push(card);
   }
-  
+
   return groups.map(g => [g.month, g.events]);
 }
 
@@ -70,7 +70,7 @@ const dateStyles = {
   fontSize: "0.95rem",
   color: "#555",
   margin: 0,
-  marginTop: "0.25rem",
+  padding: '0'
 };
 
 export default function AgendaList({ events, basePath = "/evento" }) {
@@ -114,14 +114,19 @@ export default function AgendaList({ events, basePath = "/evento" }) {
 
           <div style={{ display: "flex", flexDirection: "column" }}>
             {groupEvents.map((event) => {
-              const dateString = (event.dates || [])
+              const dateInfo = (event.dates || [])
                 .map((d) => {
                   if (!d.date) return null;
                   const dateObj = d.date.toDate ? d.date.toDate() : new Date(d.date);
                   if (isNaN(dateObj.getTime())) return null;
-                  const formattedDate = new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long' }).format(dateObj);
-                  return d.time ? `${formattedDate} · ${d.time}hs` : formattedDate;
+                  const day = new Intl.DateTimeFormat('es-ES', { day: 'numeric' }).format(dateObj);
+                  return { day, time: d.time };
                 })
+                .filter(Boolean);
+
+              const dayString = dateInfo.map((d) => d.day).join(" | ");
+              const timeString = dateInfo
+                .map((d) => (d.time ? `${d.time}hs` : null))
                 .filter(Boolean)
                 .join(" | ");
 
@@ -133,16 +138,28 @@ export default function AgendaList({ events, basePath = "/evento" }) {
                   className="agendaLinkHover"
                 >
                   <article style={agendaItemStyles}>
-                    <h3 style={titleStyles}>{event.title}</h3>
-                    {dateString && <p style={dateStyles}>{dateString}</p>}
-                    {(event.type?.length > 0 || event.directors?.length > 0) && (
-                      <p style={{ ...dateStyles, fontStyle: "italic", fontSize: "0.9rem" }}>
-                        {[
-                          event.type?.length > 0 ? event.type.join(", ") : null,
-                          event.directors?.length > 0 ? `Dir: ${event.directors.map(dir => dir.name).join(", ")}` : null
-                        ].filter(Boolean).join(" | ")}
-                      </p>
-                    )}
+                    <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
+
+                      <h3 style={{ ...titleStyles }}>
+                        {event.title}
+                      </h3>
+                      <h2 style={{ ...titleStyles, marginLeft: 0 }}>
+                        {dayString}
+                      </h2>
+
+                      {timeString && <p style={{ ...dateStyles, marginLeft: 0 }}>{timeString}</p>}
+
+                      {(event.type?.length > 0 || event.directors?.length > 0) && (
+                        <p style={{ ...dateStyles, fontStyle: "italic", fontSize: "0.9rem" }}>
+                          {[
+                            event.type?.length > 0 ? event.type.join(", ") : null,
+                            event.directors?.length > 0
+                              ? `Dir: ${event.directors.map((dir) => dir.name).join(", ")}`
+                              : null,
+                          ].filter(Boolean).join(" | ")}
+                        </p>
+                      )}
+                    </div>
                   </article>
                 </TransitionLink>
               );

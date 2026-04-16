@@ -6,6 +6,8 @@ export const metadata = {
   description: "Espacios de aprendizaje, entrenamiento y experimentación en artes escénicas y performance en Nos en Vera.",
 };
 
+export const revalidate = 3600;
+
 export default function Formacion() {
   return (
     <EventTypePage

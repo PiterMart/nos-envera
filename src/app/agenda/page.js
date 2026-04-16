@@ -86,10 +86,12 @@ export default async function AgendaPage() {
         <div className={styles.homepage_container} style={{ paddingTop: "2rem" }}>
           <div className={styles.contentMaxWidth} style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
             <AnimatedPageSection
-              title="AGENDA"
+              title="AGENDA "
               subtext="Estas son las próximas actividades abiertas a la comunidad que ofrece Nos en Vera: funciones, aperturas de procesos y espacios de formación."
               loaded={true}
             />
+
+            <h1 style={{ fontSize: "4rem", textTransform: "uppercase", letterSpacing: "0.5px", display: "inline-block", fontWeight: "600", textAlign: "LEFT" }}>2026</h1>
 
             {events.length === 0 ? (
               <div style={{ textAlign: "center", padding: "3rem", color: "#666" }}>

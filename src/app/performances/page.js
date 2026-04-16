@@ -6,6 +6,8 @@ export const metadata = {
   description: "Explora las exhibiciones y performances en Nos en Vera: obras de artistas contemporáneos en diálogo con la comunidad.",
 };
 
+export const revalidate = 3600; // revalidate every hour
+
 export default function Perfos() {
   return (
     <EventTypePage

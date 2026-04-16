@@ -6,6 +6,8 @@ export const metadata = {
   description: "Programas de residencia para el desarrollo de proyectos artísticos y procesos de investigación en Nos en Vera.",
 };
 
+export const revalidate = 3600;
+
 export default function Residencias() {
   return (
     <EventTypePage

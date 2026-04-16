@@ -6,7 +6,7 @@ export const NAV_PAGES = [
   {
     name: "EVENTOS",
     children: [
-      { name: "PERFORMANCES", path: "/performances" },
+      { name: "PERFORMANCE", path: "/performances" },
       { name: "RESIDENCIAS", path: "/residencias" },
       { name: "FORMACIONES", path: "/formaciones" },
     ],
