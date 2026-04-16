@@ -91,14 +91,14 @@ export default async function AgendaPage() {
               loaded={true}
             />
 
-            <h1 style={{ fontSize: "4rem", textTransform: "uppercase", letterSpacing: "0.5px", display: "inline-block", fontWeight: "600", textAlign: "LEFT" }}>2026</h1>
-
             {events.length === 0 ? (
               <div style={{ textAlign: "center", padding: "3rem", color: "#666" }}>
                 <p>No hay actividades próximas programadas.</p>
               </div>
             ) : (
-              <AgendaList events={events} basePath="/evento" />
+              <>
+                <AgendaList events={events} basePath="/evento" />
+              </>
             )}
           </div>
         </div>

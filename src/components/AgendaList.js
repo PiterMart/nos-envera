@@ -80,6 +80,7 @@ export default function AgendaList({ events, basePath = "/evento" }) {
     <section style={listContainerStyles}>
       {groups.map(([month, groupEvents], idx) => (
         <div key={month} style={{ width: "100%", marginTop: idx === 0 ? 0 : "2rem" }}>
+
           <header
             style={{
               marginBottom: "1rem",
@@ -89,6 +90,7 @@ export default function AgendaList({ events, basePath = "/evento" }) {
               width: "100%",
             }}
           >
+
             <h2
               style={{
                 fontFamily: "var(--font-family-base)",
@@ -165,6 +167,7 @@ export default function AgendaList({ events, basePath = "/evento" }) {
               );
             })}
           </div>
+          <h1 style={{ fontSize: "4rem", textTransform: "uppercase", letterSpacing: "0.5px", display: "inline-block", fontWeight: "600", textAlign: "LEFT", marginLeft: '0', marginRight: 'auto' }}>2026</h1>
         </div>
       ))}
     </section>
