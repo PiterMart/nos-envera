@@ -87,7 +87,7 @@ export default async function AgendaPage() {
           <div className={styles.contentMaxWidth} style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
             <AnimatedPageSection
               title="AGENDA "
-              subtext="Estas son las próximas actividades abiertas a la comunidad que ofrece Nos en Vera: funciones, aperturas de procesos y espacios de formación."
+              subtext="Estas son las próximas actividades abiertas a la comunidad que ofrece Nos en Vera: funciones, residencias, aperturas de procesos y espacios de formación."
               loaded={true}
             />
 

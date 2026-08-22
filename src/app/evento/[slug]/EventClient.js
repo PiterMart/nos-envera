@@ -70,20 +70,25 @@ export default function EventClient({ performance }) {
         }
 
         const time = entry?.time;
+        const purchaseLink = entry?.purchaseLink || entry?.purchase_link || performance.purchaseLink || "";
+
         if (!dateLabel && !time) return null;
         return {
           dateLabel,
           time,
+          purchaseLink,
         };
       })
       .filter(Boolean);
 
     const year = formatDate(firstDate?.date)?.split(" ").pop() || null;
+    const hasPerDatePurchaseLinks = formattedDates.some((d) => Boolean(d.purchaseLink));
 
     return {
       ...performance,
       formattedDates,
       year,
+      hasPerDatePurchaseLinks,
     };
   }, [performance]);
 
@@ -280,18 +285,40 @@ export default function EventClient({ performance }) {
           {enriched?.formattedDates?.length ? (
             <div style={{ textAlign: "left", alignSelf: "flex-start" }}>
               <h2 style={{ fontSize: "1.1rem", textTransform: "uppercase", letterSpacing: "0.5px", textAlign: "left" }}>Fechas</h2>
-              <ul style={{ listStyle: "none", padding: 0, margin: "0.5rem 0 0 0", display: "flex", flexDirection: "column", gap: "0.35rem", textAlign: "left" }}>
+              <ul style={{ listStyle: "none", padding: 0, margin: "0.5rem 0 0 0", display: "flex", flexDirection: "column", gap: "1rem", textAlign: "left" }}>
                 {enriched.formattedDates.map((entry, index) => (
-                  <li key={`date-${index}`} style={{ color: "#444", textAlign: "left" }}>
-                    {entry.dateLabel || "Fecha por confirmar"}
-                    {entry.time ? ` · ${entry.time}` : ""}
+                  <li key={`date-${index}`} style={{ color: "#444", textAlign: "left", display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "0.4rem" }}>
+                    <span>
+                      {entry.dateLabel || "Fecha por confirmar"}
+                      {entry.time ? ` · ${entry.time}` : ""}
+                    </span>
+                    {entry.purchaseLink ? (
+                      <a
+                        href={entry.purchaseLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          display: "inline-block",
+                          padding: "0.35rem 0.75rem",
+                          backgroundColor: "#111",
+                          color: "#fff",
+                          textDecoration: "none",
+                          letterSpacing: "0.5px",
+                          fontSize: "0.75rem",
+                          textTransform: "uppercase",
+                          marginTop: "0.15rem",
+                        }}
+                      >
+                        COMPRAR ENTRADAS
+                      </a>
+                    ) : null}
                   </li>
                 ))}
               </ul>
             </div>
           ) : null}
 
-          {(performance.address || performance.googleMapsLink || performance.purchaseLink || performance.pdfLink) ? (
+          {(performance.address || performance.googleMapsLink || ((!enriched?.hasPerDatePurchaseLinks && performance.purchaseLink) || performance.pdfLink)) ? (
             <div style={{ textAlign: "left", alignSelf: "flex-start" }}>
               <h2 style={{ fontSize: "1.1rem", textTransform: "uppercase", letterSpacing: "0.5px", textAlign: "left" }}>Ubicación</h2>
               {performance.address ? (
@@ -317,9 +344,9 @@ export default function EventClient({ performance }) {
                   Ver en Google Maps
                 </a>
               ) : null}
-              {(performance.purchaseLink || performance.pdfLink) ? (
+              {((!enriched?.hasPerDatePurchaseLinks && performance.purchaseLink) || performance.pdfLink) ? (
                 <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginTop: "0.75rem" }}>
-                  {performance.purchaseLink ? (
+                  {(!enriched?.hasPerDatePurchaseLinks && performance.purchaseLink) ? (
                     <a
                       href={performance.purchaseLink}
                       target="_blank"
@@ -336,7 +363,7 @@ export default function EventClient({ performance }) {
                         textAlign: "left",
                       }}
                     >
-                      FORMULARIO DE INSCRIPCION
+                      COMPRAR ENTRADAS
                     </a>
                   ) : null}
                   {performance.pdfLink ? (

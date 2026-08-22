@@ -30,7 +30,7 @@ export default function EventUploader() {
     featuredOrder: null,
     directors: [],
     artists: [],
-    dates: [{ date: null, time: "" }],
+    dates: [{ date: null, time: "", purchase_link: "" }],
     address: "",
     googleMapsLink: "",
     slug: "",
@@ -205,6 +205,7 @@ export default function EventUploader() {
                     : new Date(entry.date)
                   : null,
                 time: entry?.time || "",
+                purchase_link: entry?.purchase_link || entry?.purchaseLink || data.purchase_link || data.purchaseLink || "",
               }))
               .filter((entry) => entry.date instanceof Date && !isNaN(entry.date.getTime()))
           : [];
@@ -276,8 +277,9 @@ export default function EventUploader() {
               ? fallbackDates.map((entry) => ({
                   date: entry.date instanceof Date && !isNaN(entry.date.getTime()) ? entry.date : null,
                   time: entry.time || "",
+                  purchase_link: entry.purchase_link || "",
                 }))
-              : [{ date: null, time: "" }],
+              : [{ date: null, time: "", purchase_link: "" }],
           directors: fallbackDirectors,
           artists: fallbackArtists,
           address: data.address || "",
@@ -321,6 +323,7 @@ export default function EventUploader() {
         .map((entry) => ({
           date: entry?.date ? new Date(entry.date) : null,
           time: entry?.time ? entry.time.trim() : "",
+          purchase_link: entry?.purchase_link ? entry.purchase_link.trim() : "",
         }))
         .filter((entry) => entry.date instanceof Date && !isNaN(entry.date.getTime()));
 
@@ -391,7 +394,8 @@ export default function EventUploader() {
         .filter((entry) => entry.name);
 
       const purchaseLinkSanitized =
-        typeof formData.purchase_link === "string" ? formData.purchase_link.trim() : "";
+        sanitizedDates.find((d) => d.purchase_link)?.purchase_link ||
+        (typeof formData.purchase_link === "string" ? formData.purchase_link.trim() : "");
 
       const videoLinkSanitized =
         typeof formData.video_link === "string" ? formData.video_link.trim() : "";
@@ -407,6 +411,7 @@ export default function EventUploader() {
         dates: sanitizedDates.map((entry) => ({
           date: Timestamp.fromDate(new Date(entry.date)),
           time: entry.time,
+          purchase_link: entry.purchase_link,
         })),
         directors: directorsSanitized,
         artists: artistsSanitized,
@@ -487,10 +492,21 @@ export default function EventUploader() {
     });
   };
 
+  const handleSchedulePurchaseLinkChange = (index, purchase_link) => {
+    setFormData((prev) => {
+      const updatedDates = [...(prev.dates || [])];
+      updatedDates[index] = {
+        ...updatedDates[index],
+        purchase_link: purchase_link || "",
+      };
+      return { ...prev, dates: updatedDates };
+    });
+  };
+
   const addScheduleEntry = () => {
     setFormData((prev) => ({
       ...prev,
-      dates: [...(prev.dates || []), { date: null, time: "" }],
+      dates: [...(prev.dates || []), { date: null, time: "", purchase_link: "" }],
     }));
   };
 
@@ -499,7 +515,7 @@ export default function EventUploader() {
       ...prev,
       dates: (() => {
         const remaining = (prev.dates || []).filter((_, i) => i !== index);
-        return remaining.length > 0 ? remaining : [{ date: null, time: "" }];
+        return remaining.length > 0 ? remaining : [{ date: null, time: "", purchase_link: "" }];
       })(),
     }));
   };
@@ -927,7 +943,7 @@ const uploadImages = async (eventId) => {
       featuredOrder: null,
       directors: [],
       artists: [],
-      dates: [{ date: null, time: "" }],
+      dates: [{ date: null, time: "", purchase_link: "" }],
       address: "",
       googleMapsLink: "",
       slug: "",
@@ -990,6 +1006,7 @@ const uploadImages = async (eventId) => {
         .map((entry) => ({
           date: entry?.date ? new Date(entry.date) : null,
           time: entry?.time ? entry.time.trim() : "",
+          purchase_link: entry?.purchase_link ? entry.purchase_link.trim() : "",
         }))
         .filter((entry) => entry.date instanceof Date && !isNaN(entry.date.getTime()));
 
@@ -1035,7 +1052,8 @@ const uploadImages = async (eventId) => {
         .filter((entry) => entry.name);
 
       const purchaseLinkSanitized =
-        typeof formData.purchase_link === "string" ? formData.purchase_link.trim() : "";
+        sanitizedDates.find((d) => d.purchase_link)?.purchase_link ||
+        (typeof formData.purchase_link === "string" ? formData.purchase_link.trim() : "");
 
       const videoLinkSanitized =
         typeof formData.video_link === "string" ? formData.video_link.trim() : "";
@@ -1051,6 +1069,7 @@ const uploadImages = async (eventId) => {
         dates: sanitizedDates.map((entry) => ({
           date: Timestamp.fromDate(new Date(entry.date)),
           time: entry.time,
+          purchase_link: entry.purchase_link,
         })),
         directors: directorsSanitized,
         artists: artistsSanitized,
@@ -1299,37 +1318,49 @@ const uploadImages = async (eventId) => {
         <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.2rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px' }}>Fechas y horarios</h3>
         <div className={styles.artistInfoContainer}>
           {(formData.dates || []).map((schedule, index) => (
-            <div key={`schedule-${index}`} className={styles.profileAndBasicInfoRow}>
-              <div className={styles.inputGroup}>
-                <p className={styles.subtitle}>FECHA</p>
-                <DatePicker
-                  selected={schedule.date}
-                  onChange={(date) => handleScheduleDateChange(index, date)}
-                  placeholderText="Selecciona la fecha"
-                  scrollableYearDropdown={true}
-                  showMonthDropdown={true}
-                  showYearDropdown={true}
-                />
-              </div>
+            <div key={`schedule-${index}`} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', paddingBottom: '1rem', borderBottom: index < (formData.dates || []).length - 1 ? '1px solid #eee' : 'none' }}>
+              <div className={styles.profileAndBasicInfoRow}>
+                <div className={styles.inputGroup}>
+                  <p className={styles.subtitle}>FECHA</p>
+                  <DatePicker
+                    selected={schedule.date}
+                    onChange={(date) => handleScheduleDateChange(index, date)}
+                    placeholderText="Selecciona la fecha"
+                    scrollableYearDropdown={true}
+                    showMonthDropdown={true}
+                    showYearDropdown={true}
+                  />
+                </div>
 
-              <div className={styles.inputGroup}>
-                <p className={styles.subtitle}>HORARIO (OPCIONAL)</p>
-                <input
-                  type="time"
-                  value={schedule.time || ""}
-                  onChange={(e) => handleScheduleTimeChange(index, e.target.value)}
-                />
-              </div>
+                <div className={styles.inputGroup}>
+                  <p className={styles.subtitle}>HORARIO (OPCIONAL)</p>
+                  <input
+                    type="time"
+                    value={schedule.time || ""}
+                    onChange={(e) => handleScheduleTimeChange(index, e.target.value)}
+                  />
+                </div>
 
-              {formData.dates.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeScheduleEntry(index)}
-                  style={{ alignSelf: 'flex-end', padding: '0.5rem 1rem', backgroundColor: 'transparent', border: '1px solid #ccc', cursor: 'pointer', height: 'fit-content' }}
-                >
-                  Eliminar
-                </button>
-              )}
+                <div className={styles.inputGroup}>
+                  <p className={styles.subtitle}>ENLACE DE COMPRA / ENTRADAS (OPCIONAL)</p>
+                  <input
+                    type="url"
+                    placeholder="https://..."
+                    value={schedule.purchase_link || ""}
+                    onChange={(e) => handleSchedulePurchaseLinkChange(index, e.target.value)}
+                  />
+                </div>
+
+                {formData.dates.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeScheduleEntry(index)}
+                    style={{ alignSelf: 'flex-end', padding: '0.5rem 1rem', backgroundColor: 'transparent', border: '1px solid #ccc', cursor: 'pointer', height: 'fit-content' }}
+                  >
+                    Eliminar
+                  </button>
+                )}
+              </div>
             </div>
           ))}
 
@@ -1340,7 +1371,7 @@ const uploadImages = async (eventId) => {
           >
             Agregar otra funcion
           </button>
-          <p className={styles.helpText}>Puedes agregar multiples fechas para el evento. El horario es opcional.</p>
+          <p className={styles.helpText}>Puedes agregar multiples fechas para el evento. Cada funcion puede tener su propio enlace de compra y horario.</p>
         </div>
       </div>
 

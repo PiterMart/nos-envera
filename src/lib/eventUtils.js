@@ -151,12 +151,14 @@ export const parseDateEntry = (entry) => {
   }
 
   const time = typeof entry.time === "string" ? entry.time.trim() : "";
+  const rawPurchaseLink = entry.purchase_link || entry.purchaseLink || "";
+  const purchaseLink = typeof rawPurchaseLink === "string" ? rawPurchaseLink.trim() : "";
 
-  if (!parsedDate && !time) {
+  if (!parsedDate && !time && !purchaseLink) {
     return null;
   }
 
-  return { date: parsedDate, time };
+  return { date: parsedDate, time, purchaseLink };
 };
 
 export const extractYear = (dates = []) => {
@@ -299,12 +301,19 @@ export const normalizeEventDoc = (docData, docId) => {
     return null;
   }
 
-  const dates = Array.isArray(docData.dates)
-    ? docData.dates.map(parseDateEntry).filter(Boolean)
-    : [];
   const rawPurchaseLink = docData.purchase_link || docData.purchaseLink || "";
   const purchaseLink =
     typeof rawPurchaseLink === "string" ? rawPurchaseLink.trim() : "";
+
+  const dates = Array.isArray(docData.dates)
+    ? docData.dates
+        .map(parseDateEntry)
+        .filter(Boolean)
+        .map((d) => ({
+          ...d,
+          purchaseLink: d.purchaseLink || purchaseLink,
+        }))
+    : [];
 
   const rawVideoLink = docData.video_link || docData.videoLink || "";
   const videoLink =
